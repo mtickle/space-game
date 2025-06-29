@@ -1,7 +1,7 @@
 // Procedural star name generator
 export const generateStarName = () => {
     const prefixes = ['Zorath', 'Klyra', 'Vexis', 'Nyxara', 'Solara', 'Dracon', 'Aether', 'Lumys'];
-    const suffixes = ['I', 'II', 'III', 'IV', 'IX', 'A', 'B', 'Prime'];
+    const suffixes = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII','IX','X','Alpha', 'Bravo', 'Prime'];
     return `${prefixes[Math.floor(Math.random() * prefixes.length)]}-${suffixes[Math.floor(Math.random() * suffixes.length)]}`;
 };
 

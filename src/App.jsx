@@ -18,8 +18,8 @@ const App = () => {
       { type: 'M', color: '#F56565', temp: '<3,700K', size: 3, weight: 0.4 },
     ];
 
-    const stars = [];
-    for (let i = 0; i < 20; i++) {
+    const generatedStars = [];
+    for (let i = 0; i < 30; i++) {
       const rand = Math.random();
       let cumulative = 0;
       let starClass = classes[classes.length - 1];
@@ -30,10 +30,11 @@ const App = () => {
           break;
         }
       }
+
       const starName = generateStarName();
-      stars.push({
-        x: Math.random() * 1920,
-        y: Math.random() * 1080,
+      generatedStars.push({
+        x: Math.random() * 1200 - 600,
+        y: Math.random() * 800 - 400,
         type: starClass.type,
         color: starClass.color,
         temp: starClass.temp,
@@ -44,11 +45,25 @@ const App = () => {
       });
     }
 
-    setStars(stars);
+    // Find center of star field
+    const centerX = generatedStars.reduce((sum, s) => sum + s.x, 0) / generatedStars.length;
+    const centerY = generatedStars.reduce((sum, s) => sum + s.y, 0) / generatedStars.length;
+
+    // Shift all stars so center is at (0,0)
+    const centeredStars = generatedStars.map(s => ({
+      ...s,
+      x: s.x - centerX,
+      y: s.y - centerY,
+    }));
+
+    setStars(centeredStars);
   }, []);
 
+
   return (
-    <div className="bg-black" style={{ width: '1920px', height: '1080px' }}>
+
+    <div className="bg-black w-fill h-fill" >
+
       <Routes>
         <Route path="/" element={<StarMap stars={stars} />} />
         <Route path="/system/:starName" element={<SystemView stars={stars} />} />
