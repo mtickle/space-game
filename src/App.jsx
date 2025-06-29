@@ -32,8 +32,8 @@ const App = () => {
       }
       const starName = generateStarName();
       stars.push({
-        x: Math.random() * 4000 - 2000, // Wider x range for full screen
-        y: Math.random() * 2400 - 1200,  // Wider y range for full screen
+        x: Math.random() * 1920,
+        y: Math.random() * 1080,
         type: starClass.type,
         color: starClass.color,
         temp: starClass.temp,
@@ -48,7 +48,7 @@ const App = () => {
   }, []);
 
   return (
-    <div className="h-screen bg-black">
+    <div className="bg-black" style={{ width: '1920px', height: '1080px' }}>
       <Routes>
         <Route path="/" element={<StarMap stars={stars} />} />
         <Route path="/system/:starName" element={<SystemView stars={stars} />} />
