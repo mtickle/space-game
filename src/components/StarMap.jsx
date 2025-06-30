@@ -157,6 +157,12 @@ const StarMap = ({ stars }) => {
         }
     };
 
+    const handleMapClick = (planet) => {
+        if (planet.settlements) {
+            setSelectedPlanet(planet);
+        }
+    };
+
     return (
         <div className="w-screen h-screen bg-black flex flex-col text-white font-mono">
             <Header
@@ -167,7 +173,7 @@ const StarMap = ({ stars }) => {
                 setStarTypeFilter={setStarTypeFilter}
             />
             <div className="flex flex-row flex-1 overflow-hidden">
-                <Sidebar selectedStar={selectedStar} setSelectedPlanet={setSelectedPlanet} />
+                <Sidebar selectedStar={selectedStar} onMapClick={handleMapClick} />
                 <div className="flex flex-1 items-center justify-center relative">
                     <div className="relative w-[75vw] aspect-[16/9] border-black-500 shadow-[0_0-10px_#0f0]">
                         <canvas
