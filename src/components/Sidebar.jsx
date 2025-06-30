@@ -1,7 +1,6 @@
-
 import { useEffect, useState } from 'react';
 
-const Sidebar = ({ selectedStar }) => {
+const Sidebar = ({ selectedStar, setSelectedPlanet }) => {
     const [displayText, setDisplayText] = useState('');
 
     useEffect(() => {
@@ -20,7 +19,7 @@ const Sidebar = ({ selectedStar }) => {
                     <h3 class="text-lg font-bold text-yellow-400">Planetary System</h3>
                     ${selectedStar.planets.map((planet, index) => `
                         <div key=${index} class="text-base text-gray-300">
-                            <p><strong style="color: ${selectedStar.faction?.color || '#FFFFFF'}">${planet.name}</strong> (${planet.type})</p>
+                            <p><strong style="color: ${selectedStar.faction?.color || '#FFFFFF'}">${planet.name}</strong> (${planet.type})${planet.settlements ? ` <span class="text-green-400 hover:text-green-300 cursor-pointer" onclick="setSelectedPlanet(${JSON.stringify(planet)})">[map]</span>` : ''}</p>
                             <p>Size: ${planet.size > 6 ? 'Large' : planet.size > 3 ? 'Medium' : 'Small'}</p>
                             ${planet.settlements ? `
                                 <div class="ml-4 mt-1">

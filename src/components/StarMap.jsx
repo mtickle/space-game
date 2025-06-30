@@ -1,4 +1,3 @@
-
 import { useEffect, useRef, useState } from 'react';
 import Header from './Header';
 import PlanetMapModal from './PlanetMapModal';
@@ -158,12 +157,6 @@ const StarMap = ({ stars }) => {
         }
     };
 
-    const handlePlanetClick = (planet) => {
-        if (planet.settlements) {
-            setSelectedPlanet(planet);
-        }
-    };
-
     return (
         <div className="w-screen h-screen bg-black flex flex-col text-white font-mono">
             <Header
@@ -174,7 +167,7 @@ const StarMap = ({ stars }) => {
                 setStarTypeFilter={setStarTypeFilter}
             />
             <div className="flex flex-row flex-1 overflow-hidden">
-                <Sidebar selectedStar={selectedStar} />
+                <Sidebar selectedStar={selectedStar} setSelectedPlanet={setSelectedPlanet} />
                 <div className="flex flex-1 items-center justify-center relative">
                     <div className="relative w-[75vw] aspect-[16/9] border-black-500 shadow-[0_0-10px_#0f0]">
                         <canvas
@@ -204,15 +197,6 @@ const StarMap = ({ stars }) => {
                             <p className="text-green-400"><strong>Type:</strong> {hoveredStar.type}</p>
                             <p className="text-green-400"><strong>Temp:</strong> {hoveredStar.temp}</p>
                             <p className="text-green-400"><strong>Faction:</strong> {hoveredStar.faction?.name || 'Unknown'}</p>
-                        </div>
-                    )}
-                    {selectedStar && (
-                        <div className="absolute top-2 left-2 bg-black bg-opacity-80 p-2 rounded-lg border-2 border-green-500 shadow-[0_0-5px_#0f0]">
-                            {selectedStar.planets.map((planet, index) => (
-                                <p key={index} className="text-green-400 cursor-pointer hover:text-green-300" onClick={() => handlePlanetClick(planet)}>
-                                    {planet.name} (${planet.type})
-                                </p>
-                            ))}
                         </div>
                     )}
                 </div>
