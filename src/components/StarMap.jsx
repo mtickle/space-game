@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import Header from './Header';
 
 const StarMap = ({ stars }) => {
     const canvasRef = useRef(null);
@@ -13,6 +14,8 @@ const StarMap = ({ stars }) => {
     const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
     const [mapState, setMapState] = useState({ offsetX: 0, offsetY: 0, scale: 1, clickOffsetX: 0, clickOffsetY: 0 });
     const [redrawTrigger, setRedrawTrigger] = useState(false);
+    const [factionFilter, setFactionFilter] = useState('All');
+    const [starTypeFilter, setStarTypeFilter] = useState('All');
 
     // Resize canvas dynamically with observer
     useEffect(() => {
@@ -41,7 +44,8 @@ const StarMap = ({ stars }) => {
         ctx.translate(canvas.width / 2 + offsetX, canvas.height / 2 + offsetY);
         ctx.scale(scale, scale);
 
-        const sortedStars = [...stars].sort((a, b) => (a.z || 0) - (b.z || 0));
+        const filteredStars = factionFilter === 'All' ? stars : stars.filter(star => star.faction?.name === factionFilter);
+        const sortedStars = [...filteredStars].sort((a, b) => (a.z || 0) - (b.z || 0));
 
         sortedStars.forEach((star) => {
             const depth = star.z || 0;
@@ -59,9 +63,9 @@ const StarMap = ({ stars }) => {
             ctx.globalAlpha = 1;
 
             ctx.fillStyle = '#FFFFFF';
-            
+            ctx.font = `${12 / scale}px Courier New, monospace`; // Increased font size
             ctx.textAlign = 'center';
-            ctx.fillText(star.name, star.x, star.y - star.size - 5 / scale);
+            ctx.fillText(star.name, star.x, star.y - star.size - 6 / scale);
 
             if (hoveredStar?.name === star.name) {
                 star.planets.forEach((planet) => {
@@ -92,7 +96,7 @@ const StarMap = ({ stars }) => {
         });
 
         ctx.restore();
-    }, [stars, selectedStar, hoveredStar, offsetX, offsetY, scale, redrawTrigger]);
+    }, [stars, selectedStar, hoveredStar, offsetX, offsetY, scale, redrawTrigger, factionFilter]);
 
     const handleMouseDown = (e) => {
         setIsDragging(true);
@@ -153,11 +157,15 @@ const StarMap = ({ stars }) => {
     };
 
     return (
-
         <div className="w-screen h-screen bg-black flex flex-col items-center justify-center relative text-white font-mono">
 
-            <h1 className="text-3xl mb-4 text-orange-400 tracking-wider">STARWEAVE '78</h1>
-
+            <Header
+                stars={stars}
+                factionFilter={factionFilter}
+                setFactionFilter={setFactionFilter}
+                starTypeFilter={starTypeFilter}
+                setStarTypeFilter={setStarTypeFilter}
+            />
 
 
             <div className="relative w-[75vw] aspect-[16/9] border-2 border-green-500 shadow-[0_0-10px_#0f0]">
@@ -181,9 +189,16 @@ const StarMap = ({ stars }) => {
                         top: Math.min(hoveredStar.clientY, window.innerHeight - 120),
                     }}
                 >
-                    <p className="text-yellow-400 font-bold">{hoveredStar.name}</p>
+                    <div className="flex items-center mb-1">
+                        <div
+                            className="w-4 h-4 rounded-full mr-2"
+                            style={{ backgroundColor: hoveredStar.faction?.color || '#FFFFFF' }}
+                        />
+                        <p className="text-yellow-400 font-bold">{hoveredStar.name}</p>
+                    </div>
                     <p className="text-green-400"><strong>Type:</strong> {hoveredStar.type}</p>
                     <p className="text-green-400"><strong>Temp:</strong> {hoveredStar.temp}</p>
+                    <p className="text-green-400"><strong>Faction:</strong> {hoveredStar.faction?.name || 'Unknown'}</p>
                 </div>
             )}
 
@@ -207,15 +222,22 @@ const StarMap = ({ stars }) => {
                         setRedrawTrigger(prev => !prev);
                     }}
                 >
-                    <h2 className="text-2xl font-bold text-yellow-400">{selectedStar.name}</h2>
+                    <div className="flex items-center mb-2">
+                        <div
+                            className="w-6 h-6 rounded-full mr-3"
+                            style={{ backgroundColor: selectedStar.faction?.color || '#FFFFFF' }}
+                        />
+                        <h2 className="text-2xl font-bold text-yellow-400">{selectedStar.name}</h2>
+                    </div>
                     <p className="text-green-400"><strong>Type:</strong> {selectedStar.type}</p>
                     <p className="text-green-400"><strong>Temperature:</strong> {selectedStar.temp}</p>
-                    <p className="mt-2 text-sm text-gray-300">{selectedStar.description}</p>
+                    <p className="text-green-400"><strong>Faction:</strong> {selectedStar.faction?.name || 'Unknown'}</p>
+                    <p className="mt-2 text-base text-gray-300">{selectedStar.description}</p>
                     <div className="mt-4 max-h-40 overflow-y-auto">
                         <h3 className="text-lg font-bold text-yellow-400">Planetary System</h3>
                         {selectedStar.planets.map((planet, index) => (
-                            <div key={index} className="text-sm text-gray-300">
-                                <p><strong>{planet.name}</strong> ({planet.type})</p>
+                            <div key={index} className="text-base text-gray-300">
+                                <p><strong style={{ color: selectedStar.faction?.color || '#FFFFFF' }}>{planet.name}</strong> ({planet.type})</p>
                                 <p>Size: {planet.size > 6 ? 'Large' : planet.size > 3 ? 'Medium' : 'Small'}</p>
                             </div>
                         ))}

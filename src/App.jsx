@@ -2,6 +2,7 @@ import StarMap from '@components/StarMap';
 import SystemView from '@components/SystemView';
 import { useEffect, useState } from 'react';
 import { Route, Routes } from 'react-router-dom';
+import { assignFaction } from './utils/factionUtils';
 import { generatePlanets, generateStarName, getStarDescription } from './utils/starUtils';
 
 const App = () => {
@@ -19,7 +20,7 @@ const App = () => {
     ];
 
     const generatedStars = [];
-    for (let i = 0; i < 30; i++) {
+    for (let i = 0; i < 20; i++) {
       const rand = Math.random();
       let cumulative = 0;
       let starClass = classes[classes.length - 1];
@@ -32,6 +33,8 @@ const App = () => {
       }
 
       const starName = generateStarName();
+      const faction = assignFaction({ name: starName });
+
       generatedStars.push({
         x: Math.random() * 1200 - 600,
         y: Math.random() * 800 - 400,
@@ -42,6 +45,7 @@ const App = () => {
         name: starName,
         description: getStarDescription(starClass.type),
         planets: generatePlanets(starName),
+        faction: faction
       });
     }
 

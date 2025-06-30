@@ -31,9 +31,9 @@ const SystemView = ({ stars }) => {
 
         // Draw star with glow
         ctx.beginPath();
-        ctx.arc(0, 0, star.size * 2, 0, Math.PI * 2); // Larger star for visibility
+        ctx.arc(0, 0, star.size * 2, 0, Math.PI * 2);
         ctx.fillStyle = star.color;
-        ctx.shadowBlur = 15; // Retro glow
+        ctx.shadowBlur = 15;
         ctx.shadowColor = star.color;
         ctx.fill();
         ctx.shadowBlur = 0;
@@ -41,17 +41,16 @@ const SystemView = ({ stars }) => {
         // Draw planet orbits
         star.planets.forEach(planet => {
             ctx.beginPath();
-            ctx.arc(0, 0, planet.orbitRadius * 1.5, 0, Math.PI * 2); // Scaled orbits
+            ctx.arc(0, 0, planet.orbitRadius * 1.5, 0, Math.PI * 2);
             ctx.strokeStyle = planet.color + '33';
             ctx.lineWidth = 0.5;
             ctx.stroke();
 
-            // Draw planet
-            const angle = Math.random() * Math.PI * 2;
+            const angle = Math.random() * Math.PI * 2; // Random angle for demo
             const px = Math.cos(angle) * planet.orbitRadius * 1.5;
             const py = Math.sin(angle) * planet.orbitRadius * 1.5;
             ctx.beginPath();
-            ctx.arc(px, py, planet.size / 2, 0, Math.PI * 2); // Larger planets
+            ctx.arc(px, py, planet.size / 2, 0, Math.PI * 2);
             ctx.fillStyle = planet.color;
             ctx.fill();
         });
@@ -65,10 +64,17 @@ const SystemView = ({ stars }) => {
         <div className="h-screen bg-black flex flex-col items-center text-white font-mono p-4">
             <h1 className="text-3xl mb-4 text-orange-400 tracking-wider">STARWEAVE '78: {star.name}</h1>
             <div className="bg-black bg-opacity-90 p-6 rounded-lg border-2 border-orange-400 shadow-[0_0_8px_#ff0] max-w-2xl w-full">
-                <h2 className="text-2xl font-bold text-yellow-400">{star.name}</h2>
+                <div className="flex items-center mb-2">
+                    <div
+                        className="w-6 h-6 rounded-full mr-3"
+                        style={{ backgroundColor: star.faction?.color || '#FFFFFF' }}
+                    />
+                    <h2 className="text-2xl font-bold text-yellow-400">{star.name}</h2>
+                </div>
                 <p className="text-green-400"><strong>Type:</strong> {star.type}</p>
                 <p className="text-green-400"><strong>Temperature:</strong> {star.temp}</p>
-                <p className="mt-2 text-sm text-gray-300">{star.description}</p>
+                <p className="text-green-400"><strong>Faction:</strong> {star.faction?.name || 'Unknown'}</p>
+                <p className="mt-2 text-base text-gray-300">{star.description}</p>
                 <canvas
                     ref={canvasRef}
                     width={400}
@@ -78,13 +84,13 @@ const SystemView = ({ stars }) => {
                 <div className="mt-4 max-h-60 overflow-y-auto">
                     <h3 className="text-lg font-bold text-yellow-400">Planetary System</h3>
                     {star.planets.map((planet, index) => (
-                        <div key={index} className="mt-2 flex items-center text-sm text-gray-300">
+                        <div key={index} className="mt-2 flex items-center text-base text-gray-300">
                             <div
                                 className="w-4 h-4 rounded-full mr-2"
                                 style={{ backgroundColor: planet.color }}
                             />
                             <div>
-                                <p><strong>{planet.name}</strong> ({planet.type})</p>
+                                <p><strong style={{ color: star.faction?.color || '#FFFFFF' }}>{planet.name}</strong> ({planet.type})</p>
                                 <p>Size: {planet.size > 6 ? 'Large' : planet.size > 3 ? 'Medium' : 'Small'}</p>
                             </div>
                         </div>
