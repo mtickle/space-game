@@ -1,12 +1,13 @@
+
 import { useEffect, useRef, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import Header from './Header';
+import PlanetMapModal from './PlanetMapModal';
+import Sidebar from './Sidebar';
 
 const StarMap = ({ stars }) => {
     const canvasRef = useRef(null);
     const [selectedStar, setSelectedStar] = useState(null);
     const [hoveredStar, setHoveredStar] = useState(null);
-    const navigate = useNavigate();
     const [offsetX, setOffsetX] = useState(0);
     const [offsetY, setOffsetY] = useState(0);
     const [scale, setScale] = useState(1);
@@ -16,8 +17,8 @@ const StarMap = ({ stars }) => {
     const [redrawTrigger, setRedrawTrigger] = useState(false);
     const [factionFilter, setFactionFilter] = useState('All');
     const [starTypeFilter, setStarTypeFilter] = useState('All');
+    const [selectedPlanet, setSelectedPlanet] = useState(null);
 
-    // Resize canvas dynamically with observer
     useEffect(() => {
         const canvas = canvasRef.current;
         const container = canvas.parentElement;
@@ -32,7 +33,6 @@ const StarMap = ({ stars }) => {
         return () => resizeObserver.unobserve(container);
     }, []);
 
-    // Redraw stars and planets
     useEffect(() => {
         const canvas = canvasRef.current;
         if (!canvas) return;
@@ -63,7 +63,7 @@ const StarMap = ({ stars }) => {
             ctx.globalAlpha = 1;
 
             ctx.fillStyle = '#FFFFFF';
-            ctx.font = `${12 / scale}px Courier New, monospace`; // Increased font size
+            ctx.font = `${12 / scale}px Courier New, monospace`;
             ctx.textAlign = 'center';
             ctx.fillText(star.name, star.x, star.y - star.size - 6 / scale);
 
@@ -151,14 +151,21 @@ const StarMap = ({ stars }) => {
                 const clickOffsetY = e.clientY - screenY;
                 setMapState({ offsetX, offsetY, scale, clickOffsetX, clickOffsetY });
                 setSelectedStar({ ...clickedStar, clientX: e.clientX - rect.left, clientY: e.clientY - rect.top });
-                navigate(`/system/${encodeURIComponent(clickedStar.name)}`);
+            } else {
+                setSelectedStar(null);
+                setSelectedPlanet(null); // Clear planet selection if clicking outside
             }
         }
     };
 
-    return (
-        <div className="w-screen h-screen bg-black flex flex-col items-center justify-center relative text-white font-mono">
+    const handlePlanetClick = (planet) => {
+        if (planet.settlements) {
+            setSelectedPlanet(planet);
+        }
+    };
 
+    return (
+        <div className="w-screen h-screen bg-black flex flex-col text-white font-mono">
             <Header
                 stars={stars}
                 factionFilter={factionFilter}
@@ -166,101 +173,52 @@ const StarMap = ({ stars }) => {
                 starTypeFilter={starTypeFilter}
                 setStarTypeFilter={setStarTypeFilter}
             />
-
-
-            <div className="relative w-[75vw] aspect-[16/9] border-2 border-green-500 shadow-[0_0-10px_#0f0]">
-                <canvas
-                    ref={canvasRef}
-                    className="bg-black cursor-pointer w-full h-full block"
-                    onMouseDown={handleMouseDown}
-                    onMouseMove={handleMouseMove}
-                    onMouseUp={handleMouseUp}
-                    onMouseLeave={handleMouseUp}
-                    onWheel={handleWheel}
-                    onClick={handleClick}
-                />
-            </div>
-
-            {hoveredStar && !selectedStar && (
-                <div
-                    className="absolute bg-black bg-opacity-90 p-2 rounded-lg border-2 border-orange-400 shadow-[0_0-5px_#ff0] text-sm z-10"
-                    style={{
-                        left: Math.min(hoveredStar.clientX + 20, window.innerWidth - 220),
-                        top: Math.min(hoveredStar.clientY, window.innerHeight - 120),
-                    }}
-                >
-                    <div className="flex items-center mb-1">
-                        <div
-                            className="w-4 h-4 rounded-full mr-2"
-                            style={{ backgroundColor: hoveredStar.faction?.color || '#FFFFFF' }}
+            <div className="flex flex-row flex-1 overflow-hidden">
+                <Sidebar selectedStar={selectedStar} />
+                <div className="flex flex-1 items-center justify-center relative">
+                    <div className="relative w-[75vw] aspect-[16/9] border-black-500 shadow-[0_0-10px_#0f0]">
+                        <canvas
+                            ref={canvasRef}
+                            className="bg-black cursor-pointer w-full h-full block"
+                            onMouseDown={handleMouseDown}
+                            onMouseMove={handleMouseMove}
+                            onMouseUp={handleMouseUp}
+                            onMouseLeave={handleMouseUp}
+                            onWheel={handleWheel}
+                            onClick={handleClick}
                         />
-                        <p className="text-yellow-400 font-bold">{hoveredStar.name}</p>
                     </div>
-                    <p className="text-green-400"><strong>Type:</strong> {hoveredStar.type}</p>
-                    <p className="text-green-400"><strong>Temp:</strong> {hoveredStar.temp}</p>
-                    <p className="text-green-400"><strong>Faction:</strong> {hoveredStar.faction?.name || 'Unknown'}</p>
-                </div>
-            )}
 
-            {selectedStar && (
-                <div
-                    className="absolute bg-black bg-opacity-90 p-4 rounded-lg border-2 border-orange-400 shadow-[0_0-8px_#ff0] max-w-sm transition-opacity duration-200 z-10"
-                    style={{
-                        left: Math.max(10, Math.min(selectedStar.clientX + 10, window.innerWidth - 320)),
-                        top: Math.max(10, Math.min(selectedStar.clientY + 10, window.innerHeight - 320)),
-                    }}
-                    onClick={() => {
-                        setSelectedStar(null);
-                        setOffsetX(mapState.offsetX);
-                        setOffsetY(mapState.offsetY);
-                        setScale(mapState.scale);
-                        const canvas = canvasRef.current;
-                        const targetX = (canvas.width / 2) - mapState.clickOffsetX;
-                        const targetY = (canvas.height / 2) - mapState.clickOffsetY;
-                        setOffsetX(prev => prev + (targetX - (canvas.width / 2 + prev)));
-                        setOffsetY(prev => prev + (targetY - (canvas.height / 2 + prev)));
-                        setRedrawTrigger(prev => !prev);
-                    }}
-                >
-                    <div className="flex items-center mb-2">
+                    {hoveredStar && !selectedStar && (
                         <div
-                            className="w-6 h-6 rounded-full mr-3"
-                            style={{ backgroundColor: selectedStar.faction?.color || '#FFFFFF' }}
-                        />
-                        <h2 className="text-2xl font-bold text-yellow-400">{selectedStar.name}</h2>
-                    </div>
-                    <p className="text-green-400"><strong>Type:</strong> {selectedStar.type}</p>
-                    <p className="text-green-400"><strong>Temperature:</strong> {selectedStar.temp}</p>
-                    <p className="text-green-400"><strong>Faction:</strong> {selectedStar.faction?.name || 'Unknown'}</p>
-                    <p className="mt-2 text-base text-gray-300">{selectedStar.description}</p>
-                    <div className="mt-4 max-h-40 overflow-y-auto">
-                        <h3 className="text-lg font-bold text-yellow-400">Planetary System</h3>
-                        {selectedStar.planets.map((planet, index) => (
-                            <div key={index} className="text-base text-gray-300">
-                                <p><strong style={{ color: selectedStar.faction?.color || '#FFFFFF' }}>{planet.name}</strong> ({planet.type})</p>
-                                <p>Size: {planet.size > 6 ? 'Large' : planet.size > 3 ? 'Medium' : 'Small'}</p>
+                            className="absolute bg-black bg-opacity-90 p-2 rounded-lg border-2 border-orange-400 shadow-[0_0-5px_#ff0] text-sm z-10"
+                            style={{
+                                left: Math.min(hoveredStar.clientX + 30, window.innerWidth - 220),
+                                top: Math.min(hoveredStar.clientY + 40, window.innerHeight - 120),
+                            }}
+                        >
+                            <div className="flex items-center mb-1">
+                                {hoveredStar.faction?.symbol || '⛔'}
+                                <p className="text-yellow-400 font-bold"> {hoveredStar.name}</p>
                             </div>
-                        ))}
-                    </div>
-                    <button
-                        className="mt-2 px-2 py-1 bg-orange-600 hover:bg-orange-700 rounded text-sm text-white"
-                        onClick={(e) => {
-                            e.stopPropagation();
-                            setSelectedStar(null);
-                            setOffsetX(mapState.offsetX);
-                            setOffsetY(mapState.offsetY);
-                            setScale(mapState.scale);
-                            const canvas = canvasRef.current;
-                            const targetX = (canvas.width / 2) - mapState.clickOffsetX;
-                            const targetY = (canvas.height / 2) - mapState.clickOffsetY;
-                            setOffsetX(prev => prev + (targetX - (canvas.width / 2 + prev)));
-                            setOffsetY(prev => prev + (targetY - (canvas.height / 2 + prev)));
-                            setRedrawTrigger(prev => !prev);
-                        }}
-                    >
-                        Close
-                    </button>
+                            <p className="text-green-400"><strong>Type:</strong> {hoveredStar.type}</p>
+                            <p className="text-green-400"><strong>Temp:</strong> {hoveredStar.temp}</p>
+                            <p className="text-green-400"><strong>Faction:</strong> {hoveredStar.faction?.name || 'Unknown'}</p>
+                        </div>
+                    )}
+                    {selectedStar && (
+                        <div className="absolute top-2 left-2 bg-black bg-opacity-80 p-2 rounded-lg border-2 border-green-500 shadow-[0_0-5px_#0f0]">
+                            {selectedStar.planets.map((planet, index) => (
+                                <p key={index} className="text-green-400 cursor-pointer hover:text-green-300" onClick={() => handlePlanetClick(planet)}>
+                                    {planet.name} (${planet.type})
+                                </p>
+                            ))}
+                        </div>
+                    )}
                 </div>
+            </div>
+            {selectedPlanet && (
+                <PlanetMapModal planet={selectedPlanet} onClose={() => setSelectedPlanet(null)} />
             )}
         </div>
     );
