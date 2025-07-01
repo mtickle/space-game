@@ -1,3 +1,4 @@
+import { generateMineral } from '@utils/mineralUtils'; // Import mineral generator
 import { useEffect, useRef, useState } from 'react';
 import Header from './Header';
 import PlanetMapModal from './PlanetMapModal';
@@ -31,6 +32,68 @@ const StarMap = ({ stars }) => {
         resizeObserver.observe(container);
         return () => resizeObserver.unobserve(container);
     }, []);
+
+    // Generate or enhance planets for a star
+    const generateOrEnhancePlanets = (star) => {
+        const planetCount = Math.floor(Math.random() * 3) + 1; // 1 to 3 planets
+        const planetTypes = [
+            "Gas Giant", "Rocky", "Radiated", "Ice World", "Oceanic", "Volcanic", "Barren",
+            "Exotic", "Crystaline", "Artificial"
+        ];
+        let planets = star.planets || [];
+        console.log('Initial Planets for', star.name, ':', planets);
+
+        if (!planets.length) {
+            for (let i = 0; i < planetCount; i++) {
+                const type = planetTypes[Math.floor(Math.random() * planetTypes.length)];
+                const planet = {
+                    name: `Planet-${i + 1}`,
+                    type,
+                    orbitRadius: 50 + i * 30,
+                    size: 3 + Math.random() * 5,
+                    color: '#00FF00',
+                    angle: Math.random() * Math.PI * 2,
+                    minerals: generateMineralsForPlanet(type)
+                };
+                console.log('Generated Planet for', star.name, ':', planet);
+                planets.push(planet);
+            }
+        } else {
+            planets = planets.map(planet => ({
+                ...planet,
+                minerals: generateMineralsForPlanet(planet.type) // Add minerals to existing planets
+            }));
+            console.log('Enhanced Planets for', star.name, ':', planets);
+        }
+        return planets;
+    };
+
+    // Generate minerals for a specific planet type
+    const generateMineralsForPlanet = (planetType) => {
+        const mineralCount = Math.floor(Math.random() * 3) + 1; // 1 to 3 minerals
+        const minerals = [];
+        for (let i = 0; i < mineralCount; i++) {
+            const mineral = generateMineral(planetType);
+            console.log('Generated Mineral for', planetType, 'attempt', i + 1, ':', mineral);
+            if (mineral && mineral.elements && mineral.elements.length > 0) {
+                minerals.push(mineral);
+            } else {
+                console.warn('Invalid mineral generated, skipping:', mineral);
+            }
+        }
+        console.log('Minerals generated for', planetType, ':', minerals);
+        return minerals;
+    };
+
+    // Enhance selected star with updated planets
+    const enhanceSelectedStar = (star) => {
+        if (star) {
+            const enhancedStar = { ...star, planets: generateOrEnhancePlanets(star) };
+            console.log('Enhanced Selected Star:', enhancedStar);
+            return enhancedStar;
+        }
+        return star;
+    };
 
     useEffect(() => {
         const canvas = canvasRef.current;
@@ -67,15 +130,14 @@ const StarMap = ({ stars }) => {
             ctx.fillText(star.name, star.x, star.y - star.size - 6 / scale);
 
             if (hoveredStar?.name === star.name) {
-                star.planets.forEach((planet) => {
-                    if (!planet.angle) planet.angle = Math.random() * Math.PI * 2;
+                generateOrEnhancePlanets(star).forEach((planet) => {
                     ctx.beginPath();
                     ctx.arc(star.x, star.y, planet.orbitRadius, 0, Math.PI * 2);
                     ctx.strokeStyle = planet.color + '33';
                     ctx.lineWidth = 0.5 / scale;
                     ctx.stroke();
 
-                    const angle = planet.angle;
+                    const angle = planet.angle || Math.random() * Math.PI * 2; // Default angle if missing
                     const px = star.x + Math.cos(angle) * planet.orbitRadius;
                     const py = star.y + Math.sin(angle) * planet.orbitRadius;
                     ctx.beginPath();
@@ -149,7 +211,7 @@ const StarMap = ({ stars }) => {
                 const clickOffsetX = e.clientX - screenX;
                 const clickOffsetY = e.clientY - screenY;
                 setMapState({ offsetX, offsetY, scale, clickOffsetX, clickOffsetY });
-                setSelectedStar({ ...clickedStar, clientX: e.clientX - rect.left, clientY: e.clientY - rect.top });
+                setSelectedStar(enhanceSelectedStar(clickedStar)); // Update with enhanced planets
             } else {
                 setSelectedStar(null);
                 setSelectedPlanet(null); // Clear planet selection if clicking outside

@@ -1,9 +1,11 @@
 import StarMap from '@components/StarMap';
 import SystemView from '@components/SystemView';
+import { generatePlanets } from '@utils/planetUtils';
 import { useEffect, useState } from 'react';
 import { Route, Routes } from 'react-router-dom';
 import { assignFaction } from './utils/factionUtils';
-import { generatePlanets, generateStarName, getStarDescription } from './utils/starUtils';
+import { generateStarName, getStarDescription } from './utils/starUtils';
+
 
 const App = () => {
   const [stars, setStars] = useState([]);

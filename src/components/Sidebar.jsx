@@ -6,6 +6,7 @@ const Sidebar = ({ selectedStar, onMapClick }) => {
 
     useEffect(() => {
         if (selectedStar) {
+            console.log('Selected Star Planets:', selectedStar.planets); // Debug log
             setContent(
                 <div>
                     <div className="flex items-center mb-2">
@@ -43,8 +44,6 @@ const Sidebar = ({ selectedStar, onMapClick }) => {
                                         </ul>
                                     </div>
                                 )}
-
-
                                 <div className="ml-4 mt-1">
                                     <h4 className="text-md font-bold text-orange-400">Resources:</h4>
                                     <ul className="list-disc list-inside text-sm text-gray-200">
@@ -77,12 +76,23 @@ const Sidebar = ({ selectedStar, onMapClick }) => {
                                             <li key="gen3">Sulfur (Trace)</li>,
                                             <li key="gen4">Calcium (Abundant)</li>,
                                         ]}
-                                        <li key="compounds">
-                                            <strong>Compound Minerals:</strong>
-                                            <ul className="list-disc list-inside ml-4">
-                                                <li>Mikalite - 80% Iron, 10% Carbon, 10% Unknown (Requires Advanced Analysis or Crafting Tool to Unlock)</li>
-                                            </ul>
-                                        </li>
+                                    </ul>
+                                </div>
+                                <div className="ml-4 mt-1">
+                                    <h4 className="text-md font-bold text-orange-400">Compound Minerals:</h4>
+                                    <ul className="list-disc list-inside text-sm text-gray-200">
+                                        {planet.minerals && planet.minerals.length > 0 ? (
+                                            planet.minerals.map((mineral, mIndex) => (
+                                                <li key={mIndex}>
+                                                    {mineral.mineralName} - {mineral.elements.join(', ')}
+                                                    {mineral.unknownElements && (
+                                                        <span> + {mineral.unknownElements.map(ue => ue.symbol).join(', ')} (Unknown)</span>
+                                                    )}
+                                                </li>
+                                            ))
+                                        ) : (
+                                            <li>Currently empty</li>
+                                        )}
                                     </ul>
                                 </div>
                                 <div className="ml-4 mt-1">
