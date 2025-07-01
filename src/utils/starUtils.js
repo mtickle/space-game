@@ -128,3 +128,4 @@ export const generatePlanets = (starName) => {
     }
     return planets;
 };
+

@@ -43,6 +43,8 @@ const Sidebar = ({ selectedStar, onMapClick }) => {
                                         </ul>
                                     </div>
                                 )}
+
+
                                 <div className="ml-4 mt-1">
                                     <h4 className="text-md font-bold text-orange-400">Resources:</h4>
                                     <ul className="list-disc list-inside text-sm text-gray-200">
