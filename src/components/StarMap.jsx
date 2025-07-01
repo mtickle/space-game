@@ -1,4 +1,5 @@
-import { generateMineral } from '@utils/mineralUtils'; // Import mineral generator
+import { getConditionsForPlanetType } from '@utils/conditionUtils.js';
+import { generateMineral, } from '@utils/mineralUtils'; // Import mineral and condition utils
 import { useEffect, useRef, useState } from 'react';
 import Header from './Header';
 import PlanetMapModal from './PlanetMapModal';
@@ -36,16 +37,12 @@ const StarMap = ({ stars }) => {
     // Generate or enhance planets for a star
     const generateOrEnhancePlanets = (star) => {
         const planetCount = Math.floor(Math.random() * 3) + 1; // 1 to 3 planets
-        const planetTypes = [
-            "Gas Giant", "Rocky", "Radiated", "Ice World", "Oceanic", "Volcanic", "Barren",
-            "Exotic", "Crystaline", "Artificial"
-        ];
         let planets = star.planets || [];
-        console.log('Initial Planets for', star.name, ':', planets);
+        //console.log('Initial Planets for', star.name, ':', planets);
 
         if (!planets.length) {
             for (let i = 0; i < planetCount; i++) {
-                const type = planetTypes[Math.floor(Math.random() * planetTypes.length)];
+                const type = ["Gas Giant", "Rocky", "Radiated", "Ice World", "Oceanic", "Volcanic", "Barren", "Exotic", "Crystaline", "Artificial"][Math.floor(Math.random() * 10)];
                 const planet = {
                     name: `Planet-${i + 1}`,
                     type,
@@ -53,17 +50,19 @@ const StarMap = ({ stars }) => {
                     size: 3 + Math.random() * 5,
                     color: '#00FF00',
                     angle: Math.random() * Math.PI * 2,
-                    minerals: generateMineralsForPlanet(type)
+                    minerals: generateMineralsForPlanet(type),
+                    ...getConditionsForPlanetType(type) // Add random conditions
                 };
-                console.log('Generated Planet for', star.name, ':', planet);
+                //console.log('Generated Planet for', star.name, ':', planet);
                 planets.push(planet);
             }
         } else {
             planets = planets.map(planet => ({
                 ...planet,
-                minerals: generateMineralsForPlanet(planet.type) // Add minerals to existing planets
+                minerals: generateMineralsForPlanet(planet.type),
+                ...getConditionsForPlanetType(planet.type) // Add or override conditions
             }));
-            console.log('Enhanced Planets for', star.name, ':', planets);
+            // console.log('Enhanced Planets for', star.name, ':', planets);
         }
         return planets;
     };
@@ -74,14 +73,14 @@ const StarMap = ({ stars }) => {
         const minerals = [];
         for (let i = 0; i < mineralCount; i++) {
             const mineral = generateMineral(planetType);
-            console.log('Generated Mineral for', planetType, 'attempt', i + 1, ':', mineral);
+            // console.log('Generated Mineral for', planetType, 'attempt', i + 1, ':', mineral);
             if (mineral && mineral.elements && mineral.elements.length > 0) {
                 minerals.push(mineral);
             } else {
                 console.warn('Invalid mineral generated, skipping:', mineral);
             }
         }
-        console.log('Minerals generated for', planetType, ':', minerals);
+        //console.log('Minerals generated for', planetType, ':', minerals);
         return minerals;
     };
 
@@ -89,7 +88,7 @@ const StarMap = ({ stars }) => {
     const enhanceSelectedStar = (star) => {
         if (star) {
             const enhancedStar = { ...star, planets: generateOrEnhancePlanets(star) };
-            console.log('Enhanced Selected Star:', enhancedStar);
+            //console.log('Enhanced Selected Star:', enhancedStar);
             return enhancedStar;
         }
         return star;

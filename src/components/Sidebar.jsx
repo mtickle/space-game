@@ -1,4 +1,4 @@
-
+import { generateMineral, mineableElements } from '@utils/mineralUtils'; // Import mineral utils
 import { useEffect, useState } from 'react';
 
 const Sidebar = ({ selectedStar, onMapClick }) => {
@@ -6,7 +6,7 @@ const Sidebar = ({ selectedStar, onMapClick }) => {
 
     useEffect(() => {
         if (selectedStar) {
-            console.log('Selected Star Planets:', selectedStar.planets); // Debug log
+
             setContent(
                 <div>
                     <div className="flex items-center mb-2">
@@ -47,35 +47,36 @@ const Sidebar = ({ selectedStar, onMapClick }) => {
                                 <div className="ml-4 mt-1">
                                     <h4 className="text-md font-bold text-orange-400">Resources:</h4>
                                     <ul className="list-disc list-inside text-sm text-gray-200">
-                                        {planet.type === 'Gas Giant' && [
-                                            <li key="h">Hydrogen (Abundant)</li>,
-                                            <li key="he">Helium (Moderate)</li>,
-                                            <li key="ch4">Methane (Moderate)</li>,
-                                            <li key="nh3">Ammonia (Trace)</li>,
-                                        ]}
-                                        {planet.type === 'Rocky' && [
-                                            <li key="fe">Iron (Abundant)</li>,
-                                            <li key="al">Aluminum (Moderate)</li>,
-                                            <li key="si">Silicon (Moderate)</li>,
-                                            <li key="o">Oxygen (Abundant)</li>,
-                                        ]}
-                                        {planet.type === 'Radioactive' && [
-                                            <li key="u">Uranium (Moderate)</li>,
-                                            <li key="th">Thorium (Trace)</li>,
-                                            <li key="k40">Potassium-40 (Trace)</li>,
-                                        ]}
-                                        {planet.type === 'Ice World' && [
-                                            <li key="h2o">Water Ice (Abundant)</li>,
-                                            <li key="co2">Carbon Dioxide (Moderate)</li>,
-                                            <li key="n">Nitrogen (Moderate)</li>,
-                                            <li key="mg">Magnesium (Trace)</li>,
-                                        ]}
-                                        {(planet.type !== 'Gas Giant' && planet.type !== 'Rocky' && planet.type !== 'Radioactive' && planet.type !== 'Ice World') && [
-                                            <li key="gen1">Titanium (Moderate)</li>,
-                                            <li key="gen2">Nickel (Moderate)</li>,
-                                            <li key="gen3">Sulfur (Trace)</li>,
-                                            <li key="gen4">Calcium (Abundant)</li>,
-                                        ]}
+                                        {(() => {
+                                            const resources = [];
+                                            const resourceCount = Math.floor(Math.random() * 3) + 2; // 2 to 4 resources
+                                            for (let i = 0; i < resourceCount; i++) {
+                                                const mineral = generateMineral(planet.type);
+                                                resources.push(
+                                                    <li key={i}>
+                                                        {mineral.mineralName} ({mineral.elements.join(', ')})
+                                                        {mineral.unknownElements && (
+                                                            <span> + {mineral.unknownElements.map(ue => ue.symbol).join(', ')} (Unknown)</span>
+                                                        )}
+                                                    </li>
+                                                );
+                                            }
+                                            // Fallback to hardcoded resources if no valid minerals
+                                            if (resources.length === 0) {
+                                                const fallback = Object.values(mineableElements[0])
+                                                    .find(category => category.planetTypes.includes(planet.type));
+                                                if (fallback) {
+                                                    fallback.elements.forEach((el, idx) => {
+                                                        resources.push(
+                                                            <li key={`fallback-${idx}`}>
+                                                                {el.name} ({el.symbol})
+                                                            </li>
+                                                        );
+                                                    });
+                                                }
+                                            }
+                                            return resources;
+                                        })()}
                                     </ul>
                                 </div>
                                 <div className="ml-4 mt-1">
@@ -98,46 +99,12 @@ const Sidebar = ({ selectedStar, onMapClick }) => {
                                 <div className="ml-4 mt-1">
                                     <h4 className="text-md font-bold text-orange-400">Conditions:</h4>
                                     <ul className="list-disc list-inside text-sm text-gray-200">
-                                        {planet.type === 'Gas Giant' && [
-                                            <li key="weather">Typical Weather: Stormy</li>,
-                                            <li key="air">Air Temp: Variable</li>,
-                                            <li key="night">Night Temp: Extreme Drop</li>,
-                                            <li key="wind">Winds: Hurricane-force</li>,
-                                            <li key="tox">Toxicity Levels: High</li>,
-                                            <li key="rad">Radiation Levels: Elevated</li>,
-                                        ]}
-                                        {planet.type === 'Rocky' && [
-                                            <li key="weather">Typical Weather: Arid</li>,
-                                            <li key="air">Air Temp: Temperate</li>,
-                                            <li key="night">Night Temp: Mild</li>,
-                                            <li key="wind">Winds: Gentle</li>,
-                                            <li key="tox">Toxicity Levels: Low</li>,
-                                            <li key="rad">Radiation Levels: Safe</li>,
-                                        ]}
-                                        {planet.type === 'Radioactive' && [
-                                            <li key="weather">Typical Weather: Harsh</li>,
-                                            <li key="air">Air Temp: Hot</li>,
-                                            <li key="night">Night Temp: Warm</li>,
-                                            <li key="wind">Winds: Strong</li>,
-                                            <li key="tox">Toxicity Levels: High</li>,
-                                            <li key="rad">Radiation Levels: Hazardous</li>,
-                                        ]}
-                                        {planet.type === 'Ice World' && [
-                                            <li key="weather">Typical Weather: Icy Blizzards</li>,
-                                            <li key="air">Air Temp: Cold</li>,
-                                            <li key="night">Night Temp: Freezing</li>,
-                                            <li key="wind">Winds: Gentle</li>,
-                                            <li key="tox">Toxicity Levels: Low</li>,
-                                            <li key="rad">Radiation Levels: Safe</li>,
-                                        ]}
-                                        {(planet.type !== 'Gas Giant' && planet.type !== 'Rocky' && planet.type !== 'Radioactive' && planet.type !== 'Ice World') && [
-                                            <li key="weather">Typical Weather: Calm</li>,
-                                            <li key="air">Air Temp: Temperate</li>,
-                                            <li key="night">Night Temp: Stable</li>,
-                                            <li key="wind">Winds: Moderate</li>,
-                                            <li key="tox">Toxicity Levels: Low</li>,
-                                            <li key="rad">Radiation Levels: Safe</li>,
-                                        ]}
+                                        <li>Typical Weather: {planet.weather || (planet.type === 'Gas Giant' && 'Stormy') || (planet.type === 'Rocky' && 'Arid') || (planet.type === 'Radiated' && 'Harsh') || (planet.type === 'Ice World' && 'Icy Blizzards') || 'Calm'}</li>
+                                        <li>Air Temp: {planet.temperature || (planet.type === 'Gas Giant' && 'Variable') || (planet.type === 'Rocky' && 'Temperate') || (planet.type === 'Radiated' && 'Hot') || (planet.type === 'Ice World' && 'Cold') || 'Temperate'}</li>
+                                        <li>Night Temp: {planet.nightTemperature || (planet.type === 'Gas Giant' && 'Extreme Drop') || (planet.type === 'Rocky' && 'Mild') || (planet.type === 'Radiated' && 'Warm') || (planet.type === 'Ice World' && 'Freezing') || 'Stable'}</li>
+                                        <li>Winds: {planet.wind || (planet.type === 'Gas Giant' && 'Hurricane-force') || (planet.type === 'Rocky' && 'Gentle') || (planet.type === 'Radiated' && 'Strong') || (planet.type === 'Ice World' && 'Gentle') || 'Moderate'}</li>
+                                        <li>Toxicity Levels: {planet.toxicity || (planet.type === 'Gas Giant' && 'High') || (planet.type === 'Rocky' && 'Low') || (planet.type === 'Radiated' && 'High') || (planet.type === 'Ice World' && 'Low') || 'Low'}</li>
+                                        <li>Radiation Levels: {planet.radiation || (planet.type === 'Gas Giant' && 'Elevated') || (planet.type === 'Rocky' && 'Safe') || (planet.type === 'Radiated' && 'Hazardous') || (planet.type === 'Ice World' && 'Safe') || 'Safe'}</li>
                                     </ul>
                                 </div>
                             </div>
