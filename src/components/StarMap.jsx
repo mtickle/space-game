@@ -1,4 +1,3 @@
-
 import { getConditionsForPlanetType } from '@utils/conditionUtils.js';
 import { generateMineral } from '@utils/mineralUtils';
 import { useEffect, useRef, useState } from 'react';

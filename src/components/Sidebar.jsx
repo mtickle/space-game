@@ -1,5 +1,5 @@
 import { generateMineral } from '@utils/mineralUtils';
-import { Droplet, Factory, FlaskConical, MapPin, Radiation, ThermometerSnowflake, ThermometerSun, Wind } from 'lucide-react';
+import { Crown, Droplet, Factory, FlaskConical, MapPin, Radiation, ThermometerSnowflake, ThermometerSun, Wind } from 'lucide-react';
 import { useMemo, useState } from 'react';
 
 const PlanetPanel = ({ planet, factionColor, onMapClick }) => {
@@ -45,7 +45,12 @@ const PlanetPanel = ({ planet, factionColor, onMapClick }) => {
                             <ul className="ml-4 list-disc text-gray-200 text-sm">
                                 {planet.settlements.map((s, i) => (
                                     <li key={i}>
-                                        {s.name}{s.isCapital ? ' *' : ''} (Pop: {s.population.toLocaleString()})
+                                        {s.isCapital ? (
+                                            <Crown className="inline w-5 h-5 mr-1 text-yellow-400" />
+                                        ) : (
+                                            <MapPin className="inline w-4 h-4 mr-1 text-gray-400" />
+                                        )}
+                                        {s.name} (Pop: {s.population.toLocaleString()})
                                         <button onClick={() => onMapClick(planet)} className="ml-2 text-green-400 hover:text-green-300">
                                             [map]
                                         </button>
