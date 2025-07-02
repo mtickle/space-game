@@ -1,5 +1,6 @@
+
 import { getConditionsForPlanetType } from '@utils/conditionUtils.js';
-import { generateMineral, } from '@utils/mineralUtils'; // Import mineral and condition utils
+import { generateMineral } from '@utils/mineralUtils';
 import { useEffect, useRef, useState } from 'react';
 import Header from './Header';
 import PlanetMapModal from './PlanetMapModal';
@@ -19,6 +20,21 @@ const StarMap = ({ stars }) => {
     const [factionFilter, setFactionFilter] = useState('All');
     const [starTypeFilter, setStarTypeFilter] = useState('All');
     const [selectedPlanet, setSelectedPlanet] = useState(null);
+    const [animationFrameId, setAnimationFrameId] = useState(null);
+
+    useEffect(() => {
+        stars.forEach(star => {
+            if (!star.planets || star.planets.length === 0) {
+                star.planets = generateOrEnhancePlanets(star);
+                console.log('Initialized planets for', star.name, ':', star.planets);
+            }
+            if (isNaN(star.x) || isNaN(star.y)) {
+                console.warn('Invalid coordinates for star', star.name, ': x=', star.x, 'y=', star.y);
+                star.x = star.x || 0; // Default to 0 if undefined
+                star.y = star.y || 0;
+            }
+        });
+    }, [stars]);
 
     useEffect(() => {
         const canvas = canvasRef.current;
@@ -34,62 +50,91 @@ const StarMap = ({ stars }) => {
         return () => resizeObserver.unobserve(container);
     }, []);
 
-    // Generate or enhance planets for a star
+    useEffect(() => {
+        const animateOrbits = () => {
+            if (selectedStar) {
+                const updatedPlanets = selectedStar.planets.map(planet => ({
+                    ...planet,
+                    angle: (planet.angle + 0.01) % (Math.PI * 2)
+                }));
+                setSelectedStar(prev => prev ? { ...prev, planets: updatedPlanets } : prev);
+                setAnimationFrameId(requestAnimationFrame(animateOrbits));
+            }
+        };
+        if (selectedStar && !animationFrameId) {
+            setAnimationFrameId(requestAnimationFrame(animateOrbits));
+        } else if (!selectedStar && animationFrameId) {
+            cancelAnimationFrame(animationFrameId);
+            setAnimationFrameId(null);
+        }
+        return () => animationFrameId && cancelAnimationFrame(animationFrameId);
+    }, [selectedStar, animationFrameId]);
+
     const generateOrEnhancePlanets = (star) => {
-        const planetCount = Math.floor(Math.random() * 3) + 1; // 1 to 3 planets
+        const planetCount = Math.floor(Math.random() * 3) + 1;
         let planets = star.planets || [];
-        //console.log('Initial Planets for', star.name, ':', planets);
+
+        const typeColorMap = {
+            "Gas Giant": '#FFD700',
+            "Rocky": '#B87333',
+            "Radiated": '#FF69B4',
+            "Ice World": '#87CEEB',
+            "Oceanic": '#1E90FF',
+            "Volcanic": '#FF4500',
+            "Barren": '#A9A9A9',
+            "Exotic": '#DA70D6',
+            "Crystaline": '#00FFFF',
+            "Artificial": '#7FFF00'
+        };
 
         if (!planets.length) {
             for (let i = 0; i < planetCount; i++) {
-                const type = ["Gas Giant", "Rocky", "Radiated", "Ice World", "Oceanic", "Volcanic", "Barren", "Exotic", "Crystaline", "Artificial"][Math.floor(Math.random() * 10)];
+                const type = Object.keys(typeColorMap)[Math.floor(Math.random() * 10)];
                 const planet = {
-                    name: `Planet-${i + 1}`,
+                    name: `Planet - ${i + 1}`,
                     type,
                     orbitRadius: 50 + i * 30,
-                    size: 3 + Math.random() * 5,
-                    color: '#00FF00',
+                    size: 1 + Math.random() * 3, // Reduced range: 1 to 4
+                    color: typeColorMap[type] || '#00FF00',
                     angle: Math.random() * Math.PI * 2,
                     minerals: generateMineralsForPlanet(type),
-                    ...getConditionsForPlanetType(type) // Add random conditions
+                    ...getConditionsForPlanetType(type)
                 };
-                //console.log('Generated Planet for', star.name, ':', planet);
                 planets.push(planet);
             }
         } else {
-            planets = planets.map(planet => ({
-                ...planet,
-                minerals: generateMineralsForPlanet(planet.type),
-                ...getConditionsForPlanetType(planet.type) // Add or override conditions
-            }));
-            // console.log('Enhanced Planets for', star.name, ':', planets);
+            planets = planets.map(planet => {
+                const color = typeColorMap[planet.type] || '#00FF00';
+                return {
+                    ...planet,
+                    color,
+                    angle: planet.angle !== undefined ? planet.angle : Math.random() * Math.PI * 2,
+                    size: Math.min(planet.size, 4), // Cap size at 4
+                    minerals: generateMineralsForPlanet(planet.type),
+                    ...getConditionsForPlanetType(planet.type)
+                };
+            });
         }
         return planets;
     };
 
-    // Generate minerals for a specific planet type
     const generateMineralsForPlanet = (planetType) => {
-        const mineralCount = Math.floor(Math.random() * 3) + 1; // 1 to 3 minerals
+        const mineralCount = Math.floor(Math.random() * 3) + 1;
         const minerals = [];
         for (let i = 0; i < mineralCount; i++) {
             const mineral = generateMineral(planetType);
-            // console.log('Generated Mineral for', planetType, 'attempt', i + 1, ':', mineral);
             if (mineral && mineral.elements && mineral.elements.length > 0) {
                 minerals.push(mineral);
             } else {
                 console.warn('Invalid mineral generated, skipping:', mineral);
             }
         }
-        //console.log('Minerals generated for', planetType, ':', minerals);
         return minerals;
     };
 
-    // Enhance selected star with updated planets
     const enhanceSelectedStar = (star) => {
         if (star) {
-            const enhancedStar = { ...star, planets: generateOrEnhancePlanets(star) };
-            //console.log('Enhanced Selected Star:', enhancedStar);
-            return enhancedStar;
+            return { ...star, planets: generateOrEnhancePlanets(star) };
         }
         return star;
     };
@@ -128,31 +173,38 @@ const StarMap = ({ stars }) => {
             ctx.textAlign = 'center';
             ctx.fillText(star.name, star.x, star.y - star.size - 6 / scale);
 
-            if (hoveredStar?.name === star.name) {
-                generateOrEnhancePlanets(star).forEach((planet) => {
+            const drawPlanets = (planets) => {
+                if (!planets || planets.length === 0) {
+                    console.warn('No planets to draw for', star.name);
+                    return;
+                }
+                planets.forEach((planet) => {
+                    if (planet.angle === undefined) {
+                        console.warn('Undefined angle for planet', planet.name, 'setting to 0');
+                        planet.angle = 0;
+                    }
                     ctx.beginPath();
                     ctx.arc(star.x, star.y, planet.orbitRadius, 0, Math.PI * 2);
                     ctx.strokeStyle = planet.color + '33';
                     ctx.lineWidth = 0.5 / scale;
                     ctx.stroke();
 
-                    const angle = planet.angle || Math.random() * Math.PI * 2; // Default angle if missing
-                    const px = star.x + Math.cos(angle) * planet.orbitRadius;
-                    const py = star.y + Math.sin(angle) * planet.orbitRadius;
+                    const px = star.x + Math.cos(planet.angle) * planet.orbitRadius;
+                    const py = star.y + Math.sin(planet.angle) * planet.orbitRadius;
+                    if (isNaN(px) || isNaN(py)) {
+                        console.error('Invalid planet coordinates for', planet.name, 'star.x:', star.x, 'star.y:', star.y, 'angle:', planet.angle, 'orbitRadius:', planet.orbitRadius);
+                        return;
+                    }
                     ctx.beginPath();
-                    ctx.arc(px, py, planet.size / 4, 0, Math.PI * 2);
+                    ctx.arc(px, py, planet.size, 0, Math.PI * 2);
                     ctx.fillStyle = planet.color;
                     ctx.fill();
+                    console.log('Drawing planet:', planet.name, 'at', { x: px, y: py }, 'color:', planet.color);
                 });
-            }
+            };
 
-            if (selectedStar?.name === star.name) {
-                ctx.beginPath();
-                ctx.arc(star.x, star.y, star.size + 2, 0, Math.PI * 2);
-                ctx.strokeStyle = '#FFFFFF';
-                ctx.lineWidth = 1 / scale;
-                ctx.stroke();
-            }
+            if (hoveredStar?.name === star.name) drawPlanets(star.planets);
+            if (selectedStar?.name === star.name) drawPlanets(selectedStar.planets);
         });
 
         ctx.restore();
@@ -210,10 +262,10 @@ const StarMap = ({ stars }) => {
                 const clickOffsetX = e.clientX - screenX;
                 const clickOffsetY = e.clientY - screenY;
                 setMapState({ offsetX, offsetY, scale, clickOffsetX, clickOffsetY });
-                setSelectedStar(enhanceSelectedStar(clickedStar)); // Update with enhanced planets
+                setSelectedStar(enhanceSelectedStar(clickedStar));
             } else {
                 setSelectedStar(null);
-                setSelectedPlanet(null); // Clear planet selection if clicking outside
+                setSelectedPlanet(null);
             }
         }
     };

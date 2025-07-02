@@ -36,7 +36,7 @@ export const radiationLevelNames = [
     "Safe", "Background Only", "Elevated", "Unshielded Exposure Not Recommended",
     "Dangerous", "Suit-Melting", "Microwave-Worthy", "Hostile to DNA",
     "Glow in the Dark Guaranteed", "Turns Teeth Into Antennas", "Full Cosmic BBQ",
-    "Congratulations, You’re a Radiator Now", "Only Survivable by Cockroaches or Bureaucrats"
+    "Congratulations, You’re a Radiator Now", "Only Survivable by Cockroaches"
 ];
 
 // Weighted random selection

@@ -1,13 +1,94 @@
-import { generateMineral, mineableElements } from '@utils/mineralUtils'; // Import mineral utils
-import { useEffect, useState } from 'react';
+import { generateMineral } from '@utils/mineralUtils';
+import { Droplet, Factory, FlaskConical, MapPin, Radiation, ThermometerSnowflake, ThermometerSun, Wind } from 'lucide-react';
+import { useMemo, useState } from 'react';
+
+const PlanetPanel = ({ planet, factionColor, onMapClick }) => {
+    const [open, setOpen] = useState(false);
+
+    const resourceList = useMemo(() => {
+        const resources = [];
+        const count = Math.floor(Math.random() * 3) + 2;
+        for (let i = 0; i < count; i++) {
+            const mineral = generateMineral(planet.type);
+            resources.push(
+                <li key={i} className="text-sm text-gray-200">
+                    <FlaskConical className="inline w-4 h-4 mr-1 text-pink-400" />
+                    {mineral.mineralName} ({mineral.elements.join(', ')})
+                    {mineral.unknownElements && (
+                        <span className="text-purple-400"> + {mineral.unknownElements.map(e => e.symbol).join(', ')} (Unknown)</span>
+                    )}
+                </li>
+            );
+        }
+        return resources;
+    }, [planet.type]); // Only recompute if planet.type changes
+
+    return (
+        <div className="border-t border-gray-700 py-2">
+            <button
+                className="w-full text-left text-lg text-yellow-300 font-semibold hover:text-yellow-200"
+                onClick={() => setOpen(!open)}
+            >
+                {open ? '▼' : '▶'} <span style={{ color: factionColor }}>{planet.name}</span> <span className="text-sm text-gray-400">({planet.type})</span>
+            </button>
+
+            {open && (
+                <div className="ml-4 mt-1 space-y-2 pb-20">
+                    <p className="text-sm text-gray-300">Size: {planet.size > 6 ? 'Large' : planet.size > 3 ? 'Medium' : 'Small'}</p>
+
+                    {/* Settlements */}
+                    {planet.settlements && (
+                        <div>
+                            <div className="flex items-center gap-1 text-orange-400 font-bold">
+                                <Factory className="w-4 h-4" /> Settlements
+                            </div>
+                            <ul className="ml-4 list-disc text-gray-200 text-sm">
+                                {planet.settlements.map((s, i) => (
+                                    <li key={i}>
+                                        {s.name}{s.isCapital ? ' *' : ''} (Pop: {s.population.toLocaleString()})
+                                        <button onClick={() => onMapClick(planet)} className="ml-2 text-green-400 hover:text-green-300">
+                                            [map]
+                                        </button>
+                                    </li>
+                                ))}
+                            </ul>
+                        </div>
+                    )}
+
+                    {/* Resources */}
+                    <div>
+                        <div className="flex items-center gap-1 text-orange-400 font-bold">
+                            <FlaskConical className="w-4 h-4" /> Resources
+                        </div>
+                        <ul className="ml-4 list-disc text-gray-200">
+                            {resourceList}
+                        </ul>
+                    </div>
+
+                    {/* Conditions */}
+                    <div>
+                        <div className="flex items-center gap-1 text-orange-400 font-bold">
+                            <Radiation className="w-4 h-4" /> Conditions
+                        </div>
+                        <ul className="ml-4 list-disc text-gray-200 text-sm space-y-1 mt-1">
+                            <li><Wind className="inline w-4 h-4 mr-1 text-cyan-400" />Winds: {planet.wind || 'Gentle'}</li>
+                            <li><ThermometerSun className="inline w-4 h-4 mr-1 text-red-400" />Day Temp: {planet.temperature || 'Temperate'}</li>
+                            <li><ThermometerSnowflake className="inline w-4 h-4 mr-1 text-blue-400" />Night Temp: {planet.nightTemperature || 'Mild'}</li>
+                            <li><Droplet className="inline w-4 h-4 mr-1 text-lime-400" />Toxicity: {planet.toxicity || 'Low'}</li>
+                            <li><Radiation className="inline w-4 h-4 mr-1 text-pink-400" />Radiation: {planet.radiation || 'Safe'}</li>
+                            <li><MapPin className="inline w-4 h-4 mr-1 text-yellow-400" />Weather: {planet.weather || 'Arid'}</li>
+                        </ul>
+                    </div>
+                </div>
+            )}
+        </div>
+    );
+};
 
 const Sidebar = ({ selectedStar, onMapClick }) => {
-    const [content, setContent] = useState(null);
-
-    useEffect(() => {
-        if (selectedStar) {
-
-            setContent(
+    return (
+        <div className="w-1/4 bg-gray-900 text-white font-mono p-4 h-screen overflow-y-auto shadow-[0_0-10px_#0f0]">
+            {selectedStar ? (
                 <div>
                     <div className="flex items-center mb-2">
                         <div className="w-6 h-6 rounded-full mr-3" style={{ backgroundColor: selectedStar.faction?.color || '#FFFFFF' }}></div>
@@ -18,113 +99,25 @@ const Sidebar = ({ selectedStar, onMapClick }) => {
                     <p className="text-green-400"><strong>Faction:</strong> {selectedStar.faction?.name || 'Unknown'}</p>
                     <p className="text-green-400"><strong>Symbol:</strong> {selectedStar.faction?.symbol || 'N/A'}</p>
                     <p className="mt-2 text-base text-gray-300">{selectedStar.description}</p>
-                    <div className="mt-4 overflow-y-auto" style={{ maxHeight: 'calc(100vh - 200px)' }}>
+
+                    <div className="mt-4">
                         <h3 className="text-lg font-bold text-yellow-400">Planetary System</h3>
                         {selectedStar.planets.map((planet, index) => (
-                            <div key={index} className="text-base text-gray-300">
-                                <p>
-                                    <strong style={{ color: selectedStar.faction?.color || '#FFFFFF' }}>{planet.name}</strong> ({planet.type})
-                                    {planet.settlements && (
-                                        <span
-                                            className="text-green-400 hover:text-green-300 cursor-pointer ml-2"
-                                            onClick={() => onMapClick(planet)}
-                                        >
-                                            [map]
-                                        </span>
-                                    )}
-                                </p>
-                                <p>Size: {planet.size > 6 ? 'Large' : planet.size > 3 ? 'Medium' : 'Small'}</p>
-                                {planet.settlements && (
-                                    <div className="ml-4 mt-1">
-                                        <h4 className="text-md font-bold text-orange-400">Settlements:</h4>
-                                        <ul className="list-disc list-inside text-sm text-gray-200">
-                                            {planet.settlements.map((settlement, sIndex) => (
-                                                <li key={sIndex}>{settlement.name}{settlement.isCapital ? ' *' : ''} (Pop: {settlement.population.toLocaleString()})</li>
-                                            ))}
-                                        </ul>
-                                    </div>
-                                )}
-                                <div className="ml-4 mt-1">
-                                    <h4 className="text-md font-bold text-orange-400">Resources:</h4>
-                                    <ul className="list-disc list-inside text-sm text-gray-200">
-                                        {(() => {
-                                            const resources = [];
-                                            const resourceCount = Math.floor(Math.random() * 3) + 2; // 2 to 4 resources
-                                            for (let i = 0; i < resourceCount; i++) {
-                                                const mineral = generateMineral(planet.type);
-                                                resources.push(
-                                                    <li key={i}>
-                                                        {mineral.mineralName} ({mineral.elements.join(', ')})
-                                                        {mineral.unknownElements && (
-                                                            <span> + {mineral.unknownElements.map(ue => ue.symbol).join(', ')} (Unknown)</span>
-                                                        )}
-                                                    </li>
-                                                );
-                                            }
-                                            // Fallback to hardcoded resources if no valid minerals
-                                            if (resources.length === 0) {
-                                                const fallback = Object.values(mineableElements[0])
-                                                    .find(category => category.planetTypes.includes(planet.type));
-                                                if (fallback) {
-                                                    fallback.elements.forEach((el, idx) => {
-                                                        resources.push(
-                                                            <li key={`fallback-${idx}`}>
-                                                                {el.name} ({el.symbol})
-                                                            </li>
-                                                        );
-                                                    });
-                                                }
-                                            }
-                                            return resources;
-                                        })()}
-                                    </ul>
-                                </div>
-                                <div className="ml-4 mt-1">
-                                    <h4 className="text-md font-bold text-orange-400">Compound Minerals:</h4>
-                                    <ul className="list-disc list-inside text-sm text-gray-200">
-                                        {planet.minerals && planet.minerals.length > 0 ? (
-                                            planet.minerals.map((mineral, mIndex) => (
-                                                <li key={mIndex}>
-                                                    {mineral.mineralName} - {mineral.elements.join(', ')}
-                                                    {mineral.unknownElements && (
-                                                        <span> + {mineral.unknownElements.map(ue => ue.symbol).join(', ')} (Unknown)</span>
-                                                    )}
-                                                </li>
-                                            ))
-                                        ) : (
-                                            <li>Currently empty</li>
-                                        )}
-                                    </ul>
-                                </div>
-                                <div className="ml-4 mt-1">
-                                    <h4 className="text-md font-bold text-orange-400">Conditions:</h4>
-                                    <ul className="list-disc list-inside text-sm text-gray-200">
-                                        <li>Typical Weather: {planet.weather || (planet.type === 'Gas Giant' && 'Stormy') || (planet.type === 'Rocky' && 'Arid') || (planet.type === 'Radiated' && 'Harsh') || (planet.type === 'Ice World' && 'Icy Blizzards') || 'Calm'}</li>
-                                        <li>Air Temp: {planet.temperature || (planet.type === 'Gas Giant' && 'Variable') || (planet.type === 'Rocky' && 'Temperate') || (planet.type === 'Radiated' && 'Hot') || (planet.type === 'Ice World' && 'Cold') || 'Temperate'}</li>
-                                        <li>Night Temp: {planet.nightTemperature || (planet.type === 'Gas Giant' && 'Extreme Drop') || (planet.type === 'Rocky' && 'Mild') || (planet.type === 'Radiated' && 'Warm') || (planet.type === 'Ice World' && 'Freezing') || 'Stable'}</li>
-                                        <li>Winds: {planet.wind || (planet.type === 'Gas Giant' && 'Hurricane-force') || (planet.type === 'Rocky' && 'Gentle') || (planet.type === 'Radiated' && 'Strong') || (planet.type === 'Ice World' && 'Gentle') || 'Moderate'}</li>
-                                        <li>Toxicity Levels: {planet.toxicity || (planet.type === 'Gas Giant' && 'High') || (planet.type === 'Rocky' && 'Low') || (planet.type === 'Radiated' && 'High') || (planet.type === 'Ice World' && 'Low') || 'Low'}</li>
-                                        <li>Radiation Levels: {planet.radiation || (planet.type === 'Gas Giant' && 'Elevated') || (planet.type === 'Rocky' && 'Safe') || (planet.type === 'Radiated' && 'Hazardous') || (planet.type === 'Ice World' && 'Safe') || 'Safe'}</li>
-                                    </ul>
-                                </div>
-                            </div>
+                            <PlanetPanel
+                                key={index}
+                                planet={planet}
+                                factionColor={selectedStar.faction?.color || '#FFFFFF'}
+                                onMapClick={onMapClick}
+                            />
                         ))}
                     </div>
                 </div>
-            );
-        } else {
-            setContent(
+            ) : (
                 <div>
                     <h2 className="text-2xl font-bold text-orange-400">Welcome to StarWeave '78</h2>
                     <p className="text-gray-300">Click a star to explore its system. Journey through the cosmos and uncover faction secrets!</p>
                 </div>
-            );
-        }
-    }, [selectedStar]);
-
-    return (
-        <div className="w-1/4 bg-gray-900 text-white font-mono p-4 h-screen overflow-y-auto shadow-[0_0-10px_#0f0]">
-            {content}
+            )}
         </div>
     );
 };
