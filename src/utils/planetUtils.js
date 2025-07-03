@@ -1,5 +1,3 @@
-
-
 // New list of potential unique planet names
 const uniquePlanetNames = [
     'Aurelis', 'Celestine', 'Dravira', 'Elarion', 'Feyrith', 'Glimmera', 'Havenar', 'Iridesa', 'Jovaris', 'Kryon',
@@ -53,9 +51,11 @@ export const generatePlanetName = (starName, index, uniqueNames) => {
     return `${starName} ${letters[index]}`;
 };
 
-// Generate planetary system (updated for inhabited planets, settlements, population, and random capital)
-export const generatePlanets = (starName) => {
+// Import economy names
+import { economyNames } from './economyUtils.js';
 
+// Generate planetary system (updated for inhabited planets, settlements, population, random capital, and economy)
+export const generatePlanets = (starName) => {
     console.log('Generating planets for star:', starName);
 
     const numPlanets = Math.floor(Math.random() * 5) + 2; // 2–6 planets
@@ -94,6 +94,8 @@ export const generatePlanets = (starName) => {
                     const capitalIndex = Math.floor(Math.random() * planet.settlements.length);
                     planet.settlements[capitalIndex].isCapital = true;
                 }
+                // Assign a random economy
+                planet.economy = economyNames[Math.floor(Math.random() * economyNames.length)];
             }
         }
         planets.push(planet);

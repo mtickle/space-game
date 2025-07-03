@@ -34,6 +34,17 @@ const PlanetPanel = ({ planet, factionColor, onMapClick }) => {
 
             {open && (
                 <div className="ml-4 mt-1 space-y-2 pb-20">
+                    {/* Economy */}
+                    {planet.economy && (
+                        <div>
+                            <div className="flex items-center gap-1 text-orange-400 font-bold">
+                                <Factory className="w-4 h-4" /> Economy
+                            </div>
+                            <p className="ml-4 text-sm text-gray-200"><strong>{planet.economy.name}</strong></p>
+                            <p className="ml-4 text-xs text-gray-400 italic">{planet.economy.description}</p>
+                        </div>
+                    )}
+
                     <p className="text-sm text-gray-300">Size: {planet.size > 6 ? 'Large' : planet.size > 3 ? 'Medium' : 'Small'}</p>
 
                     {/* Settlements */}
