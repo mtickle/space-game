@@ -22,19 +22,30 @@ const StarMap = ({ stars }) => {
     const [selectedPlanet, setSelectedPlanet] = useState(null);
     const [animationFrameId, setAnimationFrameId] = useState(null);
 
-    // useEffect(() => {
-    //     stars.forEach(star => {
-    //         if (!star.planets || star.planets.length === 0) {
-    //             star.planets = generateOrEnhancePlanets(star);
-    //             console.log('Initialized planets for', star.name, ':', star.planets);
-    //         }
-    //         if (isNaN(star.x) || isNaN(star.y)) {
-    //             console.warn('Invalid coordinates for star', star.name, ': x=', star.x, 'y=', star.y);
-    //             star.x = star.x || 0; // Default to 0 if undefined
-    //             star.y = star.y || 0;
-    //         }
-    //     });
-    // }, [stars]);
+    useEffect(() => {
+        //--- In the beginning God created the heavens and the earth.
+        console.log('Processing star systems for initialization');
+        stars.forEach(star => {
+
+            //--- A Star system is born!
+            console.log(`System ${star.name} born at coordinates ${star.x},${star.y}`);
+
+            if (!star.planets || star.planets.length === 0) {
+                console.log(`Generating planets for star: ${star.name}`);
+                star.planets = generateOrEnhancePlanets(star);
+                console.log(`Initialized ${star.planets.length} planets for ${star.name}`);
+            } else {
+                //There are already planets ...
+                //console.log(`Star ${star.name} already has ${star.planets.length} planets, skipping generation`);
+            }
+            if (isNaN(star.x) || isNaN(star.y)) {
+                console.warn(`Invalid coordinates for star ${star.name}: x=${star.x}, y=${star.y}`);
+                star.x = star.x || 0; // Default to 0 if undefined
+                star.y = star.y || 0;
+            }
+        });
+        console.log(`Completed processing ${stars.length} star systems`);
+    }, [stars]);
 
 
     useEffect(() => {
@@ -72,6 +83,13 @@ const StarMap = ({ stars }) => {
     //     return () => animationFrameId && cancelAnimationFrame(animationFrameId);
     // }, [selectedStar, animationFrameId]);
 
+
+    //--- Take us to sector 0,0
+    const handleResetView = () => {
+        console.log('Resetting view to coordinates (0,0)');
+        setOffsetX(0);
+        setOffsetY(0);
+    };
 
 
     const generateOrEnhancePlanets = (star) => {
@@ -121,6 +139,7 @@ const StarMap = ({ stars }) => {
                 };
             });
         }
+        console.log(`Completed star system for ${star.name} with ${planets.length} planets`);
         return planets;
     };
 
@@ -140,6 +159,7 @@ const StarMap = ({ stars }) => {
 
     const enhanceSelectedStar = (star) => {
         if (star) {
+            console.log(`Enhancing selected star system: ${star.name}`);
             return { ...star, planets: generateOrEnhancePlanets(star) };
         }
         return star;
@@ -329,6 +349,17 @@ const StarMap = ({ stars }) => {
             {selectedPlanet && (
                 <PlanetMapModal planet={selectedPlanet} onClose={() => setSelectedPlanet(null)} />
             )}
+            <div className="bg-black bg-opacity-90 border-t-2 border-green-500 p-2 flex justify-between items-center text-sm text-green-400">
+                <div>
+                    Coordinates: ({Math.round(offsetX)}, {Math.round(offsetY)}) | Zoom: {scale.toFixed(2)}x
+                </div>
+                <button
+                    className="underline text-green-400 hover:text-green-200 transition-colors"
+                    onClick={handleResetView}
+                >
+                    Return to (0,0)
+                </button>
+            </div>
 
         </div>
     );
