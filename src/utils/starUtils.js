@@ -33,3 +33,18 @@ export const getStarDescription = (type) => {
 };
 
 
+export function loadOrGenerateStars(generateFn) {
+    try {
+        const saved = localStorage.getItem('starweaveStars');
+        if (saved) {
+            const parsed = JSON.parse(saved);
+            if (Array.isArray(parsed) && parsed.length > 0) {
+                return parsed;
+            }
+        }
+    } catch (err) {
+        console.warn('Failed to parse stored stars:', err);
+    }
+    generateFn();
+    return null;
+}

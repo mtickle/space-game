@@ -21,19 +21,20 @@ const StarMap = ({ stars }) => {
     const [selectedPlanet, setSelectedPlanet] = useState(null);
     const [animationFrameId, setAnimationFrameId] = useState(null);
 
-    useEffect(() => {
-        stars.forEach(star => {
-            if (!star.planets || star.planets.length === 0) {
-                star.planets = generateOrEnhancePlanets(star);
-                console.log('Initialized planets for', star.name, ':', star.planets);
-            }
-            if (isNaN(star.x) || isNaN(star.y)) {
-                console.warn('Invalid coordinates for star', star.name, ': x=', star.x, 'y=', star.y);
-                star.x = star.x || 0; // Default to 0 if undefined
-                star.y = star.y || 0;
-            }
-        });
-    }, [stars]);
+    // useEffect(() => {
+    //     stars.forEach(star => {
+    //         if (!star.planets || star.planets.length === 0) {
+    //             star.planets = generateOrEnhancePlanets(star);
+    //             console.log('Initialized planets for', star.name, ':', star.planets);
+    //         }
+    //         if (isNaN(star.x) || isNaN(star.y)) {
+    //             console.warn('Invalid coordinates for star', star.name, ': x=', star.x, 'y=', star.y);
+    //             star.x = star.x || 0; // Default to 0 if undefined
+    //             star.y = star.y || 0;
+    //         }
+    //     });
+    // }, [stars]);
+
 
     useEffect(() => {
         const canvas = canvasRef.current;
@@ -49,25 +50,28 @@ const StarMap = ({ stars }) => {
         return () => resizeObserver.unobserve(container);
     }, []);
 
-    useEffect(() => {
-        const animateOrbits = () => {
-            if (selectedStar) {
-                const updatedPlanets = selectedStar.planets.map(planet => ({
-                    ...planet,
-                    angle: (planet.angle + 0.01) % (Math.PI * 2)
-                }));
-                setSelectedStar(prev => prev ? { ...prev, planets: updatedPlanets } : prev);
-                setAnimationFrameId(requestAnimationFrame(animateOrbits));
-            }
-        };
-        if (selectedStar && !animationFrameId) {
-            setAnimationFrameId(requestAnimationFrame(animateOrbits));
-        } else if (!selectedStar && animationFrameId) {
-            cancelAnimationFrame(animationFrameId);
-            setAnimationFrameId(null);
-        }
-        return () => animationFrameId && cancelAnimationFrame(animationFrameId);
-    }, [selectedStar, animationFrameId]);
+
+    // useEffect(() => {
+    //     const animateOrbits = () => {
+    //         if (selectedStar) {
+    //             const updatedPlanets = selectedStar.planets.map(planet => ({
+    //                 ...planet,
+    //                 angle: (planet.angle + 0.01) % (Math.PI * 2)
+    //             }));
+    //             setSelectedStar(prev => prev ? { ...prev, planets: updatedPlanets } : prev);
+    //             setAnimationFrameId(requestAnimationFrame(animateOrbits));
+    //         }
+    //     };
+    //     if (selectedStar && !animationFrameId) {
+    //         setAnimationFrameId(requestAnimationFrame(animateOrbits));
+    //     } else if (!selectedStar && animationFrameId) {
+    //         cancelAnimationFrame(animationFrameId);
+    //         setAnimationFrameId(null);
+    //     }
+    //     return () => animationFrameId && cancelAnimationFrame(animationFrameId);
+    // }, [selectedStar, animationFrameId]);
+
+
 
     const generateOrEnhancePlanets = (star) => {
         const planetCount = Math.floor(Math.random() * 3) + 1;
@@ -287,7 +291,7 @@ const StarMap = ({ stars }) => {
             <div className="flex flex-row flex-1 overflow-hidden">
                 <Sidebar selectedStar={selectedStar} onMapClick={handleMapClick} />
                 <div className="flex flex-1 items-center justify-center relative">
-                    <div className="relative w-[75vw] aspect-[16/9] border-black-500 shadow-[0_0-10px_#0f0]">
+                    <div className="relative w-full h-full border-black-500 shadow-[0_0-10px_#0f0]">
                         <canvas
                             ref={canvasRef}
                             className="bg-black cursor-pointer w-full h-full block"
@@ -322,6 +326,7 @@ const StarMap = ({ stars }) => {
             {selectedPlanet && (
                 <PlanetMapModal planet={selectedPlanet} onClose={() => setSelectedPlanet(null)} />
             )}
+
         </div>
     );
 };
