@@ -45,7 +45,7 @@ const PlanetPanel = ({ planet, factionColor, onMapClick }) => {
                         </div>
                     )}
 
-                    <p className="text-sm text-gray-300">Size: {planet.size > 6 ? 'Large' : planet.size > 3 ? 'Medium' : 'Small'}</p>
+                    {/* <p className="text-sm text-gray-300">Planetary Size: {planet.size > 6 ? 'Large' : planet.size > 3 ? 'Medium' : 'Small'}</p> */}
 
                     {/* Settlements */}
                     {planet.settlements && (
