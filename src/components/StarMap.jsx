@@ -1,5 +1,6 @@
 import { getConditionsForPlanetType } from '@utils/conditionUtils.js';
 import { generateMineral } from '@utils/mineralUtils';
+import { planetTypes } from '@utils/planetUtils.js';
 import { useEffect, useRef, useState } from 'react';
 import Header from './Header';
 import PlanetMapModal from './PlanetMapModal';
@@ -74,31 +75,31 @@ const StarMap = ({ stars }) => {
 
 
     const generateOrEnhancePlanets = (star) => {
+        console.log('Generating or enhancing planets for star:', star.name);
         const planetCount = Math.floor(Math.random() * 3) + 1;
         let planets = star.planets || [];
 
-        const typeColorMap = {
-            "Gas Giant": '#FFD700',
-            "Rocky": '#B87333',
-            "Radiated": '#FF69B4',
-            "Ice World": '#87CEEB',
-            "Oceanic": '#1E90FF',
-            "Volcanic": '#FF4500',
-            "Barren": '#A9A9A9',
-            "Exotic": '#DA70D6',
-            "Crystaline": '#00FFFF',
-            "Artificial": '#7FFF00'
+        // Function to select a planet type based on weights
+        const getWeightedRandomType = () => {
+            const totalWeight = planetTypes.reduce((sum, { weight }) => sum + weight, 0);
+            let random = Math.random() * totalWeight;
+            for (const { type, weight } of planetTypes) {
+                random -= weight;
+                if (random <= 0) return type;
+            }
+            return planetTypes[planetTypes.length - 1].type; // Fallback
         };
 
         if (!planets.length) {
             for (let i = 0; i < planetCount; i++) {
-                const type = Object.keys(typeColorMap)[Math.floor(Math.random() * 10)];
+                const type = getWeightedRandomType();
+                const color = planetTypes.find(p => p.type === type).color;
                 const planet = {
                     name: `Planet - ${i + 1}`,
                     type,
                     orbitRadius: 50 + i * 30,
                     size: 1 + Math.random() * 3, // Reduced range: 1 to 4
-                    color: typeColorMap[type] || '#00FF00',
+                    color,
                     angle: Math.random() * Math.PI * 2,
                     minerals: generateMineralsForPlanet(type),
                     ...getConditionsForPlanetType(type)
@@ -106,15 +107,17 @@ const StarMap = ({ stars }) => {
                 planets.push(planet);
             }
         } else {
-            planets = planets.map(planet => {
-                const color = typeColorMap[planet.type] || '#00FF00';
+            planets = planets.map((planet, i) => {
+                const type = planet.type || getWeightedRandomType();
+                const color = planetTypes.find(p => p.type === type)?.color || '#00FF00';
                 return {
                     ...planet,
                     color,
-                    angle: planet.angle !== undefined ? planet.angle : Math.random() * Math.PI * 2,
-                    size: Math.min(planet.size, 4), // Cap size at 4
-                    minerals: generateMineralsForPlanet(planet.type),
-                    ...getConditionsForPlanetType(planet.type)
+                    orbitRadius: planet.orbitRadius ?? 50 + i * 30,
+                    angle: typeof planet.angle === 'number' ? planet.angle : Math.random() * Math.PI * 2,
+                    size: Math.min(planet.size ?? (1 + Math.random() * 3), 4),
+                    minerals: generateMineralsForPlanet(type),
+                    ...getConditionsForPlanetType(type)
                 };
             });
         }
@@ -183,7 +186,7 @@ const StarMap = ({ stars }) => {
                 }
                 planets.forEach((planet) => {
                     if (planet.angle === undefined) {
-                        console.warn('Undefined angle for planet', planet.name, 'setting to 0');
+                        //console.warn('Undefined angle for planet', planet.name, 'setting to 0');
                         planet.angle = 0;
                     }
                     ctx.beginPath();
@@ -202,7 +205,7 @@ const StarMap = ({ stars }) => {
                     ctx.arc(px, py, planet.size, 0, Math.PI * 2);
                     ctx.fillStyle = planet.color;
                     ctx.fill();
-                    console.log('Drawing planet:', planet.name, 'at', { x: px, y: py }, 'color:', planet.color);
+                    //console.log('Drawing planet:', planet.name, 'at', { x: px, y: py }, 'color:', planet.color);
                 });
             };
 

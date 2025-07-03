@@ -29,6 +29,19 @@ const settlementNames = [
     'Emberwatch', 'Seahold', 'Highspire', 'Moonwatch', 'Sandwatch', 'Firehold', 'Mistspire', 'Dawnreach', 'Ironwatch', 'Stormspire'
 ];
 
+export const planetTypes = [
+    { type: 'Rocky', color: '#A0AEC0', weight: 0.25 },
+    { type: 'Gas Giant', color: '#F6AD55', weight: 0.2 },
+    { type: 'Ice World', color: '#90CDF4', weight: 0.15 },
+    { type: 'Exotic', color: '#ED64A6', weight: 0.1 },
+    { type: 'Oceanic', color: '#63B3ED', weight: 0.1 },
+    { type: 'Volcanic', color: '#FC8181', weight: 0.05 },
+    { type: 'Barren', color: '#CBD5E0', weight: 0.05 },
+    { type: 'Crystaline', color: '#B794F4', weight: 0.05 },
+    { type: 'Radiated', color: '#FBB6CE', weight: 0.03 },
+    { type: 'Artificial', color: '#F0E68C', weight: 0.02 }
+];
+
 // Procedural planet name generator (updated to support unique names)
 export const generatePlanetName = (starName, index, uniqueNames) => {
     if (uniqueNames && uniqueNames.length > 0 && Math.random() < 0.4) { // 40% chance for a unique name
@@ -40,21 +53,9 @@ export const generatePlanetName = (starName, index, uniqueNames) => {
     return `${starName} ${letters[index]}`;
 };
 
-
 // Generate planetary system (updated for inhabited planets, settlements, population, and random capital)
 export const generatePlanets = (starName) => {
-    const planetTypes = [
-        { type: 'Rocky', color: '#A0AEC0', weight: 0.25 },
-        { type: 'Gas Giant', color: '#F6AD55', weight: 0.2 },
-        { type: 'Ice World', color: '#90CDF4', weight: 0.15 },
-        { type: 'Exotic', color: '#ED64A6', weight: 0.1 },
-        { type: 'Oceanic', color: '#63B3ED', weight: 0.1 },
-        { type: 'Volcanic', color: '#FC8181', weight: 0.05 },
-        { type: 'Barren', color: '#CBD5E0', weight: 0.05 },
-        { type: 'Crystaline', color: '#B794F4', weight: 0.05 },
-        { type: 'Radiated', color: '#FBB6CE', weight: 0.03 },
-        { type: 'Artificial', color: '#F0E68C', weight: 0.02 }
-    ];
+
 
     const numPlanets = Math.floor(Math.random() * 5) + 2; // 2–6 planets
     const planets = [];
