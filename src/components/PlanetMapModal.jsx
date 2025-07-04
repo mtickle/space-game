@@ -1,17 +1,17 @@
-
 import { useEffect, useRef } from 'react';
 
 const PlanetMapModal = ({ planet, onClose }) => {
     const canvasRef = useRef(null);
 
     useEffect(() => {
+        // Save settlement coordinates to localStorage after first assignment
+        let updated = false;
         const canvas = canvasRef.current;
         if (!canvas) return;
         const ctx = canvas.getContext('2d');
-        const width = 300;
-        const height = 300;
+        const width = 500;
+        const height = 500;
 
-        // Set canvas size
         canvas.width = width;
         canvas.height = height;
 
@@ -39,33 +39,41 @@ const PlanetMapModal = ({ planet, onClose }) => {
         gradients['Radiated'].addColorStop(0, '#FBB6CE'); gradients['Radiated'].addColorStop(1, '#F687B3');
         gradients['Artificial'].addColorStop(0, '#F0E68C'); gradients['Artificial'].addColorStop(1, '#D4AF37');
 
+        ctx.beginPath();
+        ctx.arc(width / 2, height / 2, width / 2, 0, Math.PI * 2);
         ctx.fillStyle = gradients[planet.type] || gradients['Rocky'];
-        ctx.fillRect(0, 0, width, height);
+        ctx.fill();
 
-        // Random settlements (5-15)
-        const numSettlements = Math.floor(Math.random() * 11) + 5;
         planet.settlements?.forEach((settlement, index) => {
-            const x = Math.random() * (width - 20) + 10;
-            const y = Math.random() * (height - 20) + 10;
+            if (!settlement.mapX || !settlement.mapY) {
+                settlement.mapX = Math.random() * (width - 20) + 10;
+                settlement.mapY = Math.random() * (height - 20) + 10;
+                updated = true;
+            }
+            const x = settlement.mapX;
+            const y = settlement.mapY;
+
             ctx.beginPath();
             ctx.arc(x, y, settlement.isCapital ? 5 : 3, 0, Math.PI * 2);
             ctx.fillStyle = settlement.isCapital ? '#FFFF00' : '#FFFFFF';
             ctx.fill();
             ctx.fillStyle = '#000000';
-            ctx.font = '10px monospace';
-            ctx.fillText(settlement.name + (settlement.isCapital ? ' *' : ''), x - 20, y - 5);
+            ctx.font = '14px monospace';
+            ctx.fillText(settlement.name + (settlement.isCapital ? ' *' : ''), x - 25, y - 7);
         });
 
-        // Random plots (2-5)
-        const numPlots = Math.floor(Math.random() * 4) + 2;
-        for (let i = 0; i < numPlots; i++) {
-            const x = Math.random() * (width - 50) + 25;
-            const y = Math.random() * (height - 50) + 25;
-            const w = Math.random() * 30 + 20;
-            const h = Math.random() * 30 + 20;
-            ctx.strokeStyle = '#00FF00';
-            ctx.lineWidth = 2;
-            ctx.strokeRect(x, y, w, h);
+        if (updated) {
+            try {
+                const storedStar = JSON.parse(localStorage.getItem(`stars_sector_${Math.floor((planet.parentX || 0) / 500)},${Math.floor((planet.parentY || 0) / 500)}`)) || [];
+                const updatedStar = storedStar.find(s => s.name === planet.parentStar);
+                if (updatedStar) {
+                    const p = updatedStar.planets?.find(p => p.name === planet.name);
+                    if (p) p.settlements = planet.settlements;
+                    localStorage.setItem(`stars_sector_${Math.floor((planet.parentX || 0) / 500)},${Math.floor((planet.parentY || 0) / 500)}`, JSON.stringify(storedStar));
+                }
+            } catch (e) {
+                console.warn('Failed to persist settlement map data', e);
+            }
         }
     }, [planet]);
 
@@ -76,7 +84,7 @@ const PlanetMapModal = ({ planet, onClose }) => {
             <div className="bg-gray-900 p-4 rounded-lg shadow-[0_0-10px_#0f0] relative">
                 <button onClick={onClose} className="absolute top-2 right-2 text-red-400 hover:text-red-300">X</button>
                 <h3 className="text-xl font-bold text-yellow-400 mb-2">{planet.name} Map</h3>
-                <canvas ref={canvasRef} className="border-2 border-green-500" />
+                <canvas ref={canvasRef} className="border-2 border-green-500 rounded-full" />
             </div>
         </div>
     );

@@ -1,5 +1,6 @@
 // StarMap.jsx
 import { useEffect, useRef, useState } from 'react';
+import { getStarTooltip, saveStarToLocalStorage } from '../hooks/useLazyStarField';
 import { generatePlanets } from '../utils/planetUtils';
 import Footer from './Footer';
 import Header from './Header';
@@ -48,6 +49,9 @@ const StarMap = ({
         ctx.fillStyle = '#1A202C';
         ctx.fillRect(0, 0, canvas.width, canvas.height);
 
+        const visited = JSON.parse(localStorage.getItem('visitedStars') || '[]');
+        const home = JSON.parse(localStorage.getItem('homeSystem') || '{}');
+
         ctx.save();
         ctx.translate(canvas.width / 2 + offsetX, canvas.height / 2 + offsetY);
         ctx.scale(scale, scale);
@@ -70,31 +74,41 @@ const StarMap = ({
             ctx.shadowBlur = 0;
             ctx.globalAlpha = 1;
 
+            // Home outline
+            if (home.name === star.name) {
+                ctx.beginPath();
+                ctx.arc(star.x, star.y, star.size + 4 / scale, 0, Math.PI * 2);
+                ctx.strokeStyle = '#FFFFFF';
+                ctx.lineWidth = 1 / scale;
+                ctx.stroke();
+            }
+
             ctx.fillStyle = '#FFFFFF';
             ctx.font = `${12 / scale}px Courier New, monospace`;
             ctx.textAlign = 'center';
             ctx.fillText(star.name, star.x, star.y - star.size - 6 / scale);
 
-            // Only draw orbits and planets for the selected star
-            if (selectedStar?.name === star.name && star.planets) {
-                star.planets.forEach((planet) => {
+            if (visited.includes(star.name)) {
+                ctx.beginPath();
+                ctx.arc(star.x, star.y - star.size - 12 / scale, 2 / scale, 0, Math.PI * 2);
+                ctx.fillStyle = '#00FF00';
+                ctx.fill();
+            }
 
-                    // Orbit ring
+            if ((selectedStar?.name === star.name || hoveredStar?.name === star.name) && star.planets) {
+                star.planets.forEach((planet) => {
                     ctx.beginPath();
                     ctx.arc(star.x, star.y, planet.orbitRadius, 0, Math.PI * 2);
                     ctx.strokeStyle = planet.color + '33';
                     ctx.lineWidth = .5 / scale;
                     ctx.stroke();
 
-                    // Planet dot (animated position)
                     planet.angle = (planet.angle ?? Math.random() * Math.PI * 2) + 0.01;
                     const px = star.x + Math.cos(planet.angle) * planet.orbitRadius;
                     const py = star.y + Math.sin(planet.angle) * planet.orbitRadius;
                     ctx.beginPath();
-                    //ctx.arc(px, py, planet.size ?? 1.5, 0, Math.PI * 2);
                     const renderSize = Math.min(planet.size ?? 1.5, 4);
                     ctx.arc(px, py, renderSize, 0, Math.PI * 2);
-
                     ctx.fillStyle = planet.color;
                     ctx.fill();
                 });
@@ -102,6 +116,19 @@ const StarMap = ({
         });
 
         ctx.restore();
+
+        if (hoveredStar) {
+            const tooltip = getStarTooltip(hoveredStar);
+            ctx.save();
+            ctx.font = '12px monospace';
+            ctx.fillStyle = 'rgba(0,0,0,0.8)';
+            const text = `★ ${tooltip.name} | ${tooltip.type} | ${tooltip.faction} | ${tooltip.planets} planets`;
+            const metrics = ctx.measureText(text);
+            ctx.fillRect(hoveredStar.clientX + 10, hoveredStar.clientY - 10, metrics.width + 10, 20);
+            ctx.fillStyle = '#00ff88';
+            ctx.fillText(text, hoveredStar.clientX + 15, hoveredStar.clientY + 5);
+            ctx.restore();
+        }
     };
 
     useEffect(() => {
@@ -111,7 +138,7 @@ const StarMap = ({
         };
         animate();
         return () => cancelAnimationFrame(animationFrameRef.current);
-    }, [stars, offsetX, offsetY, scale, factionFilter, selectedStar]);
+    }, [stars, offsetX, offsetY, scale, factionFilter, selectedStar, hoveredStar]);
 
     const handleMouseDown = (e) => {
         setIsDragging(true);
@@ -166,11 +193,37 @@ const StarMap = ({
                 clickedStar.planets.forEach(p => {
                     p.angle = p.angle ?? Math.random() * Math.PI * 2;
                 });
+                saveStarToLocalStorage(clickedStar, stars);
                 setSelectedStar(clickedStar);
+
+                const visited = JSON.parse(localStorage.getItem('visitedStars') || '[]');
+                if (!visited.includes(clickedStar.name)) {
+                    visited.push(clickedStar.name);
+                    localStorage.setItem('visitedStars', JSON.stringify(visited));
+                }
             } else {
                 setSelectedStar(null);
                 setSelectedPlanet(null);
             }
+        }
+    };
+
+    const handleContextMenu = (e) => {
+        e.preventDefault();
+        const canvas = canvasRef.current;
+        const rect = canvas.getBoundingClientRect();
+        const mouseX = (e.clientX - rect.left - canvas.width / 2 - offsetX) / scale;
+        const mouseY = (e.clientY - rect.top - canvas.height / 2 - offsetY) / scale;
+
+        const clickedStar = stars.find(star => {
+            const dx = mouseX - star.x;
+            const dy = mouseY - star.y;
+            return Math.sqrt(dx * dx + dy * dy) < star.size + 4;
+        });
+
+        if (clickedStar) {
+            localStorage.setItem('homeSystem', JSON.stringify({ name: clickedStar.name, x: clickedStar.x, y: clickedStar.y }));
+            alert(`${clickedStar.name} is now your home system.`);
         }
     };
 
@@ -195,12 +248,13 @@ const StarMap = ({
                         onMouseLeave={handleMouseUp}
                         onWheel={handleWheel}
                         onClick={handleClick}
+                        onContextMenu={handleContextMenu}
                     />
                 </div>
             </div>
+            {/* <VisitedSystemsPanel stars={stars} /> */}
             <Footer offsetX={offsetX} offsetY={offsetY} scale={scale} stars={stars} setOffsetX={setOffsetX} setOffsetY={setOffsetY} />
         </div>
-
     );
 };
 
