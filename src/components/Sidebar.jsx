@@ -1,11 +1,12 @@
+
 import { generateMineral } from '@utils/mineralUtils';
-import { Crown, Diameter, Droplet, Earth, Factory, FlaskConical, LandPlot, MapPin, Radiation, ThermometerSnowflake, ThermometerSun, Wind } from 'lucide-react';
+import { Crown, Diameter, Droplet, Earth, Factory, FlaskConical, LandPlot, MapPin, MapPlus, Radiation, ThermometerSnowflake, ThermometerSun, Wind } from 'lucide-react';
 import { useMemo, useState } from 'react';
+import PlanetMapModal from './PlanetMapModal';
 
 const PlanetPanel = ({ planet, factionColor, onMapClick }) => {
     const [open, setOpen] = useState(false);
 
-    //--- Build the list of resources.
     const resourceList = useMemo(() => {
         const resources = [];
         const count = Math.floor(Math.random() * 3) + 2;
@@ -22,7 +23,7 @@ const PlanetPanel = ({ planet, factionColor, onMapClick }) => {
             );
         }
         return resources;
-    }, [planet.type]); // Only recompute if planet.type changes
+    }, [planet.type]);
 
     return (
         <div className="border-t border-gray-700 py-2">
@@ -36,14 +37,16 @@ const PlanetPanel = ({ planet, factionColor, onMapClick }) => {
             {open && (
                 <div className="ml-4 mt-1 space-y-2 pb-5">
                     <div>
-                        <div className="flex items-center gap-1 text-orange-400 font-bold"  >
+                        <div className="flex items-center gap-1 text-orange-400 font-bold">
                             <Earth className="w-4 h-4" /> Planetary Details
                         </div>
                         <ul className="ml-4 list-disc text-gray-200 text-sm">
                             <li><LandPlot className="inline w-4 h-4 mr-1 text-gray-400" /><strong>Type:</strong> {planet.type}</li>
                             <li><Diameter className="inline w-4 h-4 mr-1 text-gray-400" /><strong>Size:</strong> {planet.size > 6 ? 'Large' : planet.size > 3 ? 'Medium' : 'Small'}</li>
+                            <li><MapPlus className="inline w-4 h-4 mr-1 text-gray-400" /><strong>Map:</strong><button onClick={() => onMapClick(planet)} className="ml-2 text-green-400 hover:text-green-300">
+                                Open Map
+                            </button></li>
                         </ul>
-
                     </div>
 
                     {/* Economy */}
@@ -72,9 +75,7 @@ const PlanetPanel = ({ planet, factionColor, onMapClick }) => {
                                             <MapPin className="inline w-4 h-4 mr-1 text-gray-400" />
                                         )}
                                         {s.name} (Pop: {s.population.toLocaleString()})
-                                        <button onClick={() => onMapClick(planet)} className="ml-2 text-green-400 hover:text-green-300">
-                                            [map]
-                                        </button>
+
                                     </li>
                                 ))}
                             </ul>
@@ -111,7 +112,16 @@ const PlanetPanel = ({ planet, factionColor, onMapClick }) => {
     );
 };
 
-const Sidebar = ({ selectedStar, onMapClick }) => {
+const Sidebar = ({ selectedStar }) => {
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [selectedPlanet, setSelectedPlanet] = useState(null);
+
+    const handleMapClick = (planet) => {
+        console.log(`Clicked on planet: ${planet.name}`);
+        setSelectedPlanet(planet);
+        setIsModalOpen(true);
+    };
+
     return (
         <div className="w-1/4 bg-gray-900 text-white font-mono p-4 h-screen overflow-y-auto shadow-[0_0-10px_#0f0] pb-50">
             {selectedStar ? (
@@ -133,7 +143,7 @@ const Sidebar = ({ selectedStar, onMapClick }) => {
                                 key={index}
                                 planet={planet}
                                 factionColor={selectedStar.faction?.color || '#FFFFFF'}
-                                onMapClick={onMapClick}
+                                onMapClick={handleMapClick}
                             />
                         ))}
                     </div>
@@ -143,6 +153,12 @@ const Sidebar = ({ selectedStar, onMapClick }) => {
                     <h2 className="text-2xl font-bold text-orange-400">Welcome to StarWeave '78</h2>
                     <p className="text-gray-300">Click a star to explore its system. Journey through the cosmos and uncover faction secrets!</p>
                 </div>
+            )}
+            {isModalOpen && selectedPlanet && (
+                <PlanetMapModal
+                    planet={selectedPlanet}
+                    onClose={() => setIsModalOpen(false)}
+                />
             )}
         </div>
     );
