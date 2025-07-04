@@ -23,17 +23,7 @@ const Header = ({ stars, factionFilter, setFactionFilter, starTypeFilter, setSta
                         <option key={faction} value={faction}>{faction}</option>
                     ))}
                 </select>
-                <button
-                    onClick={() => {
-                        if (confirm("Are you sure you want to reset the galaxy?")) {
-                            localStorage.clear();
-                            location.reload(); // full reload to regenerate
-                        }
-                    }}
-                    className="ml-4 px-2 py-1 bg-red-600 text-white text-xs rounded hover:bg-red-700"
-                >
-                    Reset Galaxy
-                </button>
+               
             </div>
         </header>
     );

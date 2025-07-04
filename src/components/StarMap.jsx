@@ -239,7 +239,7 @@ const StarMap = ({
             />
             <div className="flex flex-row flex-1 overflow-hidden">
                 <Sidebar selectedStar={selectedStar} onMapClick={() => { }} />
-                <div className="flex flex-1 items-center justify-center relative">
+                <div className="flex flex-1 items-center justify-center relative" >
                     <canvas
                         ref={canvasRef}
                         className="bg-black cursor-pointer w-full h-full block"
