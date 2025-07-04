@@ -1,10 +1,11 @@
 import { generateMineral } from '@utils/mineralUtils';
-import { Crown, Droplet, Factory, FlaskConical, MapPin, Radiation, ThermometerSnowflake, ThermometerSun, Wind } from 'lucide-react';
+import { Crown, Diameter, Droplet, Earth, Factory, FlaskConical, LandPlot, MapPin, Radiation, ThermometerSnowflake, ThermometerSun, Wind } from 'lucide-react';
 import { useMemo, useState } from 'react';
 
 const PlanetPanel = ({ planet, factionColor, onMapClick }) => {
     const [open, setOpen] = useState(false);
 
+    //--- Build the list of resources.
     const resourceList = useMemo(() => {
         const resources = [];
         const count = Math.floor(Math.random() * 3) + 2;
@@ -33,7 +34,18 @@ const PlanetPanel = ({ planet, factionColor, onMapClick }) => {
             </button>
 
             {open && (
-                <div className="ml-4 mt-1 space-y-2 pb-20">
+                <div className="ml-4 mt-1 space-y-2 pb-5">
+                    <div>
+                        <div className="flex items-center gap-1 text-orange-400 font-bold"  >
+                            <Earth className="w-4 h-4" /> Planetary Details
+                        </div>
+                        <ul className="ml-4 list-disc text-gray-200 text-sm">
+                            <li><LandPlot className="inline w-4 h-4 mr-1 text-gray-400" /><strong>Type:</strong> {planet.type}</li>
+                            <li><Diameter className="inline w-4 h-4 mr-1 text-gray-400" /><strong>Size:</strong> {planet.size > 6 ? 'Large' : planet.size > 3 ? 'Medium' : 'Small'}</li>
+                        </ul>
+
+                    </div>
+
                     {/* Economy */}
                     {planet.economy && (
                         <div>
@@ -44,8 +56,6 @@ const PlanetPanel = ({ planet, factionColor, onMapClick }) => {
                             <p className="ml-4 text-xs text-gray-400 italic">{planet.economy.description}</p>
                         </div>
                     )}
-
-                    {/* <p className="text-sm text-gray-300">Planetary Size: {planet.size > 6 ? 'Large' : planet.size > 3 ? 'Medium' : 'Small'}</p> */}
 
                     {/* Settlements */}
                     {planet.settlements && (
@@ -103,7 +113,7 @@ const PlanetPanel = ({ planet, factionColor, onMapClick }) => {
 
 const Sidebar = ({ selectedStar, onMapClick }) => {
     return (
-        <div className="w-1/4 bg-gray-900 text-white font-mono p-4 h-screen overflow-y-auto shadow-[0_0-10px_#0f0]">
+        <div className="w-1/4 bg-gray-900 text-white font-mono p-4 h-screen overflow-y-auto shadow-[0_0-10px_#0f0] pb-50">
             {selectedStar ? (
                 <div>
                     <div className="flex items-center mb-2">

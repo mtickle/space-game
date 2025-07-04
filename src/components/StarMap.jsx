@@ -1,6 +1,7 @@
 // StarMap.jsx
 import { useEffect, useRef, useState } from 'react';
 import { generatePlanets } from '../utils/planetUtils';
+import Footer from './Footer';
 import Header from './Header';
 import Sidebar from './Sidebar';
 
@@ -77,11 +78,12 @@ const StarMap = ({
             // Only draw orbits and planets for the selected star
             if (selectedStar?.name === star.name && star.planets) {
                 star.planets.forEach((planet) => {
+
                     // Orbit ring
                     ctx.beginPath();
                     ctx.arc(star.x, star.y, planet.orbitRadius, 0, Math.PI * 2);
                     ctx.strokeStyle = planet.color + '33';
-                    ctx.lineWidth = 0.5 / scale;
+                    ctx.lineWidth = .5 / scale;
                     ctx.stroke();
 
                     // Planet dot (animated position)
@@ -89,7 +91,10 @@ const StarMap = ({
                     const px = star.x + Math.cos(planet.angle) * planet.orbitRadius;
                     const py = star.y + Math.sin(planet.angle) * planet.orbitRadius;
                     ctx.beginPath();
-                    ctx.arc(px, py, planet.size ?? 1.5, 0, Math.PI * 2);
+                    //ctx.arc(px, py, planet.size ?? 1.5, 0, Math.PI * 2);
+                    const renderSize = Math.min(planet.size ?? 1.5, 4);
+                    ctx.arc(px, py, renderSize, 0, Math.PI * 2);
+
                     ctx.fillStyle = planet.color;
                     ctx.fill();
                 });
@@ -193,21 +198,9 @@ const StarMap = ({
                     />
                 </div>
             </div>
-            <div className="bg-black bg-opacity-90 border-t-2 border-green-500 p-2 flex justify-between items-center text-sm text-green-400">
-                <div>
-                    Coordinates: ({Math.round(offsetX)}, {Math.round(offsetY)}) | Zoom: {scale.toFixed(2)}x | Total Systems: {stars.length}
-                </div>
-                <button
-                    className="underline text-green-400 hover:text-green-200 transition-colors"
-                    onClick={() => {
-                        setOffsetX(0);
-                        setOffsetY(0);
-                    }}
-                >
-                    Return to (0,0)
-                </button>
-            </div>
+            <Footer offsetX={offsetX} offsetY={offsetY} scale={scale} stars={stars} setOffsetX={setOffsetX} setOffsetY={setOffsetY} />
         </div>
+
     );
 };
 

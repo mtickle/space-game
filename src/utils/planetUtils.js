@@ -56,7 +56,7 @@ import { economyNames } from './economyUtils.js';
 
 // Generate planetary system (updated for inhabited planets, settlements, population, random capital, and economy)
 export const generatePlanets = (starName) => {
-    console.log('Generating planets for star:', starName);
+    //console.log('Generating planets for star:', starName);
 
     const numPlanets = Math.floor(Math.random() * 5) + 2; // 2–6 planets
     const planets = [];

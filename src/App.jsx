@@ -19,6 +19,8 @@ const App = () => {
     scale,
   });
 
+
+
   return (
     <div className="bg-black w-fill h-fill">
       <Routes>
