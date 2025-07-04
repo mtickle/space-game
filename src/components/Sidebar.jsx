@@ -1,4 +1,4 @@
-
+// Updated Sidebar.jsx with Home System Button
 import { generateMineral } from '@utils/mineralUtils';
 import { Crown, Diameter, Droplet, Earth, Factory, FlaskConical, LandPlot, MapPin, MapPlus, Radiation, ThermometerSnowflake, ThermometerSun, Wind } from 'lucide-react';
 import { useMemo, useState } from 'react';
@@ -49,7 +49,6 @@ const PlanetPanel = ({ planet, factionColor, onMapClick }) => {
                         </ul>
                     </div>
 
-                    {/* Economy */}
                     {planet.economy && (
                         <div>
                             <div className="flex items-center gap-1 text-orange-400 font-bold">
@@ -60,7 +59,6 @@ const PlanetPanel = ({ planet, factionColor, onMapClick }) => {
                         </div>
                     )}
 
-                    {/* Settlements */}
                     {planet.settlements && (
                         <div>
                             <div className="flex items-center gap-1 text-orange-400 font-bold">
@@ -75,14 +73,12 @@ const PlanetPanel = ({ planet, factionColor, onMapClick }) => {
                                             <MapPin className="inline w-4 h-4 mr-1 text-gray-400" />
                                         )}
                                         {s.name} (Pop: {s.population.toLocaleString()})
-
                                     </li>
                                 ))}
                             </ul>
                         </div>
                     )}
 
-                    {/* Resources */}
                     <div>
                         <div className="flex items-center gap-1 text-orange-400 font-bold">
                             <FlaskConical className="w-4 h-4" /> Resources
@@ -92,7 +88,6 @@ const PlanetPanel = ({ planet, factionColor, onMapClick }) => {
                         </ul>
                     </div>
 
-                    {/* Conditions */}
                     <div>
                         <div className="flex items-center gap-1 text-orange-400 font-bold">
                             <Radiation className="w-4 h-4" /> Conditions
@@ -115,9 +110,9 @@ const PlanetPanel = ({ planet, factionColor, onMapClick }) => {
 const Sidebar = ({ selectedStar }) => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [selectedPlanet, setSelectedPlanet] = useState(null);
+    const home = JSON.parse(localStorage.getItem('homeSystem') || '{}');
 
     const handleMapClick = (planet) => {
-        console.log(`Clicked on planet: ${planet.name}`);
         setSelectedPlanet(planet);
         setIsModalOpen(true);
     };
@@ -128,13 +123,45 @@ const Sidebar = ({ selectedStar }) => {
                 <div>
                     <div className="flex items-center mb-2">
                         <div className="w-6 h-6 rounded-full mr-3" style={{ backgroundColor: selectedStar.faction?.color || '#FFFFFF' }}></div>
-                        <h2 className="text-2xl font-bold text-yellow-400">{selectedStar.name}</h2>
+                        <h2 className="text-2xl font-bold text-yellow-400">
+                            {selectedStar.name}
+                            {selectedStar.name === home.name && (
+                                <span className="ml-2 text-green-400 text-sm">(Home)</span>
+                            )}
+                        </h2>
                     </div>
                     <p className="text-green-400"><strong>Type:</strong> {selectedStar.type}</p>
                     <p className="text-green-400"><strong>Temperature:</strong> {selectedStar.temp}</p>
                     <p className="text-green-400"><strong>Faction:</strong> {selectedStar.faction?.name || 'Unknown'}</p>
                     <p className="text-green-400"><strong>Symbol:</strong> {selectedStar.faction?.symbol || 'N/A'}</p>
                     <p className="mt-2 text-base text-gray-300">{selectedStar.description}</p>
+
+                    {selectedStar.name === home.name ? (
+                        <button
+                            onClick={() => {
+                                localStorage.removeItem('homeSystem');
+                                alert(`Home system cleared.`);
+                            }}
+                            className="mt-3 px-2 py-1 bg-gray-700 text-white text-xs rounded hover:bg-gray-600"
+                        >
+                            Unset Home System
+                        </button>
+                    ) : (
+                        <button
+                            onClick={() => {
+                                localStorage.setItem('homeSystem', JSON.stringify({
+                                    name: selectedStar.name,
+                                    x: selectedStar.x,
+                                    y: selectedStar.y
+                                }));
+                                alert(`${selectedStar.name} is now your home system.`);
+                            }}
+                            className="mt-3 px-2 py-1 bg-blue-600 text-white text-xs rounded hover:bg-blue-700"
+                        >
+                            Set as Home System
+                        </button>
+                    )}
+
 
                     <div className="mt-4">
                         <h3 className="text-lg font-bold text-yellow-400">Planetary System</h3>

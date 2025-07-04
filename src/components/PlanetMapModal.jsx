@@ -46,8 +46,11 @@ const PlanetMapModal = ({ planet, onClose }) => {
 
         planet.settlements?.forEach((settlement, index) => {
             if (!settlement.mapX || !settlement.mapY) {
-                settlement.mapX = Math.random() * (width - 20) + 10;
-                settlement.mapY = Math.random() * (height - 20) + 10;
+                // Generate coordinates within the circle using polar coordinates
+                const angle = Math.random() * Math.PI * 2; // Random angle (0 to 2π)
+                const radius = Math.random() * (width / 2 - 20); // Random radius up to circle's edge minus a buffer
+                settlement.mapX = width / 2 + radius * Math.cos(angle); // Center + offset
+                settlement.mapY = height / 2 + radius * Math.sin(angle);
                 updated = true;
             }
             const x = settlement.mapX;
@@ -59,7 +62,7 @@ const PlanetMapModal = ({ planet, onClose }) => {
             ctx.fill();
             ctx.fillStyle = '#000000';
             ctx.font = '14px monospace';
-            ctx.fillText(settlement.name + (settlement.isCapital ? ' *' : ''), x - 25, y - 7);
+            ctx.fillText(settlement.name, x - 25, y - 7);
         });
 
         if (updated) {
