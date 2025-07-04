@@ -2,6 +2,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { getStarTooltip, saveStarToLocalStorage } from '../hooks/useLazyStarField';
 import { generatePlanets } from '../utils/planetUtils';
+import AdminPanel from './AdminPanel';
 import Footer from './Footer';
 import Header from './Header';
 import Sidebar from './Sidebar';
@@ -252,7 +253,7 @@ const StarMap = ({
                     />
                 </div>
             </div>
-            {/* <VisitedSystemsPanel stars={stars} /> */}
+            <AdminPanel stars={stars} />
             <Footer offsetX={offsetX} offsetY={offsetY} scale={scale} stars={stars} setOffsetX={setOffsetX} setOffsetY={setOffsetY} />
         </div>
     );
