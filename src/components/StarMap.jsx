@@ -1,4 +1,5 @@
 // StarMap.jsx
+
 import { useEffect, useRef, useState } from 'react';
 import { getStarTooltip, saveStarToLocalStorage } from '../hooks/useLazyStarField';
 import { generatePlanets } from '../utils/planetUtils';
@@ -123,7 +124,7 @@ const StarMap = ({
             ctx.save();
             ctx.font = '12px monospace';
             ctx.fillStyle = 'rgba(0,0,0,0.8)';
-            const text = `★ ${tooltip.name} | ${tooltip.type} | ${tooltip.faction} | ${tooltip.planets} planets`;
+            const text = `★ ${tooltip.name} | ${tooltip.faction} | ${tooltip.planets} planets`;
             const metrics = ctx.measureText(text);
             ctx.fillRect(hoveredStar.clientX + 10, hoveredStar.clientY - 10, metrics.width + 10, 20);
             ctx.fillStyle = '#00ff88';
@@ -239,7 +240,7 @@ const StarMap = ({
             />
             <div className="flex flex-row flex-1 overflow-hidden">
                 <Sidebar selectedStar={selectedStar} onMapClick={() => { }} />
-                <div className="flex flex-1 items-center justify-center relative" >
+                <div className="flex flex-1 items-center justify-center relative">
                     <canvas
                         ref={canvasRef}
                         className="bg-black cursor-pointer w-full h-full block"

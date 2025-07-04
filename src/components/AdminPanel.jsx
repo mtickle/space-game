@@ -14,7 +14,7 @@ const AdminPanel = ({ stars }) => {
             </button>
 
             {open && (
-                <div className="w-72 h-full bg-gray-900 border-l-2 border-green-500 p-4 overflow-y-auto text-green-300 font-mono shadow-xl">
+                <div className="w-80 h-full bg-gray-900 border-l-2 border-green-500 p-4 overflow-y-auto text-green-300 font-mono shadow-xl">
                     <h2 className="text-lg text-yellow-400 font-bold mb-4">Galactic Ops</h2>
                     <button
                         onClick={() => {
