@@ -11,6 +11,8 @@ const PlanetMapModal = ({ planet, onClose }) => {
         const ctx = canvas.getContext('2d');
         const width = 500;
         const height = 500;
+        const minDistance = 30; // Minimum distance between settlements
+        const maxAttempts = 100; // Maximum attempts to reposition a settlement
 
         canvas.width = width;
         canvas.height = height;
@@ -44,14 +46,50 @@ const PlanetMapModal = ({ planet, onClose }) => {
         ctx.fillStyle = gradients[planet.type] || gradients['Rocky'];
         ctx.fill();
 
+        // Function to check if two settlements are too close
+        const isTooClose = (x1, y1, x2, y2, minDist) => {
+            const dx = x1 - x2;
+            const dy = y1 - y2;
+            return Math.sqrt(dx * dx + dy * dy) < minDist;
+        };
+
+        // Function to check if a point is within the planet's circular boundary
+        const isWithinBounds = (x, y, centerX, centerY, maxRadius) => {
+            const dx = x - centerX;
+            const dy = y - centerY;
+            return Math.sqrt(dx * dx + dy * dy) <= maxRadius;
+        };
+
+        // Assign coordinates to settlements
         planet.settlements?.forEach((settlement, index) => {
             if (!settlement.mapX || !settlement.mapY) {
-                // Generate coordinates within the circle using polar coordinates
-                const angle = Math.random() * Math.PI * 2; // Random angle (0 to 2π)
-                const radius = Math.random() * (width / 2 - 20); // Random radius up to circle's edge minus a buffer
-                settlement.mapX = width / 2 + radius * Math.cos(angle); // Center + offset
-                settlement.mapY = height / 2 + radius * Math.sin(angle);
-                updated = true;
+                let attempts = 0;
+                let x, y;
+                do {
+                    const angle = Math.random() * Math.PI * 2;
+                    const radius = Math.random() * (width / 2 - 20);
+                    x = width / 2 + radius * Math.cos(angle);
+                    y = height / 2 + radius * Math.sin(angle);
+                    attempts++;
+                    // Check against all previously placed settlements
+                    const overlaps = planet.settlements.some((other, i) => {
+                        if (i >= index || !other.mapX || !other.mapY) return false;
+                        return isTooClose(x, y, other.mapX, other.mapY, minDistance);
+                    });
+                    if (!overlaps && isWithinBounds(x, y, width / 2, height / 2, width / 2 - 20)) {
+                        settlement.mapX = x;
+                        settlement.mapY = y;
+                        updated = true;
+                        break;
+                    }
+                } while (attempts < maxAttempts);
+                if (attempts >= maxAttempts) {
+                    console.warn(`Could not place settlement ${settlement.name} without overlap`);
+                    // Fallback: Place at a default position
+                    settlement.mapX = width / 2;
+                    settlement.mapY = height / 2;
+                    updated = true;
+                }
             }
             const x = settlement.mapX;
             const y = settlement.mapY;
@@ -62,7 +100,7 @@ const PlanetMapModal = ({ planet, onClose }) => {
             ctx.fill();
             ctx.fillStyle = '#000000';
             ctx.font = '14px monospace';
-            ctx.fillText(settlement.name, x - 25, y - 7);
+            ctx.fillText(settlement.name, x + 10, y + 5);
         });
 
         if (updated) {
@@ -87,7 +125,7 @@ const PlanetMapModal = ({ planet, onClose }) => {
             <div className="bg-gray-900 p-4 rounded-lg shadow-[0_0-10px_#0f0] relative">
                 <button onClick={onClose} className="absolute top-2 right-2 text-red-400 hover:text-red-300">X</button>
                 <h3 className="text-xl font-bold text-yellow-400 mb-2">{planet.name} Map</h3>
-                <canvas ref={canvasRef} className="border-2 border-green-500 rounded-full" />
+                <canvas ref={canvasRef} className="border-2 border-black rounded-full" />
             </div>
         </div>
     );

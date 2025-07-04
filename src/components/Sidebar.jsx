@@ -41,9 +41,9 @@ const PlanetPanel = ({ planet, factionColor, onMapClick }) => {
                             <Earth className="w-4 h-4" /> Planetary Details
                         </div>
                         <ul className="ml-4 list-disc text-gray-200 text-sm">
-                            <li><LandPlot className="inline w-4 h-4 mr-1 text-gray-400" /><strong>Type:</strong> {planet.type}</li>
-                            <li><Diameter className="inline w-4 h-4 mr-1 text-gray-400" /><strong>Size:</strong> {planet.size > 6 ? 'Large' : planet.size > 3 ? 'Medium' : 'Small'}</li>
-                            <li><MapPlus className="inline w-4 h-4 mr-1 text-gray-400" /><strong>Map:</strong><button onClick={() => onMapClick(planet)} className="ml-2 text-green-400 hover:text-green-300">
+                            <li><LandPlot className="inline w-4 h-4 mr-1 text-red-400" /><strong>Type:</strong> {planet.type}</li>
+                            <li><Diameter className="inline w-4 h-4 mr-1 text-red-400" /><strong>Size:</strong> {planet.size > 6 ? 'Large' : planet.size > 3 ? 'Medium' : 'Small'}</li>
+                            <li><MapPlus className="inline w-4 h-4 mr-1 text-red-400" /><strong>Map:</strong><button onClick={() => onMapClick(planet)} className="ml-2 text-green-400 hover:text-green-300">
                                 Open Map
                             </button></li>
                         </ul>
