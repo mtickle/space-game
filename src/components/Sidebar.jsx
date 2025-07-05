@@ -4,12 +4,6 @@ import { useHomeSystem } from '../hooks/useHomeSystem'; // adjust path as needed
 import PlanetMapModal from './PlanetMapModal';
 import PlanetPanel from './PlanetPanel'; // adjust path as needed
 
-
-
-
-
-
-
 const Sidebar = ({ selectedStar }) => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [selectedPlanet, setSelectedPlanet] = useState(null);

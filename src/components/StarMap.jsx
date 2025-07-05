@@ -1,12 +1,16 @@
 // StarMap.jsx
 
+//--- Welcome to the StarMap component! 
+//--- This component renders a star map with interactive features like zooming, dragging, and selecting stars. 
+//--- It also includes a sidebar for star details and an admin panel for additional functionalities.
+
+import AdminPanel from '@components/AdminPanel';
+import Sidebar from '@components/Sidebar';
+import { getStarTooltip, saveStarToLocalStorage } from '@hooks/useLazyStarField';
 import Footer from '@layouts/Footer';
 import Header from '@layouts/Header';
+import { generatePlanets } from '@utils/planetUtils';
 import { useEffect, useRef, useState } from 'react';
-import { getStarTooltip, saveStarToLocalStorage } from '../hooks/useLazyStarField';
-import { generatePlanets } from '../utils/planetUtils';
-import AdminPanel from './AdminPanel';
-import Sidebar from './Sidebar';
 
 const StarMap = ({
     stars,
@@ -30,6 +34,7 @@ const StarMap = ({
     const [selectedPlanet, setSelectedPlanet] = useState(null);
     const animationFrameRef = useRef(null);
 
+    //--- This effect sets the initial canvas size and listens for window resize events to adjust the canvas size dynamically.
     useEffect(() => {
         const canvas = canvasRef.current;
         const container = canvas.parentElement;
@@ -45,6 +50,7 @@ const StarMap = ({
         return () => resizeObserver.unobserve(container);
     }, [setCanvasSize]);
 
+    //--- This function draws the star map scene, including stars, planets, and tooltips.
     const drawScene = () => {
         const canvas = canvasRef.current;
         if (!canvas) return;
@@ -148,12 +154,6 @@ const StarMap = ({
         setDragStart({ x: e.clientX, y: e.clientY });
     };
 
-    // const goToSystem = (star) => {
-    //     setOffsetX(-star.x);
-    //     setOffsetY(-star.y);
-    //     setSelectedStar(star);
-    // };
-
     const goToSystem = (targetStar) => {
         const duration = 600; // ms
         const frameRate = 60;
@@ -184,7 +184,6 @@ const StarMap = ({
 
         requestAnimationFrame(animate);
     };
-
 
     const handleMouseMove = (e) => {
         const canvas = canvasRef.current;
@@ -291,7 +290,7 @@ const StarMap = ({
                 </div>
             </div>
             <AdminPanel stars={stars} goToSystem={goToSystem} />
-            <Footer offsetX={offsetX} offsetY={offsetY} scale={scale} stars={stars} setOffsetX={setOffsetX} setOffsetY={setOffsetY} />
+            <Footer offsetX={offsetX} offsetY={offsetY} scale={scale} stars={stars} setOffsetX={setOffsetX} setOffsetY={setOffsetY} goToSystem={goToSystem} />
         </div>
     );
 };

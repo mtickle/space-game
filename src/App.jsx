@@ -9,6 +9,7 @@ const App = () => {
   const [scale, setScale] = useState(1);
   const [canvasSize, setCanvasSize] = useState({ width: 1200, height: 800 });
 
+  //--- This hook generates a lazy-loaded star field based on the current offset and scale.
   const stars = useLazyStarField({
     offsetX,
     offsetY,
