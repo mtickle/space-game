@@ -1,8 +1,6 @@
 // App.jsx
 import StarMap from '@components/StarMap';
-import SystemView from '@components/SystemView';
 import { useState } from 'react';
-import { Route, Routes } from 'react-router-dom';
 import { useLazyStarField } from './hooks/useLazyStarField';
 
 const App = () => {
@@ -19,28 +17,18 @@ const App = () => {
     scale,
   });
 
-
-
   return (
     <div className="bg-black w-fill h-fill">
-      <Routes>
-        <Route
-          path="/"
-          element={
-            <StarMap
-              stars={stars}
-              offsetX={offsetX}
-              setOffsetX={setOffsetX}
-              offsetY={offsetY}
-              setOffsetY={setOffsetY}
-              scale={scale}
-              setScale={setScale}
-              setCanvasSize={setCanvasSize}
-            />
-          }
-        />
-        <Route path="/system/:starName" element={<SystemView stars={stars} />} />
-      </Routes>
+      <StarMap
+        stars={stars}
+        offsetX={offsetX}
+        setOffsetX={setOffsetX}
+        offsetY={offsetY}
+        setOffsetY={setOffsetY}
+        scale={scale}
+        setScale={setScale}
+        setCanvasSize={setCanvasSize}
+      />
     </div>
   );
 };

@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import VisitedSystemsPanel from './VisitedSystemsPanel';
 
-const AdminPanel = ({ stars }) => {
+const AdminPanel = ({ stars, goToSystem }) => {
     const [open, setOpen] = useState(false);
 
     return (
@@ -27,7 +27,7 @@ const AdminPanel = ({ stars }) => {
                     >
                         Reset Galaxy
                     </button>
-                    <VisitedSystemsPanel stars={stars} />
+                    <VisitedSystemsPanel stars={stars} goToSystem={goToSystem} />
 
                     {/* Future: Add more panels here */}
                 </div>

@@ -1,11 +1,11 @@
 // StarMap.jsx
 
+import Footer from '@layouts/Footer';
+import Header from '@layouts/Header';
 import { useEffect, useRef, useState } from 'react';
 import { getStarTooltip, saveStarToLocalStorage } from '../hooks/useLazyStarField';
 import { generatePlanets } from '../utils/planetUtils';
 import AdminPanel from './AdminPanel';
-import Footer from './Footer';
-import Header from './Header';
 import Sidebar from './Sidebar';
 
 const StarMap = ({
@@ -18,6 +18,7 @@ const StarMap = ({
     setScale,
     setCanvasSize,
 }) => {
+
     const canvasRef = useRef(null);
     const [selectedStar, setSelectedStar] = useState(null);
     const [hoveredStar, setHoveredStar] = useState(null);
@@ -147,6 +148,44 @@ const StarMap = ({
         setDragStart({ x: e.clientX, y: e.clientY });
     };
 
+    // const goToSystem = (star) => {
+    //     setOffsetX(-star.x);
+    //     setOffsetY(-star.y);
+    //     setSelectedStar(star);
+    // };
+
+    const goToSystem = (targetStar) => {
+        const duration = 600; // ms
+        const frameRate = 60;
+        const steps = Math.round((duration / 1000) * frameRate);
+        const startX = offsetX;
+        const startY = offsetY;
+        const deltaX = -targetStar.x - startX;
+        const deltaY = -targetStar.y - startY;
+
+        let currentStep = 0;
+
+        const animate = () => {
+            currentStep++;
+            const t = currentStep / steps;
+            const ease = t < 0.5
+                ? 2 * t * t
+                : -1 + (4 - 2 * t) * t; // easeInOutQuad
+
+            setOffsetX(startX + deltaX * ease);
+            setOffsetY(startY + deltaY * ease);
+
+            if (currentStep < steps) {
+                requestAnimationFrame(animate);
+            } else {
+                setSelectedStar(targetStar);
+            }
+        };
+
+        requestAnimationFrame(animate);
+    };
+
+
     const handleMouseMove = (e) => {
         const canvas = canvasRef.current;
         const rect = canvas.getBoundingClientRect();
@@ -203,9 +242,6 @@ const StarMap = ({
                     visited.push(clickedStar.name);
                     localStorage.setItem('visitedStars', JSON.stringify(visited));
                 }
-            } else {
-                setSelectedStar(null);
-                setSelectedPlanet(null);
             }
         }
     };
@@ -254,7 +290,7 @@ const StarMap = ({
                     />
                 </div>
             </div>
-            <AdminPanel stars={stars} />
+            <AdminPanel stars={stars} goToSystem={goToSystem} />
             <Footer offsetX={offsetX} offsetY={offsetY} scale={scale} stars={stars} setOffsetX={setOffsetX} setOffsetY={setOffsetY} />
         </div>
     );
