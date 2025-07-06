@@ -23,6 +23,12 @@ export const useGalaxyStore = create(
             setOffset: (x, y) => set({ offsetX: x, offsetY: y }),
             setScale: (scale) => set({ scale }),
 
+            adjustOffset: (dx, dy) => {
+                const { offsetX, offsetY } = get();
+                set({ offsetX: offsetX + dx, offsetY: offsetY + dy });
+            },
+
+
             setSelectedStar: (star) => {
                 const visited = get().visitedStars;
                 if (!visited.includes(star.name)) {

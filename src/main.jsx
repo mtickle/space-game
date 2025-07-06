@@ -5,8 +5,6 @@ import ReactDOM from 'react-dom/client';
 import App from './App';
 import './App.css';
 
-// const domain = 'dev-73y3t7dwltn1cjsd.us.auth0.com';
-// const clientId = 'JPs0srQOGtPWv8Jg2DPL96xdx68QSriP';
 
 // auth_config.js or useAuth.js
 export const authConfig = {
