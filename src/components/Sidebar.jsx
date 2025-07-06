@@ -54,20 +54,19 @@ const Sidebar = ({ selectedStar }) => {
                         </button>
                     )}
 
-
-
-
-                    <div className="mt-4">
-                        <h3 className="text-lg font-bold text-yellow-400">Planetary System</h3>
-                        {selectedStar.planets.map((planet, index) => (
-                            <PlanetPanel
-                                key={index}
-                                planet={planet}
-                                factionColor={selectedStar.faction?.color || '#FFFFFF'}
-                                onMapClick={handleMapClick}
-                            />
-                        ))}
-                    </div>
+                    {Array.isArray(selectedStar.planets) && (
+                        <div className="mt-4">
+                            <h3 className="text-lg font-bold text-yellow-400">Planetary System</h3>
+                            {selectedStar.planets.map((planet, index) => (
+                                <PlanetPanel
+                                    key={index}
+                                    planet={planet}
+                                    factionColor={selectedStar.faction?.color || '#FFFFFF'}
+                                    onMapClick={handleMapClick}
+                                />
+                            ))}
+                        </div>
+                    )}
                 </div>
             ) : (
                 <div>

@@ -11,6 +11,7 @@ import Footer from '@layouts/Footer';
 import Header from '@layouts/Header';
 import { generatePlanets } from '@utils/planetUtils';
 import { useEffect, useRef, useState } from 'react';
+//const { loginWithRedirect, logout, isAuthenticated, user, isLoading } = useAuth0();
 
 const StarMap = ({
     stars,
@@ -155,13 +156,16 @@ const StarMap = ({
     };
 
     const goToSystem = (targetStar) => {
-        const duration = 600; // ms
+        const fullStar = stars.find(s => s.name === targetStar.name);
+        if (!fullStar) return;
+
+        const duration = 600;
         const frameRate = 60;
         const steps = Math.round((duration / 1000) * frameRate);
         const startX = offsetX;
         const startY = offsetY;
-        const deltaX = -targetStar.x - startX;
-        const deltaY = -targetStar.y - startY;
+        const deltaX = -fullStar.x - startX;
+        const deltaY = -fullStar.y - startY;
 
         let currentStep = 0;
 
@@ -170,7 +174,7 @@ const StarMap = ({
             const t = currentStep / steps;
             const ease = t < 0.5
                 ? 2 * t * t
-                : -1 + (4 - 2 * t) * t; // easeInOutQuad
+                : -1 + (4 - 2 * t) * t;
 
             setOffsetX(startX + deltaX * ease);
             setOffsetY(startY + deltaY * ease);
@@ -178,7 +182,15 @@ const StarMap = ({
             if (currentStep < steps) {
                 requestAnimationFrame(animate);
             } else {
-                setSelectedStar(targetStar);
+                // Ensure planets are loaded
+                if (!fullStar.planets || fullStar.planets.length === 0) {
+                    fullStar.planets = generatePlanets(fullStar.name);
+                    fullStar.planets.forEach(p => {
+                        p.angle = p.angle ?? Math.random() * Math.PI * 2;
+                    });
+                }
+
+                setSelectedStar(fullStar);
             }
         };
 
@@ -273,6 +285,7 @@ const StarMap = ({
                 starTypeFilter={starTypeFilter}
                 setStarTypeFilter={setStarTypeFilter}
             />
+
             <div className="flex flex-row flex-1 overflow-hidden">
                 <Sidebar selectedStar={selectedStar} onMapClick={() => { }} />
                 <div className="flex flex-1 items-center justify-center relative">

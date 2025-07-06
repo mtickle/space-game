@@ -1,16 +1,34 @@
+import { Auth0Provider } from '@auth0/auth0-react';
 import ErrorBoundary from '@components/ErrorBoundary';
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import { BrowserRouter } from 'react-router-dom';
 import App from './App';
 import './App.css';
 
+// const domain = 'dev-73y3t7dwltn1cjsd.us.auth0.com';
+// const clientId = 'JPs0srQOGtPWv8Jg2DPL96xdx68QSriP';
+
+// auth_config.js or useAuth.js
+export const authConfig = {
+  domain: import.meta.env.VITE_AUTH0_DOMAIN,
+  clientId: import.meta.env.VITE_AUTH0_CLIENT_ID,
+};
+
+
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
-    <BrowserRouter basename="/space-game">
+    <Auth0Provider
+      domain={authConfig.domain}
+      clientId={authConfig.clientId}
+      authorizationParams={{
+        redirect_uri: window.location.origin,
+      }}
+      cacheLocation="localstorage"
+      useRefreshTokens={true}
+    >
       <ErrorBoundary>
         <App />
       </ErrorBoundary>
-    </BrowserRouter>
+    </Auth0Provider>
   </React.StrictMode>
 );
