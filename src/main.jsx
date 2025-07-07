@@ -5,13 +5,11 @@ import ReactDOM from 'react-dom/client';
 import App from './App';
 import './App.css';
 
-
 // auth_config.js or useAuth.js
 export const authConfig = {
   domain: import.meta.env.VITE_AUTH0_DOMAIN,
   clientId: import.meta.env.VITE_AUTH0_CLIENT_ID,
 };
-
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
