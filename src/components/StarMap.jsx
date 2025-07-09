@@ -34,6 +34,7 @@ const StarMap = ({
     const [starTypeFilter, setStarTypeFilter] = useState('All');
     const [selectedPlanet, setSelectedPlanet] = useState(null);
     const animationFrameRef = useRef(null);
+    const [showVisited, setShowVisited] = useState(false);
 
     //--- This effect sets the initial canvas size and listens for window resize events to adjust the canvas size dynamically.
     useEffect(() => {
@@ -197,6 +198,36 @@ const StarMap = ({
         requestAnimationFrame(animate);
     };
 
+    const goToZeroCommaZero = () => {
+        const duration = 600;
+        const frameRate = 60;
+        const steps = Math.round((duration / 1000) * frameRate);
+        const startX = offsetX;
+        const startY = offsetY;
+        const deltaX = -startX;
+        const deltaY = -startY;
+
+        let currentStep = 0;
+
+        const animate = () => {
+            currentStep++;
+            const t = currentStep / steps;
+            const ease = t < 0.5
+                ? 2 * t * t
+                : -1 + (4 - 2 * t) * t;
+
+            setOffsetX(startX + deltaX * ease);
+            setOffsetY(startY + deltaY * ease);
+
+            if (currentStep < steps) {
+                requestAnimationFrame(animate);
+            }
+        };
+
+        requestAnimationFrame(animate);
+    };
+
+
     const handleMouseMove = (e) => {
         const canvas = canvasRef.current;
         const rect = canvas.getBoundingClientRect();
@@ -303,7 +334,17 @@ const StarMap = ({
                 </div>
             </div>
             <AdminPanel stars={stars} goToSystem={goToSystem} />
-            <Footer offsetX={offsetX} offsetY={offsetY} scale={scale} stars={stars} setOffsetX={setOffsetX} setOffsetY={setOffsetY} goToSystem={goToSystem} />
+            <Footer
+                offsetX={offsetX}
+                offsetY={offsetY}
+                scale={scale}
+                stars={stars}
+                setOffsetX={setOffsetX}
+                setOffsetY={setOffsetY}
+                goToSystem={goToSystem}
+                goToZeroCommaZero={goToZeroCommaZero}
+                setShowVisited={setShowVisited}
+                showVisited={showVisited} />
         </div>
     );
 };
