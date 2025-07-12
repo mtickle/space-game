@@ -1,5 +1,3 @@
-// hooks/useLazyStarField.js
-
 import { useEffect, useRef, useState } from 'react';
 import { generateStarSystem } from '../utils/systemUtils';
 
@@ -37,6 +35,22 @@ const mulberry32 = (a) => {
     };
 };
 
+// Compress star data to reduce storage size
+const compressStars = (stars) => {
+    return stars.map(star => ({
+        name: star.name,
+        x: star.x,
+        y: star.y,
+        size: star.size,
+        color: star.color,
+        type: star.type,
+        temp: star.temp,
+        faction: star.faction ? { name: star.faction.name, color: star.faction.color } : null,
+        // Minimal planets data
+        planets: star.planets ? star.planets.map(p => ({ name: p.name, orbitRadius: p.orbitRadius })) : []
+    }));
+};
+
 export const useLazyStarField = ({ offsetX, offsetY, canvasWidth, canvasHeight, scale, seed = 42 }) => {
     const [stars, setStars] = useState([]);
     const loadedSectors = useRef(new Set());
@@ -46,6 +60,16 @@ export const useLazyStarField = ({ offsetX, offsetY, canvasWidth, canvasHeight, 
         if (!canvasWidth || !canvasHeight) return;
 
         const visibleSectors = getVisibleSectors(offsetX, offsetY, canvasWidth, canvasHeight, scale);
+
+        // Clear unused sectors to free space
+        const currentSectors = new Set(visibleSectors);
+        loadedSectors.current.forEach(key => {
+            if (!currentSectors.has(key)) {
+                const [sx, sy] = key.split(',').map(Number);
+                localStorage.removeItem(`stars_sector_${sx}_${sy}`);
+                loadedSectors.current.delete(key);
+            }
+        });
 
         visibleSectors.forEach(key => {
             if (loadedSectors.current.has(key)) return;
@@ -67,7 +91,28 @@ export const useLazyStarField = ({ offsetX, offsetY, canvasWidth, canvasHeight, 
                             y: sy * SECTOR_SIZE + rng.current() * SECTOR_SIZE,
                         };
                     });
-                    localStorage.setItem(localKey, JSON.stringify(newStars));
+                    // Check quota before saving
+                    const checkStorage = () => {
+                        try {
+                            const testKey = 'testQuota';
+                            const testData = new Array(1024 * 1024).join('x'); // 1MB test
+                            localStorage.setItem(testKey, testData);
+                            localStorage.removeItem(testKey);
+                            return true;
+                        } catch (e) {
+                            return false;
+                        }
+                    };
+
+                    if (checkStorage()) {
+                        const compressedStars = compressStars(newStars);
+                        const dataString = JSON.stringify(compressedStars);
+                        if (dataString.length < 1024 * 1024 * 4) { // Approx 4MB limit per sector
+                            localStorage.setItem(localKey, dataString);
+                        } else {
+                            console.warn(`Sector ${localKey} exceeds 4MB, not saved. Consider reducing data or using IndexedDB.`);
+                        }
+                    }
                 }
             } catch (e) {
                 console.warn(`Error loading or generating sector ${localKey}:`, e);
@@ -79,18 +124,23 @@ export const useLazyStarField = ({ offsetX, offsetY, canvasWidth, canvasHeight, 
                         y: sy * SECTOR_SIZE + rng.current() * SECTOR_SIZE,
                     };
                 });
-                localStorage.setItem(localKey, JSON.stringify(newStars));
+                // Retry with compression
+                const compressedStars = compressStars(newStars);
+                localStorage.setItem(localKey, JSON.stringify(compressedStars)); // Try again, may still fail
             }
 
-            setStars(prev => [...prev, ...newStars]);
+            setStars(prev => {
+                const existing = prev.filter(s => {
+                    const [ex, ey] = getSectorKey(s.x, s.y).split(',').map(Number);
+                    return ex !== sx || ey !== sy;
+                });
+                return [...existing, ...newStars];
+            });
             loadedSectors.current.add(key);
         });
     }, [offsetX, offsetY, canvasWidth, canvasHeight, scale, seed]);
 
     return stars;
-
-    // Used to conditionally show planet animations on hover
-    // Can be integrated with draw loop in StarMap.jsx
 };
 
 // Utility to reset saved galaxy
@@ -102,7 +152,7 @@ export const clearStoredGalaxy = () => {
     });
 };
 
-// Tooltip interface skeleton (to be used in StarMap component or globally)
+// Tooltip interface skeleton
 export const getStarTooltip = (star) => {
     if (!star) return null;
     return {
@@ -118,10 +168,11 @@ export const getStarTooltip = (star) => {
 export const saveStarToLocalStorage = (star, allStars) => {
     const sx = Math.floor(star.x / SECTOR_SIZE);
     const sy = Math.floor(star.y / SECTOR_SIZE);
-    const localKey = `stars_sector_${sx},${sy}`;
+    const localKey = `stars_sector_${sx}_${sy}`;
     const sectorStars = allStars.filter(s => Math.floor(s.x / SECTOR_SIZE) === sx && Math.floor(s.y / SECTOR_SIZE) === sy);
     try {
-        localStorage.setItem(localKey, JSON.stringify(sectorStars));
+        const compressedStars = compressStars(sectorStars);
+        localStorage.setItem(localKey, JSON.stringify(compressedStars));
     } catch (e) {
         console.warn(`Error saving star to ${localKey}:`, e);
     }
