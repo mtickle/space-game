@@ -251,7 +251,6 @@ const StarMap = ({ stars, offsetX, setOffsetX, offsetY, setOffsetY, scale, setSc
                 offsetX={offsetX}
                 offsetY={offsetY}
                 scale={scale}
-                setScale={setScale}
                 stars={stars}
                 setOffsetX={setOffsetX}
                 setOffsetY={setOffsetY}
