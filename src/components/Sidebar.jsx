@@ -18,6 +18,8 @@ const Sidebar = ({ selectedStar }) => {
         setIsModalOpen(true);
     };
 
+    console.log(selectedStar)
+
     return (
         <div className="w-1/4 bg-gray-900 text-white font-mono p-4 h-screen overflow-y-auto shadow-[0_0-10px_#0f0] pb-50">
             {selectedStar ? (
@@ -94,7 +96,7 @@ const Sidebar = ({ selectedStar }) => {
 
             {showSystemMap && selectedStar && (
                 <StarSystemViewer
-                    star={selectedStar}
+                    starSystem={selectedStar}  // ✅ match expected prop name
                     onClose={() => setShowSystemMap(false)}
                 />
             )}
