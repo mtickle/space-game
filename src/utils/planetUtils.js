@@ -154,7 +154,7 @@ export function generateMoons(planetName, planetType) {
             settlements: isNamed ? generateMoonSettlements(name) : [],
         };
 
-        //console.log('[PlanetUtils] Generated moon ' + moon.name + '  for planet ' + planetName);
+        console.log('[PlanetUtils] Generated moon ' + moon.type + '  for planet ' + planetName);
         if (moon.settlements.length) {
             console.log(`[MoonDebug] 🛰 ${moon.name} has settlements:`, moon.settlements);
         }

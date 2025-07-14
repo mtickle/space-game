@@ -308,5 +308,30 @@ function generateMineral(planetType = null) {
     };
 }
 
+// mineralUtils.js
+
+const elementalOptions = [
+    { mineralName: 'Argon', elements: ['Ar'] },
+    { mineralName: 'Helium', elements: ['He'] },
+    { mineralName: 'Neon', elements: ['Ne'] },
+    { mineralName: 'Krypton', elements: ['Kr'] },
+    { mineralName: 'Xenon', elements: ['Xe'] },
+    { mineralName: 'Radon', elements: ['Rn'] },
+    { mineralName: 'Hydrogen', elements: ['H'] },
+    { mineralName: 'Oxygen', elements: ['O'] },
+    { mineralName: 'Nitrogen', elements: ['N'] },
+    { mineralName: 'Carbon', elements: ['C'] },
+    { mineralName: 'Sulfur', elements: ['S'] },
+    { mineralName: 'Chlorine', elements: ['Cl'] },
+    { mineralName: 'Fluorine', elements: ['F'] },
+    { mineralName: 'Phosphorus', elements: ['P'] }
+];
+
+export function generateElementalMineral() {
+    const mineral = elementalOptions[Math.floor(Math.random() * elementalOptions.length)];
+    return { ...mineral };
+}
+
+
 export { elementNames, generateMineral, mineableElements, mineralNames };
 
