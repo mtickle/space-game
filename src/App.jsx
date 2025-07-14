@@ -2,7 +2,7 @@
 import StarMap from '@components/StarMap';
 import { useState } from 'react';
 import { useLazyStarField } from './hooks/useLazyStarField';
-//import { useGalaxyStore } from './stores/useGalaxyStore';
+
 
 const App = () => {
   const [offsetX, setOffsetX] = useState(0);

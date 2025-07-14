@@ -1,3 +1,4 @@
+import { getMoonColor, getPlanetColor } from '@utils/colorUtils';
 import { generateElementalMineral } from '@utils/mineralUtils';
 import { useEffect, useRef, useState } from 'react';
 
@@ -8,6 +9,11 @@ const StarSystemViewer = ({ starSystem, onClose }) => {
     const [zoomedPlanet, setZoomedPlanet] = useState(null);
     const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
     const [hoveredMoon, setHoveredMoon] = useState(null);
+    const motionPausedRef = useRef(false);
+
+    const toggleMotion = () => {
+        motionPausedRef.current = !motionPausedRef.current;
+    };
 
     useEffect(() => {
         orbitState.current = {};
@@ -69,7 +75,7 @@ const StarSystemViewer = ({ starSystem, onClose }) => {
                     const mx = px + Math.cos(moon.angle) * moon.radius * 2.5;
                     const my = py + Math.sin(moon.angle) * moon.radius * 2.5;
                     const dist = Math.sqrt((x - mx) ** 2 + (y - my) ** 2);
-                    return dist < 8;
+                    return dist < 12;
                 });
 
                 setHoveredMoon(hovered || null);
@@ -94,31 +100,6 @@ const StarSystemViewer = ({ starSystem, onClose }) => {
         const cx = width / 2;
         const cy = height / 2;
 
-        function getPlanetColor(type) {
-            const colors = {
-                Ice: '#A0DFF0',
-                Volcanic: '#F06257',
-                Rocky: '#BCAAA4',
-                Oceanic: '#4FC3F7',
-                Gas: '#CE93D8',
-                Exotic: '#FFEB3B',
-                Crystaline: '#81D4FA'
-            };
-            return colors[type] || '#4FC3F7';
-        }
-
-        function getMoonColor(type) {
-            const colors = {
-                Ice: '#90CAF9',
-                Volcanic: '#EF9A9A',
-                Rocky: '#B0BEC5',
-                Oceanic: '#81D4FA',
-                Exotic: '#FFF176',
-                Crystaline: '#E1BEE7'
-            };
-            return colors[type] || '#B0BEC5';
-        }
-
         function draw() {
             ctx.fillStyle = '#000';
             ctx.fillRect(0, 0, width, height);
@@ -130,7 +111,7 @@ const StarSystemViewer = ({ starSystem, onClose }) => {
 
             if (zoomedPlanet) {
                 const orbit = orbitState.current[zoomedPlanet.name];
-                orbit.angle += orbit.speed;
+                if (!motionPausedRef.current) orbit.angle += orbit.speed;
 
                 const px = cx;
                 const py = cy;
@@ -150,9 +131,12 @@ const StarSystemViewer = ({ starSystem, onClose }) => {
                 ctx.fillText(zoomedPlanet.name, px + 25, py);
 
                 orbit.moons?.forEach((moon) => {
-                    if (hoveredMoon !== moon) {
+
+
+                    if (!motionPausedRef.current) {
                         moon.angle += moon.speed;
                     }
+
                     const mx = px + Math.cos(moon.angle) * moon.radius * 2.5;
                     const my = py + Math.sin(moon.angle) * moon.radius * 2.5;
 
@@ -171,9 +155,9 @@ const StarSystemViewer = ({ starSystem, onClose }) => {
                     ctx.fillText(moon.name || 'Moon', mx + 8, my);
                 });
             } else {
-                starSystem.planets?.forEach((planet, index) => {
+                starSystem.planets?.forEach((planet) => {
                     const orbit = orbitState.current[planet.name];
-                    orbit.angle += orbit.speed;
+                    if (!motionPausedRef.current) orbit.angle += orbit.speed;
 
                     const px = cx + Math.cos(orbit.angle) * orbit.radius;
                     const py = cy + Math.sin(orbit.angle) * orbit.radius;
@@ -193,7 +177,7 @@ const StarSystemViewer = ({ starSystem, onClose }) => {
                     ctx.fillText(planet.name, px + 12, py);
 
                     orbit.moons?.forEach((moon) => {
-                        moon.angle += moon.speed;
+                        if (!motionPausedRef.current) moon.angle += moon.speed;
                         const mx = px + Math.cos(moon.angle) * moon.radius;
                         const my = py + Math.sin(moon.angle) * moon.radius;
 
@@ -218,9 +202,7 @@ const StarSystemViewer = ({ starSystem, onClose }) => {
     }, [starSystem, zoomedPlanet, hoveredMoon]);
 
     return (
-        // Main div to appease React
         <div>
-
             <div className="fixed inset-0 bg-black bg-opacity-90 z-50 flex flex-col items-center justify-center">
                 {zoomedPlanet && (
                     <button
@@ -242,6 +224,12 @@ const StarSystemViewer = ({ starSystem, onClose }) => {
                     </div>
                 )}
                 <button
+                    onClick={toggleMotion}
+                    className="absolute bottom-4 left-1/2 transform -translate-x-1/2 bg-gray-800 text-white px-4 py-2 rounded hover:bg-gray-700 z-50"
+                >
+                    {motionPausedRef.current ? 'Resume Motion' : 'Pause Motion'}
+                </button>
+                <button
                     onClick={onClose}
                     className="absolute top-4 right-4 bg-gray-800 text-white px-4 py-2 rounded hover:bg-gray-700"
                 >
@@ -249,7 +237,6 @@ const StarSystemViewer = ({ starSystem, onClose }) => {
                 </button>
             </div>
         </div>
-
     );
 };
 
