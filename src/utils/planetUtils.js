@@ -132,7 +132,7 @@ let moonNameIndex = 0;
  * @returns {Array} Array of moon objects
  */
 export function generateMoons(planetName, planetType) {
-    if (planetType === 'Gas Giant') return [];
+    //if (planetType === 'Gas Giant') return [];
 
     const numMoons = Math.floor(Math.random() ** 2 * 13); // heavily weighted toward fewer moons
 
