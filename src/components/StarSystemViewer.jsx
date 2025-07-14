@@ -25,6 +25,20 @@ const StarSystemViewer = ({ starSystem, onClose }) => {
         }
     };
 
+    const getMoonColor = (type) => {
+        switch (type) {
+            case 'Rocky': return '#A1887F';
+            case 'Icy': return '#8ED1FC';
+            case 'Volcanic': return '#FF5722';
+            case 'Desolate': return '#C0C0C0'
+            case 'Oceanic': return '#00BCD4';
+            case 'Cratered': return '#C0C0C0'
+            case 'Frozen': return '#8ED1FC';
+            case 'Metallic': return '#C0C0C0'
+            case 'Carbonaceous': return '#C0C0C0'
+            default: return '#4FC3F7';
+        }
+    }
     // Assign basic orbit data on load
     useEffect(() => {
         orbitState.current = {};
