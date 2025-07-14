@@ -122,7 +122,7 @@ const moonTypes = [
     'Carbonaceous',
 ];
 
-const namedMoonProbability = 0.2; // 20% chance a moon gets a unique name
+const namedMoonProbability = 0.6; // 20% chance a moon gets a unique name
 let moonNameIndex = 0;
 
 /**
@@ -155,7 +155,9 @@ export function generateMoons(planetName, planetType) {
         };
 
         //console.log('[PlanetUtils] Generated moon ' + moon.name + '  for planet ' + planetName);
-
+        if (moon.settlements.length) {
+            console.log(`[MoonDebug] 🛰 ${moon.name} has settlements:`, moon.settlements);
+        }
         moons.push(moon);
     }
 
@@ -164,7 +166,7 @@ export function generateMoons(planetName, planetType) {
 
 // Helper to generate 1–2 settlements
 function generateMoonSettlements(moonName) {
-    const count = Math.floor(Math.random() * 2) + 1;
+    const count = Math.random() < 0.6 ? 2 : 1; // 60% chance of 2 settlements
     const settlements = [];
     for (let i = 0; i < count; i++) {
         const suffix = ['Base', 'Station', 'Outpost', 'Dome', 'Colony'][Math.floor(Math.random() * 5)];

@@ -1,0 +1,1777 @@
+[
+  {
+    "id": "system-0",
+    "name": "Xanith-V",
+    "type": "A",
+    "color": "#EBF8FF",
+    "temp": "7,500–10,000K",
+    "size": 7,
+    "description": "A white star with strong stellar winds, a beacon in the cosmos.",
+    "faction": {
+      "name": "The Continuum Archive",
+      "id": "continuum_archive",
+      "alignment": "True Neutral",
+      "symbol": "📚",
+      "color": "#9370DB",
+      "description": "An ancient, neutral faction obsessed with preserving galactic knowledge. They rarely interfere, but monitor all with eerie precision."
+    },
+    "x": 3968.7658747425303,
+    "y": 312.97046784311533,
+    "planets": [
+      {
+        "name": "Nebulora",
+        "type": "Barren",
+        "color": "#CBD5E0",
+        "size": 2,
+        "orbitRadius": 20,
+        "settlements": [
+          {
+            "name": "Dawnreach",
+            "population": 977729
+          },
+          {
+            "name": "Brightstone",
+            "population": 216476
+          },
+          {
+            "name": "Ironhold",
+            "population": 15053
+          },
+          {
+            "name": "Frostwatch",
+            "population": 330841,
+            "isCapital": true
+          },
+          {
+            "name": "Duskhold",
+            "population": 133757
+          }
+        ],
+        "economy": {
+          "name": "Credit-Based Economy",
+          "description": "A universal currency system backed by a central galactic bank. Everyone agrees it's valuable, mostly because everyone else agrees it's valuable."
+        },
+        "moons": [
+          {
+            "name": "Nebulora I",
+            "type": "Volcanic",
+            "size": 0.21,
+            "conditions": {
+              "weather": "Atmospheric Static",
+              "temperature": "Sweater Weather (in a vacuum suit)",
+              "nightTemperature": "Bitter Cold",
+              "wind": "Steady",
+              "toxicity": "Great for Robots, Bad for Everything Else",
+              "radiation": "Dangerous"
+            },
+            "settlements": []
+          },
+          {
+            "name": "Nebulora II",
+            "type": "Rocky",
+            "size": 0.24,
+            "conditions": {
+              "weather": "Punchy Winds with Sideways Hail",
+              "temperature": "Just Right (for lizards)",
+              "nightTemperature": "Tolerable, Assuming Cryosleep",
+              "wind": "Strong Enough to Peel Paint Off a Ship",
+              "toxicity": "Lethal Without Filters",
+              "radiation": "Full Cosmic BBQ"
+            },
+            "settlements": []
+          },
+          {
+            "name": "Nebulora III",
+            "type": "Desolate",
+            "size": 0.19,
+            "conditions": {
+              "weather": "Volcanic Ashfall",
+              "temperature": "Vaguely Sweaty",
+              "nightTemperature": "Frigid",
+              "wind": "Unregistered Tornado Alley",
+              "toxicity": "Toxicity 3000™",
+              "radiation": "Turns Teeth Into Antennas"
+            },
+            "settlements": []
+          },
+          {
+            "name": "Nebulora IV",
+            "type": "Cratered",
+            "size": 0.37,
+            "conditions": {
+              "weather": "Thunderstorms You Can Taste",
+              "temperature": "Chilly",
+              "nightTemperature": "Subzero",
+              "wind": "Searing Winds",
+              "toxicity": "Great for Robots, Bad for Everything Else",
+              "radiation": "Suit-Melting"
+            },
+            "settlements": []
+          },
+          {
+            "name": "Nebulora V",
+            "type": "Metallic",
+            "size": 0.29,
+            "conditions": {
+              "weather": "Cyclonic",
+              "temperature": "Blistering Heat",
+              "nightTemperature": "Balmy",
+              "wind": "Unpredictable Gusts",
+              "toxicity": "Lethal Without Filters",
+              "radiation": "Suit-Melting"
+            },
+            "settlements": []
+          },
+          {
+            "name": "Nebulora VI",
+            "type": "Carbonaceous",
+            "size": 0.32,
+            "conditions": {
+              "weather": "Perpetual Overcast",
+              "temperature": "Comfortably Inhospitable",
+              "nightTemperature": "Tolerable, Assuming Cryosleep",
+              "wind": "Howling Winds",
+              "toxicity": "None",
+              "radiation": "Microwave-Worthy"
+            },
+            "settlements": []
+          },
+          {
+            "name": "Nebulora VII",
+            "type": "Icy",
+            "size": 0.1,
+            "conditions": {
+              "weather": "Arid",
+              "temperature": "Cold Enough to Freeze a Plasma Line",
+              "nightTemperature": "Bitter Cold",
+              "wind": "Strong Enough to Peel Paint Off a Ship",
+              "toxicity": "Deadly",
+              "radiation": "Suit-Melting"
+            },
+            "settlements": []
+          },
+          {
+            "name": "Nebulora VIII",
+            "type": "Frozen",
+            "size": 0.31,
+            "conditions": {
+              "weather": "Mood: Moist",
+              "temperature": "Vaguely Sweaty",
+              "nightTemperature": "So Cold Even the Darkness Shivers",
+              "wind": "Howling Winds",
+              "toxicity": "Great for Robots, Bad for Everything Else",
+              "radiation": "Suit-Melting"
+            },
+            "settlements": []
+          },
+          {
+            "name": "Nebulora IX",
+            "type": "Volcanic",
+            "size": 0.3,
+            "conditions": {
+              "weather": "Atmospheric Static",
+              "temperature": "Sweater Weather (in a vacuum suit)",
+              "nightTemperature": "Brisk But Deadly",
+              "wind": "Searing Winds",
+              "toxicity": "Toxicity 3000™",
+              "radiation": "Elevated"
+            },
+            "settlements": []
+          },
+          {
+            "name": "Nebulora X",
+            "type": "Rocky",
+            "size": 0.15,
+            "conditions": {
+              "weather": "Volcanic Ashfall",
+              "temperature": "Vaguely Sweaty",
+              "nightTemperature": "Bitter Cold",
+              "wind": "Howling Winds",
+              "toxicity": "Get in the Suit and Don’t Breathe",
+              "radiation": "Hostile to DNA"
+            },
+            "settlements": []
+          },
+          {
+            "name": "Nebulora XI",
+            "type": "Metallic",
+            "size": 0.35,
+            "conditions": {
+              "weather": "Rainy",
+              "temperature": "Scorching but Dry (like bad humor)",
+              "nightTemperature": "Subzero",
+              "wind": "Steady",
+              "toxicity": "Get in the Suit and Don’t Breathe",
+              "radiation": "Dangerous"
+            },
+            "settlements": []
+          },
+          {
+            "name": "Nebulora XII",
+            "type": "Icy",
+            "size": 0.36,
+            "conditions": {
+              "weather": "Crystal Showers",
+              "temperature": "Oppressively Humid",
+              "nightTemperature": "So Cold Even the Darkness Shivers",
+              "wind": "Howling Winds",
+              "toxicity": "Certified No-No Air",
+              "radiation": "Full Cosmic BBQ"
+            },
+            "settlements": []
+          }
+        ]
+      },
+      {
+        "name": "Jovaris",
+        "type": "Gas Giant",
+        "color": "#F6AD55",
+        "size": 4,
+        "orbitRadius": 35,
+        "settlements": [
+          {
+            "name": "Windspire",
+            "population": 1004433
+          },
+          {
+            "name": "Skyreach",
+            "population": 425748
+          },
+          {
+            "name": "Ironwatch",
+            "population": 53662
+          },
+          {
+            "name": "Lightspire",
+            "population": 319587
+          },
+          {
+            "name": "Oasisville",
+            "population": 274142,
+            "isCapital": true
+          },
+          {
+            "name": "Ashridge",
+            "population": 368330
+          },
+          {
+            "name": "Crystalreach",
+            "population": 436441
+          },
+          {
+            "name": "Windgate",
+            "population": 124384
+          },
+          {
+            "name": "Firehold",
+            "population": 3825
+          }
+        ],
+        "economy": {
+          "name": "Black Market Economy",
+          "description": "Unregulated trade thrives in the shadows. If you have to ask what’s for sale, you probably can’t afford it—or survive it."
+        },
+        "moons": [
+          {
+            "name": "Jovaris I",
+            "type": "Frozen",
+            "size": 0.23,
+            "conditions": {
+              "weather": "Unrelenting Sunlight",
+              "temperature": "Chilly",
+              "nightTemperature": "Brisk But Deadly",
+              "wind": "Steady",
+              "toxicity": "Get in the Suit and Don’t Breathe",
+              "radiation": "Suit-Melting"
+            },
+            "settlements": []
+          },
+          {
+            "name": "Jovaris II",
+            "type": "Volcanic",
+            "size": 0.35,
+            "conditions": {
+              "weather": "Dust Storms",
+              "temperature": "Scorching but Dry (like bad humor)",
+              "nightTemperature": "Frigid",
+              "wind": "You'll Need Ballast",
+              "toxicity": "Get in the Suit and Don’t Breathe",
+              "radiation": "Only Survivable by Cockroaches"
+            },
+            "settlements": []
+          },
+          {
+            "name": "Jovaris III",
+            "type": "Volcanic",
+            "size": 0.26,
+            "conditions": {
+              "weather": "Volcanic Ashfall",
+              "temperature": "Blistering Heat",
+              "nightTemperature": "Tolerable, Assuming Cryosleep",
+              "wind": "Searing Winds",
+              "toxicity": "Certified No-No Air",
+              "radiation": "Full Cosmic BBQ"
+            },
+            "settlements": []
+          },
+          {
+            "name": "Jovaris IV",
+            "type": "Volcanic",
+            "size": 0.29,
+            "conditions": {
+              "weather": "Foggy Enough to Lose a Ship",
+              "temperature": "Blistering Heat",
+              "nightTemperature": "Tolerable, Assuming Cryosleep",
+              "wind": "Howling Winds",
+              "toxicity": "Deadly",
+              "radiation": "Glow in the Dark Guaranteed"
+            },
+            "settlements": []
+          },
+          {
+            "name": "Jovaris V",
+            "type": "Icy",
+            "size": 0.27,
+            "conditions": {
+              "weather": "Thunderstorms You Can Taste",
+              "temperature": "Just Right (for lizards)",
+              "nightTemperature": "Subzero",
+              "wind": "Unregistered Tornado Alley",
+              "toxicity": "Toxicity 3000™",
+              "radiation": "Hostile to DNA"
+            },
+            "settlements": []
+          },
+          {
+            "name": "Jovaris VI",
+            "type": "Cratered",
+            "size": 0.15,
+            "conditions": {
+              "weather": "Punchy Winds with Sideways Hail",
+              "temperature": "Chilly",
+              "nightTemperature": "Balmy",
+              "wind": "Gentle",
+              "toxicity": "Great for Robots, Bad for Everything Else",
+              "radiation": "Suit-Melting"
+            },
+            "settlements": []
+          },
+          {
+            "name": "Jovaris VII",
+            "type": "Volcanic",
+            "size": 0.3,
+            "conditions": {
+              "weather": "Arid",
+              "temperature": "Blistering Heat",
+              "nightTemperature": "Frozen Solid",
+              "wind": "Steady",
+              "toxicity": "Get in the Suit and Don’t Breathe",
+              "radiation": "Suit-Melting"
+            },
+            "settlements": []
+          }
+        ]
+      },
+      {
+        "name": "Ulvoria",
+        "type": "Exotic",
+        "color": "#ED64A6",
+        "size": 9,
+        "orbitRadius": 50,
+        "settlements": [
+          {
+            "name": "Ironhold",
+            "population": 1034455
+          },
+          {
+            "name": "Moonshade",
+            "population": 116705
+          },
+          {
+            "name": "Ironvale",
+            "population": 315884,
+            "isCapital": true
+          }
+        ],
+        "economy": {
+          "name": "Black Market Economy",
+          "description": "Unregulated trade thrives in the shadows. If you have to ask what’s for sale, you probably can’t afford it—or survive it."
+        },
+        "moons": [
+          {
+            "name": "Ulvoria I",
+            "type": "Metallic",
+            "size": 0.34,
+            "conditions": {
+              "weather": "Unrelenting Sunlight",
+              "temperature": "Scorching but Dry (like bad humor)",
+              "nightTemperature": "Mild",
+              "wind": "Strong Enough to Peel Paint Off a Ship",
+              "toxicity": "Don't Even Think About It",
+              "radiation": "Elevated"
+            },
+            "settlements": []
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "system-1",
+    "name": "Draymar-Alpha",
+    "type": "G",
+    "color": "#FFFF99",
+    "temp": "5,200–6,000K",
+    "size": 5,
+    "description": "A yellow star like Sol, often hosting habitable planets.",
+    "faction": {
+      "name": "The Luma Ascendancy",
+      "id": "luma_ascendancy",
+      "alignment": "Lawful Good",
+      "symbol": "🌌",
+      "color": "#66CCFF",
+      "description": "A spiritual-technocratic society dedicated to enlightenment through science and stellar harmony. Often seen as idealistic but technologically superior."
+    },
+    "x": 3664.6656757220626,
+    "y": 422.3349264357239,
+    "planets": [
+      {
+        "name": "Draymar-Alpha a",
+        "type": "Oceanic",
+        "color": "#63B3ED",
+        "size": 10,
+        "orbitRadius": 20,
+        "moons": [
+          {
+            "name": "Draymar-Alpha a I",
+            "type": "Rocky",
+            "size": 0.15,
+            "conditions": {
+              "weather": "Rainy",
+              "temperature": "Just Right (for lizards)",
+              "nightTemperature": "Bitter Cold",
+              "wind": "Silent but Deadly",
+              "toxicity": "Toxic to the Touch",
+              "radiation": "Elevated"
+            },
+            "settlements": []
+          },
+          {
+            "name": "Draymar-Alpha a II",
+            "type": "Cratered",
+            "size": 0.21,
+            "conditions": {
+              "weather": "Punchy Winds with Sideways Hail",
+              "temperature": "Temperate",
+              "nightTemperature": "Mild",
+              "wind": "Sonic Boom Breezes",
+              "toxicity": "Toxicity 3000™",
+              "radiation": "Background Only"
+            },
+            "settlements": []
+          },
+          {
+            "name": "Draymar-Alpha a III",
+            "type": "Desolate",
+            "size": 0.13,
+            "conditions": {
+              "weather": "Dust Storms",
+              "temperature": "Just Right (for lizards)",
+              "nightTemperature": "Frigid",
+              "wind": "Unpredictable Gusts",
+              "toxicity": "High",
+              "radiation": "Background Only"
+            },
+            "settlements": []
+          },
+          {
+            "name": "Draymar-Alpha a IV",
+            "type": "Cratered",
+            "size": 0.15,
+            "conditions": {
+              "weather": "Atmospheric Static",
+              "temperature": "Scorching but Dry (like bad humor)",
+              "nightTemperature": "Tolerable, Assuming Cryosleep",
+              "wind": "You'll Need Ballast",
+              "toxicity": "Rated 'NOPE' by the Galactic Health Authority",
+              "radiation": "Background Only"
+            },
+            "settlements": []
+          },
+          {
+            "name": "Draymar-Alpha a V",
+            "type": "Volcanic",
+            "size": 0.11,
+            "conditions": {
+              "weather": "Arid",
+              "temperature": "Oppressively Humid",
+              "nightTemperature": "So Cold Even the Darkness Shivers",
+              "wind": "Searing Winds",
+              "toxicity": "Toxic to the Touch",
+              "radiation": "Only Survivable by Cockroaches"
+            },
+            "settlements": []
+          },
+          {
+            "name": "Draymar-Alpha a VI",
+            "type": "Desolate",
+            "size": 0.21,
+            "conditions": {
+              "weather": "Foggy Enough to Lose a Ship",
+              "temperature": "Chilly",
+              "nightTemperature": "Frozen Solid",
+              "wind": "Howling Winds",
+              "toxicity": "Toxic to the Touch",
+              "radiation": "Dangerous"
+            },
+            "settlements": []
+          },
+          {
+            "name": "Draymar-Alpha a VII",
+            "type": "Desolate",
+            "size": 0.34,
+            "conditions": {
+              "weather": "Mood: Moist",
+              "temperature": "Blistering Heat",
+              "nightTemperature": "Subzero",
+              "wind": "Strong Enough to Peel Paint Off a Ship",
+              "toxicity": "Great for Robots, Bad for Everything Else",
+              "radiation": "Congratulations, You’re a Radiator Now"
+            },
+            "settlements": []
+          },
+          {
+            "name": "Draymar-Alpha a VIII",
+            "type": "Desolate",
+            "size": 0.1,
+            "conditions": {
+              "weather": "Cyclonic",
+              "temperature": "Frosty",
+              "nightTemperature": "Bitter Cold",
+              "wind": "Gentle",
+              "toxicity": "Certified No-No Air",
+              "radiation": "Glow in the Dark Guaranteed"
+            },
+            "settlements": []
+          },
+          {
+            "name": "Draymar-Alpha a IX",
+            "type": "Cratered",
+            "size": 0.16,
+            "conditions": {
+              "weather": "Thunderstorms You Can Taste",
+              "temperature": "Cold Enough to Freeze a Plasma Line",
+              "nightTemperature": "So Cold Even the Darkness Shivers",
+              "wind": "Searing Winds",
+              "toxicity": "Get in the Suit and Don’t Breathe",
+              "radiation": "Microwave-Worthy"
+            },
+            "settlements": []
+          },
+          {
+            "name": "Draymar-Alpha a X",
+            "type": "Desolate",
+            "size": 0.27,
+            "conditions": {
+              "weather": "Rainy",
+              "temperature": "Comfortably Inhospitable",
+              "nightTemperature": "So Cold Even the Darkness Shivers",
+              "wind": "Gentle",
+              "toxicity": "Rated 'NOPE' by the Galactic Health Authority",
+              "radiation": "Congratulations, You’re a Radiator Now"
+            },
+            "settlements": []
+          }
+        ]
+      },
+      {
+        "name": "Draymar-Alpha b",
+        "type": "Oceanic",
+        "color": "#63B3ED",
+        "size": 8,
+        "orbitRadius": 35,
+        "moons": [
+          {
+            "name": "Draymar-Alpha b I",
+            "type": "Desolate",
+            "size": 0.29,
+            "conditions": {
+              "weather": "Crystal Showers",
+              "temperature": "Vaguely Sweaty",
+              "nightTemperature": "Bitter Cold",
+              "wind": "Steady",
+              "toxicity": "Deadly",
+              "radiation": "Microwave-Worthy"
+            },
+            "settlements": []
+          },
+          {
+            "name": "Draymar-Alpha b II",
+            "type": "Frozen",
+            "size": 0.27,
+            "conditions": {
+              "weather": "Rainy",
+              "temperature": "Oppressively Humid",
+              "nightTemperature": "Bitter Cold",
+              "wind": "Whispers of Madness",
+              "toxicity": "Toxic to the Touch",
+              "radiation": "Elevated"
+            },
+            "settlements": []
+          },
+          {
+            "name": "Draymar-Alpha b III",
+            "type": "Carbonaceous",
+            "size": 0.17,
+            "conditions": {
+              "weather": "Foggy Enough to Lose a Ship",
+              "temperature": "Comfortably Inhospitable",
+              "nightTemperature": "Mild",
+              "wind": "Sonic Boom Breezes",
+              "toxicity": "Certified No-No Air",
+              "radiation": "Unshielded Exposure Not Recommended"
+            },
+            "settlements": []
+          },
+          {
+            "name": "Draymar-Alpha b IV",
+            "type": "Oceanic",
+            "size": 0.24,
+            "conditions": {
+              "weather": "Frozen Precipitation",
+              "temperature": "Sweater Weather (in a vacuum suit)",
+              "nightTemperature": "So Cold Even the Darkness Shivers",
+              "wind": "Sonic Boom Breezes",
+              "toxicity": "Get in the Suit and Don’t Breathe",
+              "radiation": "Turns Teeth Into Antennas"
+            },
+            "settlements": []
+          },
+          {
+            "name": "Draymar-Alpha b V",
+            "type": "Metallic",
+            "size": 0.16,
+            "conditions": {
+              "weather": "Crystal Showers",
+              "temperature": "Sweater Weather (in a vacuum suit)",
+              "nightTemperature": "Mild if You're On Fire",
+              "wind": "Howling Winds",
+              "toxicity": "Don't Even Think About It",
+              "radiation": "Unshielded Exposure Not Recommended"
+            },
+            "settlements": []
+          },
+          {
+            "name": "Draymar-Alpha b VI",
+            "type": "Metallic",
+            "size": 0.28,
+            "conditions": {
+              "weather": "Volcanic Ashfall",
+              "temperature": "Frosty",
+              "nightTemperature": "Balmy",
+              "wind": "Howling Winds",
+              "toxicity": "Melts Metal (and Mood)",
+              "radiation": "Microwave-Worthy"
+            },
+            "settlements": []
+          },
+          {
+            "name": "Draymar-Alpha b VII",
+            "type": "Oceanic",
+            "size": 0.11,
+            "conditions": {
+              "weather": "Dust Storms",
+              "temperature": "Comfortably Inhospitable",
+              "nightTemperature": "Frozen Solid",
+              "wind": "Howling Winds",
+              "toxicity": "Lethal Without Filters",
+              "radiation": "Congratulations, You’re a Radiator Now"
+            },
+            "settlements": []
+          },
+          {
+            "name": "Draymar-Alpha b VIII",
+            "type": "Volcanic",
+            "size": 0.38,
+            "conditions": {
+              "weather": "Rainy",
+              "temperature": "Blistering Heat",
+              "nightTemperature": "Bitter Cold",
+              "wind": "Strong Enough to Peel Paint Off a Ship",
+              "toxicity": "Low",
+              "radiation": "Full Cosmic BBQ"
+            },
+            "settlements": []
+          },
+          {
+            "name": "Draymar-Alpha b IX",
+            "type": "Icy",
+            "size": 0.12,
+            "conditions": {
+              "weather": "Foggy Enough to Lose a Ship",
+              "temperature": "Sweater Weather (in a vacuum suit)",
+              "nightTemperature": "So Cold Even the Darkness Shivers",
+              "wind": "You'll Need Ballast",
+              "toxicity": "Toxic to the Touch",
+              "radiation": "Unshielded Exposure Not Recommended"
+            },
+            "settlements": []
+          },
+          {
+            "name": "Draymar-Alpha b X",
+            "type": "Oceanic",
+            "size": 0.29,
+            "conditions": {
+              "weather": "Volcanic Ashfall",
+              "temperature": "Frosty",
+              "nightTemperature": "Mild",
+              "wind": "Unpredictable Gusts",
+              "toxicity": "Great for Robots, Bad for Everything Else",
+              "radiation": "Microwave-Worthy"
+            },
+            "settlements": []
+          },
+          {
+            "name": "Draymar-Alpha b XI",
+            "type": "Desolate",
+            "size": 0.21,
+            "conditions": {
+              "weather": "Cyclonic",
+              "temperature": "Scorching but Dry (like bad humor)",
+              "nightTemperature": "Tolerable, Assuming Cryosleep",
+              "wind": "Sonic Boom Breezes",
+              "toxicity": "High",
+              "radiation": "Suit-Melting"
+            },
+            "settlements": []
+          }
+        ]
+      },
+      {
+        "name": "Hyris",
+        "type": "Oceanic",
+        "color": "#63B3ED",
+        "size": 5,
+        "orbitRadius": 50,
+        "moons": []
+      }
+    ]
+  },
+  {
+    "id": "system-2",
+    "name": "Thryss-VI",
+    "type": "M",
+    "color": "#F56565",
+    "temp": "<3,700K",
+    "size": 3,
+    "description": "A dim red dwarf, common and cool, with faint habitable zones.",
+    "faction": {
+      "name": "The Solar Accord",
+      "id": "solar_accord",
+      "alignment": "Lawful Neutral",
+      "symbol": "☀️",
+      "color": "#FFD700",
+      "description": "A powerful confederation of core worlds united by a common legal code and trade agreements. The Accord values diplomacy, bureaucracy, and strict regulation."
+    },
+    "x": 3575.7973081199452,
+    "y": 182.875010301359,
+    "planets": [
+      {
+        "name": "Thryss-VI a",
+        "type": "Ice World",
+        "color": "#90CDF4",
+        "size": 4,
+        "orbitRadius": 20,
+        "moons": [
+          {
+            "name": "Thryss-VI a I",
+            "type": "Carbonaceous",
+            "size": 0.34,
+            "conditions": {
+              "weather": "Frozen Precipitation",
+              "temperature": "Temperate",
+              "nightTemperature": "Frigid",
+              "wind": "Whispers of Madness",
+              "toxicity": "Get in the Suit and Don’t Breathe",
+              "radiation": "Elevated"
+            },
+            "settlements": []
+          },
+          {
+            "name": "Thryss-VI a II",
+            "type": "Frozen",
+            "size": 0.39,
+            "conditions": {
+              "weather": "Dust Storms",
+              "temperature": "Blistering Heat",
+              "nightTemperature": "Brisk But Deadly",
+              "wind": "Steady",
+              "toxicity": "Great for Robots, Bad for Everything Else",
+              "radiation": "Elevated"
+            },
+            "settlements": []
+          },
+          {
+            "name": "Thryss-VI a III",
+            "type": "Frozen",
+            "size": 0.38,
+            "conditions": {
+              "weather": "Perpetual Overcast",
+              "temperature": "Oppressively Humid",
+              "nightTemperature": "Mild",
+              "wind": "Unregistered Tornado Alley",
+              "toxicity": "Great for Robots, Bad for Everything Else",
+              "radiation": "Hostile to DNA"
+            },
+            "settlements": []
+          },
+          {
+            "name": "Thryss-VI a IV",
+            "type": "Volcanic",
+            "size": 0.23,
+            "conditions": {
+              "weather": "Dust Storms",
+              "temperature": "Cold Enough to Freeze a Plasma Line",
+              "nightTemperature": "Mild",
+              "wind": "Strong Enough to Peel Paint Off a Ship",
+              "toxicity": "Great for Robots, Bad for Everything Else",
+              "radiation": "Background Only"
+            },
+            "settlements": []
+          },
+          {
+            "name": "Thryss-VI a V",
+            "type": "Carbonaceous",
+            "size": 0.38,
+            "conditions": {
+              "weather": "Foggy Enough to Lose a Ship",
+              "temperature": "Oppressively Humid",
+              "nightTemperature": "Mild if You're On Fire",
+              "wind": "Whispers of Madness",
+              "toxicity": "Toxic to the Touch",
+              "radiation": "Suit-Melting"
+            },
+            "settlements": []
+          },
+          {
+            "name": "Thryss-VI a VI",
+            "type": "Rocky",
+            "size": 0.27,
+            "conditions": {
+              "weather": "Mood: Moist",
+              "temperature": "Oppressively Humid",
+              "nightTemperature": "Balmy",
+              "wind": "You'll Need Ballast",
+              "toxicity": "Certified No-No Air",
+              "radiation": "Background Only"
+            },
+            "settlements": []
+          },
+          {
+            "name": "Thryss-VI a VII",
+            "type": "Frozen",
+            "size": 0.14,
+            "conditions": {
+              "weather": "Rainy",
+              "temperature": "Sweater Weather (in a vacuum suit)",
+              "nightTemperature": "Bitter Cold",
+              "wind": "Whispers of Madness",
+              "toxicity": "Rated 'NOPE' by the Galactic Health Authority",
+              "radiation": "Glow in the Dark Guaranteed"
+            },
+            "settlements": []
+          },
+          {
+            "name": "Thryss-VI a VIII",
+            "type": "Oceanic",
+            "size": 0.14,
+            "conditions": {
+              "weather": "Unrelenting Sunlight",
+              "temperature": "Scorching but Dry (like bad humor)",
+              "nightTemperature": "Cozy for Ice Worms",
+              "wind": "Unpredictable Gusts",
+              "toxicity": "Rated 'NOPE' by the Galactic Health Authority",
+              "radiation": "Only Survivable by Cockroaches"
+            },
+            "settlements": []
+          },
+          {
+            "name": "Thryss-VI a IX",
+            "type": "Icy",
+            "size": 0.1,
+            "conditions": {
+              "weather": "Rainy",
+              "temperature": "Temperate",
+              "nightTemperature": "Mild if You're On Fire",
+              "wind": "Silent but Deadly",
+              "toxicity": "Lethal Without Filters",
+              "radiation": "Dangerous"
+            },
+            "settlements": []
+          }
+        ]
+      },
+      {
+        "name": "Thryss-VI b",
+        "type": "Oceanic",
+        "color": "#63B3ED",
+        "size": 10,
+        "orbitRadius": 35,
+        "moons": [
+          {
+            "name": "Thryss-VI b I",
+            "type": "Rocky",
+            "size": 0.15,
+            "conditions": {
+              "weather": "Perpetual Overcast",
+              "temperature": "Frosty",
+              "nightTemperature": "Cozy for Ice Worms",
+              "wind": "Strong Enough to Peel Paint Off a Ship",
+              "toxicity": "Get in the Suit and Don’t Breathe",
+              "radiation": "Full Cosmic BBQ"
+            },
+            "settlements": []
+          },
+          {
+            "name": "Thryss-VI b II",
+            "type": "Metallic",
+            "size": 0.11,
+            "conditions": {
+              "weather": "Rainy",
+              "temperature": "Chilly",
+              "nightTemperature": "Frozen Solid",
+              "wind": "Unregistered Tornado Alley",
+              "toxicity": "Rated 'NOPE' by the Galactic Health Authority",
+              "radiation": "Hostile to DNA"
+            },
+            "settlements": []
+          },
+          {
+            "name": "Thryss-VI b III",
+            "type": "Volcanic",
+            "size": 0.16,
+            "conditions": {
+              "weather": "Thunderstorms You Can Taste",
+              "temperature": "Comfortably Inhospitable",
+              "nightTemperature": "Tolerable, Assuming Cryosleep",
+              "wind": "Silent but Deadly",
+              "toxicity": "Melts Metal (and Mood)",
+              "radiation": "Background Only"
+            },
+            "settlements": []
+          },
+          {
+            "name": "Thryss-VI b IV",
+            "type": "Metallic",
+            "size": 0.4,
+            "conditions": {
+              "weather": "Dust Storms",
+              "temperature": "Vaguely Sweaty",
+              "nightTemperature": "Mild if You're On Fire",
+              "wind": "Whispers of Madness",
+              "toxicity": "None",
+              "radiation": "Unshielded Exposure Not Recommended"
+            },
+            "settlements": []
+          },
+          {
+            "name": "Thryss-VI b V",
+            "type": "Volcanic",
+            "size": 0.1,
+            "conditions": {
+              "weather": "Misty with a Chance of Regret",
+              "temperature": "Scorching but Dry (like bad humor)",
+              "nightTemperature": "Subzero",
+              "wind": "Searing Winds",
+              "toxicity": "High",
+              "radiation": "Microwave-Worthy"
+            },
+            "settlements": []
+          }
+        ]
+      },
+      {
+        "name": "Thryss-VI c",
+        "type": "Artificial",
+        "color": "#F0E68C",
+        "size": 3,
+        "orbitRadius": 50,
+        "moons": []
+      },
+      {
+        "name": "Thryss-VI d",
+        "type": "Rocky",
+        "color": "#A0AEC0",
+        "size": 7,
+        "orbitRadius": 65,
+        "moons": []
+      }
+    ]
+  },
+  {
+    "id": "system-3",
+    "name": "Uraven-II",
+    "type": "G",
+    "color": "#FFFF99",
+    "temp": "5,200–6,000K",
+    "size": 5,
+    "description": "A yellow star like Sol, often hosting habitable planets.",
+    "faction": {
+      "name": "The Solar Accord",
+      "id": "solar_accord",
+      "alignment": "Lawful Neutral",
+      "symbol": "☀️",
+      "color": "#FFD700",
+      "description": "A powerful confederation of core worlds united by a common legal code and trade agreements. The Accord values diplomacy, bureaucracy, and strict regulation."
+    },
+    "x": 3509.9850464612246,
+    "y": 42.75120480451733,
+    "planets": [
+      {
+        "name": "Uraven-II a",
+        "type": "Gas Giant",
+        "color": "#F6AD55",
+        "size": 7,
+        "orbitRadius": 20,
+        "moons": [
+          {
+            "name": "Uraven-II a I",
+            "type": "Volcanic",
+            "size": 0.38,
+            "conditions": {
+              "weather": "Thunderstorms You Can Taste",
+              "temperature": "Comfortably Inhospitable",
+              "nightTemperature": "Balmy",
+              "wind": "You'll Need Ballast",
+              "toxicity": "Don't Even Think About It",
+              "radiation": "Congratulations, You’re a Radiator Now"
+            },
+            "settlements": []
+          },
+          {
+            "name": "Uraven-II a II",
+            "type": "Desolate",
+            "size": 0.12,
+            "conditions": {
+              "weather": "Perpetual Overcast",
+              "temperature": "Scorching but Dry (like bad humor)",
+              "nightTemperature": "Subzero",
+              "wind": "Unregistered Tornado Alley",
+              "toxicity": "Toxic to the Touch",
+              "radiation": "Dangerous"
+            },
+            "settlements": []
+          },
+          {
+            "name": "Uraven-II a III",
+            "type": "Icy",
+            "size": 0.1,
+            "conditions": {
+              "weather": "Frozen Precipitation",
+              "temperature": "Scorching but Dry (like bad humor)",
+              "nightTemperature": "Frozen Solid",
+              "wind": "Strong Enough to Peel Paint Off a Ship",
+              "toxicity": "Toxic to the Touch",
+              "radiation": "Unshielded Exposure Not Recommended"
+            },
+            "settlements": []
+          },
+          {
+            "name": "Uraven-II a IV",
+            "type": "Frozen",
+            "size": 0.26,
+            "conditions": {
+              "weather": "Crystal Showers",
+              "temperature": "Cold Enough to Freeze a Plasma Line",
+              "nightTemperature": "Mild if You're On Fire",
+              "wind": "Sonic Boom Breezes",
+              "toxicity": "Certified No-No Air",
+              "radiation": "Microwave-Worthy"
+            },
+            "settlements": []
+          },
+          {
+            "name": "Uraven-II a V",
+            "type": "Icy",
+            "size": 0.19,
+            "conditions": {
+              "weather": "Cyclonic",
+              "temperature": "Just Right (for lizards)",
+              "nightTemperature": "Tolerable, Assuming Cryosleep",
+              "wind": "Whispers of Madness",
+              "toxicity": "Certified No-No Air",
+              "radiation": "Glow in the Dark Guaranteed"
+            },
+            "settlements": []
+          },
+          {
+            "name": "Uraven-II a VI",
+            "type": "Oceanic",
+            "size": 0.34,
+            "conditions": {
+              "weather": "Foggy Enough to Lose a Ship",
+              "temperature": "Temperate",
+              "nightTemperature": "So Cold Even the Darkness Shivers",
+              "wind": "Whispers of Madness",
+              "toxicity": "Lethal Without Filters",
+              "radiation": "Suit-Melting"
+            },
+            "settlements": []
+          },
+          {
+            "name": "Uraven-II a VII",
+            "type": "Frozen",
+            "size": 0.25,
+            "conditions": {
+              "weather": "Atmospheric Static",
+              "temperature": "Comfortably Inhospitable",
+              "nightTemperature": "Mild if You're On Fire",
+              "wind": "Unpredictable Gusts",
+              "toxicity": "Deadly",
+              "radiation": "Glow in the Dark Guaranteed"
+            },
+            "settlements": []
+          },
+          {
+            "name": "Uraven-II a VIII",
+            "type": "Rocky",
+            "size": 0.12,
+            "conditions": {
+              "weather": "Mood: Moist",
+              "temperature": "Temperate",
+              "nightTemperature": "Mild",
+              "wind": "Unpredictable Gusts",
+              "toxicity": "Certified No-No Air",
+              "radiation": "Safe"
+            },
+            "settlements": []
+          },
+          {
+            "name": "Uraven-II a IX",
+            "type": "Carbonaceous",
+            "size": 0.13,
+            "conditions": {
+              "weather": "Foggy Enough to Lose a Ship",
+              "temperature": "Temperate",
+              "nightTemperature": "Brisk But Deadly",
+              "wind": "Strong Enough to Peel Paint Off a Ship",
+              "toxicity": "Melts Metal (and Mood)",
+              "radiation": "Turns Teeth Into Antennas"
+            },
+            "settlements": []
+          },
+          {
+            "name": "Uraven-II a X",
+            "type": "Rocky",
+            "size": 0.13,
+            "conditions": {
+              "weather": "Misty with a Chance of Regret",
+              "temperature": "Oppressively Humid",
+              "nightTemperature": "Subzero",
+              "wind": "Searing Winds",
+              "toxicity": "Certified No-No Air",
+              "radiation": "Elevated"
+            },
+            "settlements": []
+          }
+        ]
+      },
+      {
+        "name": "Clyra",
+        "type": "Gas Giant",
+        "color": "#F6AD55",
+        "size": 5,
+        "orbitRadius": 35,
+        "settlements": [
+          {
+            "name": "Frostwatch",
+            "population": 1040978
+          },
+          {
+            "name": "Goldwatch",
+            "population": 175678,
+            "isCapital": true
+          },
+          {
+            "name": "Thornwatch",
+            "population": 363772
+          },
+          {
+            "name": "Starwatch",
+            "population": 480858
+          }
+        ],
+        "economy": {
+          "name": "Reputation Economy",
+          "description": "Transactions are based on trust, honor, and social standing. Great if you're popular—less great if you're known as 'that guy who spaced the ambassador.'"
+        },
+        "moons": [
+          {
+            "name": "Clyra I",
+            "type": "Rocky",
+            "size": 0.21,
+            "conditions": {
+              "weather": "Rainy",
+              "temperature": "Scorching but Dry (like bad humor)",
+              "nightTemperature": "Bitter Cold",
+              "wind": "Searing Winds",
+              "toxicity": "High",
+              "radiation": "Suit-Melting"
+            },
+            "settlements": []
+          },
+          {
+            "name": "Clyra II",
+            "type": "Icy",
+            "size": 0.27,
+            "conditions": {
+              "weather": "Thunderstorms You Can Taste",
+              "temperature": "Vaguely Sweaty",
+              "nightTemperature": "Frozen Solid",
+              "wind": "Searing Winds",
+              "toxicity": "Don't Even Think About It",
+              "radiation": "Unshielded Exposure Not Recommended"
+            },
+            "settlements": []
+          }
+        ]
+      },
+      {
+        "name": "Ylvana",
+        "type": "Rocky",
+        "color": "#A0AEC0",
+        "size": 6,
+        "orbitRadius": 50,
+        "settlements": [
+          {
+            "name": "Crystalreach",
+            "population": 1019488,
+            "isCapital": true
+          },
+          {
+            "name": "Ironvale",
+            "population": 107611
+          }
+        ],
+        "economy": {
+          "name": "Time-Based Economy",
+          "description": "Labor time is the currency. You literally pay with your time, which is fine until someone figures out how to counterfeit hours."
+        },
+        "moons": [
+          {
+            "name": "Ylvana I",
+            "type": "Oceanic",
+            "size": 0.1,
+            "conditions": {
+              "weather": "Misty with a Chance of Regret",
+              "temperature": "Frosty",
+              "nightTemperature": "Subzero",
+              "wind": "Strong Enough to Peel Paint Off a Ship",
+              "toxicity": "Certified No-No Air",
+              "radiation": "Glow in the Dark Guaranteed"
+            },
+            "settlements": []
+          },
+          {
+            "name": "Ylvana II",
+            "type": "Icy",
+            "size": 0.19,
+            "conditions": {
+              "weather": "Dust Storms",
+              "temperature": "Chilly",
+              "nightTemperature": "Tolerable, Assuming Cryosleep",
+              "wind": "Sonic Boom Breezes",
+              "toxicity": "Great for Robots, Bad for Everything Else",
+              "radiation": "Congratulations, You’re a Radiator Now"
+            },
+            "settlements": []
+          },
+          {
+            "name": "Ylvana III",
+            "type": "Volcanic",
+            "size": 0.14,
+            "conditions": {
+              "weather": "Rainy",
+              "temperature": "Cold Enough to Freeze a Plasma Line",
+              "nightTemperature": "Mild if You're On Fire",
+              "wind": "Steady",
+              "toxicity": "Toxicity 3000™",
+              "radiation": "Background Only"
+            },
+            "settlements": []
+          },
+          {
+            "name": "Ylvana IV",
+            "type": "Volcanic",
+            "size": 0.22,
+            "conditions": {
+              "weather": "Thunderstorms You Can Taste",
+              "temperature": "Sweater Weather (in a vacuum suit)",
+              "nightTemperature": "Cozy for Ice Worms",
+              "wind": "Howling Winds",
+              "toxicity": "Lethal Without Filters",
+              "radiation": "Safe"
+            },
+            "settlements": []
+          },
+          {
+            "name": "Ylvana V",
+            "type": "Oceanic",
+            "size": 0.23,
+            "conditions": {
+              "weather": "Foggy Enough to Lose a Ship",
+              "temperature": "Vaguely Sweaty",
+              "nightTemperature": "Mild",
+              "wind": "Whispers of Madness",
+              "toxicity": "Get in the Suit and Don’t Breathe",
+              "radiation": "Unshielded Exposure Not Recommended"
+            },
+            "settlements": []
+          },
+          {
+            "name": "Ylvana VI",
+            "type": "Cratered",
+            "size": 0.25,
+            "conditions": {
+              "weather": "Misty with a Chance of Regret",
+              "temperature": "Temperate",
+              "nightTemperature": "Mild if You're On Fire",
+              "wind": "Steady",
+              "toxicity": "Toxic to the Touch",
+              "radiation": "Congratulations, You’re a Radiator Now"
+            },
+            "settlements": []
+          },
+          {
+            "name": "Ylvana VII",
+            "type": "Oceanic",
+            "size": 0.32,
+            "conditions": {
+              "weather": "Arid",
+              "temperature": "Oppressively Humid",
+              "nightTemperature": "Frigid",
+              "wind": "Whispers of Madness",
+              "toxicity": "Don't Even Think About It",
+              "radiation": "Unshielded Exposure Not Recommended"
+            },
+            "settlements": []
+          },
+          {
+            "name": "Ylvana VIII",
+            "type": "Carbonaceous",
+            "size": 0.15,
+            "conditions": {
+              "weather": "Perpetual Overcast",
+              "temperature": "Vaguely Sweaty",
+              "nightTemperature": "Balmy",
+              "wind": "Steady",
+              "toxicity": "Get in the Suit and Don’t Breathe",
+              "radiation": "Elevated"
+            },
+            "settlements": []
+          },
+          {
+            "name": "Ylvana IX",
+            "type": "Volcanic",
+            "size": 0.26,
+            "conditions": {
+              "weather": "Arid",
+              "temperature": "Just Right (for lizards)",
+              "nightTemperature": "Cozy for Ice Worms",
+              "wind": "Howling Winds",
+              "toxicity": "Toxicity 3000™",
+              "radiation": "Congratulations, You’re a Radiator Now"
+            },
+            "settlements": []
+          },
+          {
+            "name": "Ylvana X",
+            "type": "Rocky",
+            "size": 0.23,
+            "conditions": {
+              "weather": "Thunderstorms You Can Taste",
+              "temperature": "Frosty",
+              "nightTemperature": "So Cold Even the Darkness Shivers",
+              "wind": "Sonic Boom Breezes",
+              "toxicity": "High",
+              "radiation": "Dangerous"
+            },
+            "settlements": []
+          },
+          {
+            "name": "Ylvana XI",
+            "type": "Desolate",
+            "size": 0.28,
+            "conditions": {
+              "weather": "Punchy Winds with Sideways Hail",
+              "temperature": "Blistering Heat",
+              "nightTemperature": "Tolerable, Assuming Cryosleep",
+              "wind": "Whispers of Madness",
+              "toxicity": "Melts Metal (and Mood)",
+              "radiation": "Dangerous"
+            },
+            "settlements": []
+          }
+        ]
+      },
+      {
+        "name": "Uraven-II d",
+        "type": "Barren",
+        "color": "#CBD5E0",
+        "size": 8,
+        "orbitRadius": 65,
+        "moons": [
+          {
+            "name": "Uraven-II d I",
+            "type": "Icy",
+            "size": 0.22,
+            "conditions": {
+              "weather": "Rainy",
+              "temperature": "Temperate",
+              "nightTemperature": "Cozy for Ice Worms",
+              "wind": "Unpredictable Gusts",
+              "toxicity": "Deadly",
+              "radiation": "Turns Teeth Into Antennas"
+            },
+            "settlements": []
+          },
+          {
+            "name": "Uraven-II d II",
+            "type": "Rocky",
+            "size": 0.19,
+            "conditions": {
+              "weather": "Punchy Winds with Sideways Hail",
+              "temperature": "Chilly",
+              "nightTemperature": "Mild if You're On Fire",
+              "wind": "Searing Winds",
+              "toxicity": "Deadly",
+              "radiation": "Congratulations, You’re a Radiator Now"
+            },
+            "settlements": []
+          },
+          {
+            "name": "Uraven-II d III",
+            "type": "Cratered",
+            "size": 0.17,
+            "conditions": {
+              "weather": "Foggy Enough to Lose a Ship",
+              "temperature": "Vaguely Sweaty",
+              "nightTemperature": "Cozy for Ice Worms",
+              "wind": "Sonic Boom Breezes",
+              "toxicity": "Moderate",
+              "radiation": "Microwave-Worthy"
+            },
+            "settlements": []
+          },
+          {
+            "name": "Uraven-II d IV",
+            "type": "Volcanic",
+            "size": 0.15,
+            "conditions": {
+              "weather": "Volcanic Ashfall",
+              "temperature": "Oppressively Humid",
+              "nightTemperature": "Mild",
+              "wind": "Strong Enough to Peel Paint Off a Ship",
+              "toxicity": "Lethal Without Filters",
+              "radiation": "Microwave-Worthy"
+            },
+            "settlements": []
+          },
+          {
+            "name": "Uraven-II d V",
+            "type": "Frozen",
+            "size": 0.3,
+            "conditions": {
+              "weather": "Dust Storms",
+              "temperature": "Scorching but Dry (like bad humor)",
+              "nightTemperature": "Balmy",
+              "wind": "Strong Enough to Peel Paint Off a Ship",
+              "toxicity": "Toxicity 3000™",
+              "radiation": "Only Survivable by Cockroaches"
+            },
+            "settlements": []
+          },
+          {
+            "name": "Uraven-II d VI",
+            "type": "Icy",
+            "size": 0.25,
+            "conditions": {
+              "weather": "Dust Storms",
+              "temperature": "Chilly",
+              "nightTemperature": "Bitter Cold",
+              "wind": "Whispers of Madness",
+              "toxicity": "Get in the Suit and Don’t Breathe",
+              "radiation": "Microwave-Worthy"
+            },
+            "settlements": []
+          },
+          {
+            "name": "Uraven-II d VII",
+            "type": "Cratered",
+            "size": 0.34,
+            "conditions": {
+              "weather": "Thunderstorms You Can Taste",
+              "temperature": "Frosty",
+              "nightTemperature": "Subzero",
+              "wind": "You'll Need Ballast",
+              "toxicity": "Don't Even Think About It",
+              "radiation": "Only Survivable by Cockroaches"
+            },
+            "settlements": []
+          },
+          {
+            "name": "Uraven-II d VIII",
+            "type": "Metallic",
+            "size": 0.28,
+            "conditions": {
+              "weather": "Dust Storms",
+              "temperature": "Oppressively Humid",
+              "nightTemperature": "Subzero",
+              "wind": "Silent but Deadly",
+              "toxicity": "High",
+              "radiation": "Only Survivable by Cockroaches"
+            },
+            "settlements": []
+          },
+          {
+            "name": "Uraven-II d IX",
+            "type": "Frozen",
+            "size": 0.21,
+            "conditions": {
+              "weather": "Perpetual Overcast",
+              "temperature": "Blistering Heat",
+              "nightTemperature": "Balmy",
+              "wind": "Silent but Deadly",
+              "toxicity": "Low",
+              "radiation": "Turns Teeth Into Antennas"
+            },
+            "settlements": []
+          },
+          {
+            "name": "Uraven-II d X",
+            "type": "Frozen",
+            "size": 0.13,
+            "conditions": {
+              "weather": "Dust Storms",
+              "temperature": "Sweater Weather (in a vacuum suit)",
+              "nightTemperature": "Brisk But Deadly",
+              "wind": "Sonic Boom Breezes",
+              "toxicity": "Low",
+              "radiation": "Turns Teeth Into Antennas"
+            },
+            "settlements": []
+          },
+          {
+            "name": "Uraven-II d XI",
+            "type": "Desolate",
+            "size": 0.17,
+            "conditions": {
+              "weather": "Unrelenting Sunlight",
+              "temperature": "Vaguely Sweaty",
+              "nightTemperature": "Bitter Cold",
+              "wind": "Whispers of Madness",
+              "toxicity": "Rated 'NOPE' by the Galactic Health Authority",
+              "radiation": "Only Survivable by Cockroaches"
+            },
+            "settlements": []
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "system-4",
+    "name": "Lioren-II",
+    "type": "M",
+    "color": "#F56565",
+    "temp": "<3,700K",
+    "size": 3,
+    "description": "A dim red dwarf, common and cool, with faint habitable zones.",
+    "faction": {
+      "name": "The Vireli Swarm",
+      "id": "vireli_swarm",
+      "alignment": "Neutral Evil",
+      "symbol": "🦠",
+      "color": "#AAFF00",
+      "description": "A post-biological hive-mind species that devours entire biospheres. Motivated by survival and propagation, they view individual sentience as a flaw."
+    },
+    "x": 3823.8283031387255,
+    "y": 363.1822186289355,
+    "planets": [
+      {
+        "name": "Lioren-II a",
+        "type": "Rocky",
+        "color": "#A0AEC0",
+        "size": 8,
+        "orbitRadius": 20,
+        "moons": [
+          {
+            "name": "Lioren-II a I",
+            "type": "Frozen",
+            "size": 0.17,
+            "conditions": {
+              "weather": "Unrelenting Sunlight",
+              "temperature": "Oppressively Humid",
+              "nightTemperature": "Mild",
+              "wind": "Steady",
+              "toxicity": "Melts Metal (and Mood)",
+              "radiation": "Full Cosmic BBQ"
+            },
+            "settlements": []
+          },
+          {
+            "name": "Lioren-II a II",
+            "type": "Frozen",
+            "size": 0.33,
+            "conditions": {
+              "weather": "Rainy",
+              "temperature": "Cold Enough to Freeze a Plasma Line",
+              "nightTemperature": "Frozen Solid",
+              "wind": "Whispers of Madness",
+              "toxicity": "Rated 'NOPE' by the Galactic Health Authority",
+              "radiation": "Microwave-Worthy"
+            },
+            "settlements": []
+          },
+          {
+            "name": "Lioren-II a III",
+            "type": "Carbonaceous",
+            "size": 0.34,
+            "conditions": {
+              "weather": "Dust Storms",
+              "temperature": "Comfortably Inhospitable",
+              "nightTemperature": "Brisk But Deadly",
+              "wind": "Sonic Boom Breezes",
+              "toxicity": "Deadly",
+              "radiation": "Suit-Melting"
+            },
+            "settlements": []
+          },
+          {
+            "name": "Lioren-II a IV",
+            "type": "Oceanic",
+            "size": 0.12,
+            "conditions": {
+              "weather": "Punchy Winds with Sideways Hail",
+              "temperature": "Chilly",
+              "nightTemperature": "Mild if You're On Fire",
+              "wind": "Searing Winds",
+              "toxicity": "Great for Robots, Bad for Everything Else",
+              "radiation": "Microwave-Worthy"
+            },
+            "settlements": []
+          }
+        ]
+      },
+      {
+        "name": "Lioren-II b",
+        "type": "Rocky",
+        "color": "#A0AEC0",
+        "size": 7,
+        "orbitRadius": 35,
+        "moons": []
+      },
+      {
+        "name": "Lioren-II c",
+        "type": "Crystaline",
+        "color": "#B794F4",
+        "size": 7,
+        "orbitRadius": 50,
+        "moons": [
+          {
+            "name": "Lioren-II c I",
+            "type": "Desolate",
+            "size": 0.14,
+            "conditions": {
+              "weather": "Cyclonic",
+              "temperature": "Oppressively Humid",
+              "nightTemperature": "Balmy",
+              "wind": "You'll Need Ballast",
+              "toxicity": "Deadly",
+              "radiation": "Safe"
+            },
+            "settlements": []
+          },
+          {
+            "name": "Lioren-II c II",
+            "type": "Frozen",
+            "size": 0.34,
+            "conditions": {
+              "weather": "Arid",
+              "temperature": "Chilly",
+              "nightTemperature": "Frigid",
+              "wind": "You'll Need Ballast",
+              "toxicity": "Melts Metal (and Mood)",
+              "radiation": "Hostile to DNA"
+            },
+            "settlements": []
+          },
+          {
+            "name": "Lioren-II c III",
+            "type": "Cratered",
+            "size": 0.28,
+            "conditions": {
+              "weather": "Mood: Moist",
+              "temperature": "Comfortably Inhospitable",
+              "nightTemperature": "Balmy",
+              "wind": "Howling Winds",
+              "toxicity": "Don't Even Think About It",
+              "radiation": "Dangerous"
+            },
+            "settlements": []
+          },
+          {
+            "name": "Lioren-II c IV",
+            "type": "Oceanic",
+            "size": 0.15,
+            "conditions": {
+              "weather": "Arid",
+              "temperature": "Frosty",
+              "nightTemperature": "Frigid",
+              "wind": "Unpredictable Gusts",
+              "toxicity": "Get in the Suit and Don’t Breathe",
+              "radiation": "Elevated"
+            },
+            "settlements": []
+          },
+          {
+            "name": "Lioren-II c V",
+            "type": "Desolate",
+            "size": 0.21,
+            "conditions": {
+              "weather": "Atmospheric Static",
+              "temperature": "Scorching but Dry (like bad humor)",
+              "nightTemperature": "Mild if You're On Fire",
+              "wind": "Searing Winds",
+              "toxicity": "Low",
+              "radiation": "Microwave-Worthy"
+            },
+            "settlements": []
+          },
+          {
+            "name": "Lioren-II c VI",
+            "type": "Oceanic",
+            "size": 0.26,
+            "conditions": {
+              "weather": "Atmospheric Static",
+              "temperature": "Comfortably Inhospitable",
+              "nightTemperature": "Subzero",
+              "wind": "Whispers of Madness",
+              "toxicity": "High",
+              "radiation": "Dangerous"
+            },
+            "settlements": []
+          }
+        ]
+      },
+      {
+        "name": "Lioren-II d",
+        "type": "Exotic",
+        "color": "#ED64A6",
+        "size": 7,
+        "orbitRadius": 65,
+        "moons": []
+      }
+    ]
+  }
+]

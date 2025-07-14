@@ -1,8 +1,9 @@
 // utils/systemUtils.js
 
-import { assignFaction } from './factionUtils';
-import { generatePlanets } from './planetUtils';
-import { generateStarName, getStarDescription } from './starUtils';
+import { assignFaction } from '@utils/factionUtils';
+import { generatePlanets } from '@utils/planetUtils';
+import { generateStarName, getStarDescription } from '@utils/starUtils';
+import { v4 as uuidv4 } from 'uuid';
 
 // Star classification schema (moved here for reuse)
 export const STAR_CLASSES = [
@@ -33,7 +34,8 @@ export const generateStarSystem = (index = 0) => {
     const faction = assignFaction({ name });
 
     return {
-        id: `system-${index}`,
+        //id: `system-${index}`,
+        id: uuidv4(), // 👈 Unique GUID here
         name,
         type: starClass.type,
         color: starClass.color,

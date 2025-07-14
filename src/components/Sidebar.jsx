@@ -3,12 +3,15 @@ import { useState } from 'react';
 import { useHomeSystem } from '../hooks/useHomeSystem'; // adjust path as needed
 import PlanetMapModal from './PlanetMapModal';
 import PlanetPanel from './PlanetPanel'; // adjust path as needed
+import StarSystemViewer from './StarSystemViewer';
+
 
 const Sidebar = ({ selectedStar }) => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [selectedPlanet, setSelectedPlanet] = useState(null);
     const home = JSON.parse(localStorage.getItem('homeSystem') || '{}');
     const { homeSystem, setHome, clearHome } = useHomeSystem();
+    const [showSystemMap, setShowSystemMap] = useState(false);
 
     const handleMapClick = (planet) => {
         setSelectedPlanet(planet);
@@ -28,11 +31,19 @@ const Sidebar = ({ selectedStar }) => {
                             )}
                         </h2>
                     </div>
+                    <p className="text-green-400"><strong>Unique ID:</strong> {selectedStar.id}</p>
                     <p className="text-green-400"><strong>Type:</strong> {selectedStar.type}</p>
                     <p className="text-green-400"><strong>Temperature:</strong> {selectedStar.temp}</p>
                     <p className="text-green-400"><strong>Faction:</strong> {selectedStar.faction?.name || 'Unknown'}</p>
                     <p className="text-green-400"><strong>Symbol:</strong> {selectedStar.faction?.symbol || 'N/A'}</p>
                     <p className="mt-2 text-base text-gray-300">{selectedStar.description}</p>
+
+                    <button
+                        onClick={() => setShowSystemMap(true)}
+                        className="mt-2 px-2 py-1 bg-purple-700 text-white text-xs rounded hover:bg-purple-600"
+                    >
+                        STAR SYSTEM MAP
+                    </button>
 
                     {selectedStar.name === homeSystem.name ? (
                         <button
@@ -78,6 +89,13 @@ const Sidebar = ({ selectedStar }) => {
                 <PlanetMapModal
                     planet={selectedPlanet}
                     onClose={() => setIsModalOpen(false)}
+                />
+            )}
+
+            {showSystemMap && selectedStar && (
+                <StarSystemViewer
+                    star={selectedStar}
+                    onClose={() => setShowSystemMap(false)}
                 />
             )}
         </div>
