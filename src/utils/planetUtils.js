@@ -40,6 +40,8 @@ export const planetTypes = [
     { type: 'Artificial', color: '#F0E68C', weight: 0.02 }
 ];
 
+
+
 // Procedural planet name generator (updated to support unique names)
 export const generatePlanetName = (starName, index, uniqueNames) => {
     if (uniqueNames && uniqueNames.length > 0 && Math.random() < 0.4) { // 40% chance for a unique name
@@ -56,7 +58,7 @@ import { economyNames } from './economyUtils.js';
 
 // Generate planetary system (updated for inhabited planets, settlements, population, random capital, and economy)
 export const generatePlanets = (starName) => {
-    //console.log('Generating planets for star:', starName);
+
 
     const numPlanets = Math.floor(Math.random() * 5) + 2; // 2–6 planets
     const planets = [];
@@ -98,7 +100,81 @@ export const generatePlanets = (starName) => {
                 planet.economy = economyNames[Math.floor(Math.random() * economyNames.length)];
             }
         }
+        planet.moons = generateMoons(planet.name, planet.type);
         planets.push(planet);
     }
     return planets;
 };
+
+
+//import { uniquePlanetNames } from './nameUtils'; 
+import { getRandomConditions } from '@utils/conditionUtils';
+
+const moonTypes = [
+    'Rocky',
+    'Icy',
+    'Volcanic',
+    'Desolate',
+    'Oceanic',
+    'Cratered',
+    'Frozen',
+    'Metallic',
+    'Carbonaceous',
+];
+
+const namedMoonProbability = 0.2; // 20% chance a moon gets a unique name
+let moonNameIndex = 0;
+
+/**
+ * Generate moons for a given planet.
+ * @param {string} planetName
+ * @param {string} planetType
+ * @returns {Array} Array of moon objects
+ */
+export function generateMoons(planetName, planetType) {
+    if (planetType === 'Gas Giant') return [];
+
+    const numMoons = Math.floor(Math.random() ** 2 * 13); // heavily weighted toward fewer moons
+
+    const moons = [];
+    for (let i = 0; i < numMoons; i++) {
+        const isNamed = Math.random() < namedMoonProbability && moonNameIndex < uniquePlanetNames.length;
+        const name = isNamed
+            ? uniquePlanetNames[moonNameIndex++]
+            : `${planetName} ${toRoman(i + 1)}`;
+
+        const type = moonTypes[Math.floor(Math.random() * moonTypes.length)];
+        const size = (Math.random() * 0.3 + 0.1).toFixed(2); // 0.1–0.4 (scaled relative to planets)
+
+        const moon = {
+            name,
+            type,
+            size: parseFloat(size),
+            conditions: getRandomConditions(),
+            settlements: isNamed ? generateMoonSettlements(name) : [],
+        };
+
+        //console.log('[PlanetUtils] Generated moon ' + moon.name + '  for planet ' + planetName);
+
+        moons.push(moon);
+    }
+
+    return moons;
+}
+
+// Helper to generate 1–2 settlements
+function generateMoonSettlements(moonName) {
+    const count = Math.floor(Math.random() * 2) + 1;
+    const settlements = [];
+    for (let i = 0; i < count; i++) {
+        const suffix = ['Base', 'Station', 'Outpost', 'Dome', 'Colony'][Math.floor(Math.random() * 5)];
+        settlements.push(`${moonName} ${suffix}`);
+    }
+    return settlements;
+}
+
+// Helper for Roman numerals like "III"
+function toRoman(num) {
+    const romans = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X', 'XI', 'XII'];
+    return romans[num - 1] || `${num}`;
+}

@@ -132,3 +132,15 @@ export const getConditionsForPlanetType = (type) => {
     }
     return conditions;
 };
+
+export const getRandomConditions = () => {
+    const conditions = {
+        weather: getWeightedRandom(weatherNames, Array(weatherNames.length).fill(1)),
+        temperature: getWeightedRandom(temperatureNames, Array(temperatureNames.length).fill(1)),
+        nightTemperature: getWeightedRandom(nightTemperatureNames, Array(nightTemperatureNames.length).fill(1)),
+        wind: getWeightedRandom(windNames, Array(windNames.length).fill(1)),
+        toxicity: getWeightedRandom(toxicityNames, Array(toxicityNames.length).fill(1)),
+        radiation: getWeightedRandom(radiationLevelNames, Array(radiationLevelNames.length).fill(1)),
+    };
+    return conditions;
+};

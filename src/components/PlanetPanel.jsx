@@ -23,6 +23,7 @@ const PlanetPanel = ({ planet, factionColor, onMapClick }) => {
         return resources;
     }, [planet.type]);
 
+
     return (
         <div className="border-t border-gray-700 py-2">
             <button
@@ -56,6 +57,31 @@ const PlanetPanel = ({ planet, factionColor, onMapClick }) => {
                             <p className="ml-4 text-xs text-gray-400 italic">{planet.economy.description}</p>
                         </div>
                     )}
+
+
+                    {Array.isArray(planet.moons) && planet.moons.length > 0 && (
+                        <div>
+                            <div className="flex items-center gap-1 text-orange-400 font-bold">
+                                <Earth className="w-4 h-4" /> Moons
+                            </div>
+                            <ul className="ml-4 list-disc text-gray-200 text-sm">
+                                {planet.moons.map((moon, idx) => (
+                                    <li key={idx}>
+                                        <span className="text-white">{moon.name}</span>{' '}
+                                        <span className="text-gray-400">({moon.type})</span>
+                                        {moon.settlements && moon.settlements.length > 0 && (
+                                            <ul className="ml-4 list-disc text-xs text-gray-400">
+                                                {moon.settlements.map((s, i) => (
+                                                    <li key={i}> {s}</li>
+                                                ))}
+                                            </ul>
+                                        )}
+                                    </li>
+                                ))}
+                            </ul>
+                        </div>
+                    )}
+
 
                     {planet.settlements && (
                         <div>

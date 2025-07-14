@@ -12,7 +12,20 @@ export const generateStarName = () => {
         'Sykaris', 'Lorvex', 'Pythera', 'Vornak', 'Qirell', 'Zhyrra', 'Talvek', 'Umbrak',
         'Arthen', 'Jureth', 'Velsor', 'Xanith', 'Cirella', 'Kheros', 'Nirvax', 'Soryn',
         'Obryth', 'Thalrix', 'Veraxa', 'Lymari', 'Azryn', 'Dornak', 'Phalor', 'Quiris',
-        'Xevara', 'Yllor', 'Zovra', 'Mekalor'];
+        'Xevara', 'Yllor', 'Zovra', 'Mekalor', 'Aetheron', 'Barenth', 'Cyralon', 'Draxil', 'Elaros', 'Faelix', 'Gorvan', 'Helion', 'Iskavor', 'Jarnyx',
+        'Krython', 'Lyvora', 'Morvax', 'Nirion', 'Orlinth', 'Pryxis', 'Quelar', 'Raveth', 'Sarnyx', 'Tyrran',
+        'Ulthera', 'Vorlax', 'Wyxen', 'Xarnis', 'Yvenor', 'Zarion', 'Alvaran', 'Bravik', 'Cindros', 'Deryth',
+        'Eronex', 'Falrix', 'Gavros', 'Hyrven', 'Illyra', 'Jarvok', 'Kelrix', 'Lorvan', 'Myrren', 'Nethros',
+        'Olthar', 'Pyrosyn', 'Quenthis', 'Rykor', 'Selyth', 'Tarnis', 'Uveron', 'Valmora', 'Wexil', 'Xyril',
+        'Yllira', 'Zornak', 'Aurex', 'Brathis', 'Calven', 'Drexar', 'Elython', 'Fioran', 'Galther', 'Harnix',
+        'Ivarra', 'Joreth', 'Kurnex', 'Lazura', 'Mirvox', 'Navori', 'Orren', 'Praxil', 'Quiris', 'Rilvax',
+        'Sylora', 'Telrix', 'Ulmira', 'Vexron', 'Wyreth', 'Xaleth', 'Yvaren', 'Zyrionis', 'Ashkar', 'Baltrax',
+        'Corven', 'Dymos', 'Elvyn', 'Faryn', 'Graven', 'Helmar', 'Inthar', 'Jelrik', 'Kyrion', 'Lurvek',
+        'Malvek', 'Norlyn', 'Omberis', 'Parvyn', 'Quelros', 'Revon', 'Syneth', 'Trenor', 'Uraven', 'Varnis',
+        'Worven', 'Xerith', 'Yothen', 'Zurvan', 'Athros', 'Belmora', 'Caelith', 'Dravik', 'Elvon', 'Ferros',
+        'Grynn', 'Halvek', 'Ilmor', 'Jazren', 'Kaltor', 'Lysira', 'Marvus', 'Nyven', 'Orvak', 'Phiryn',
+        'Qarnis', 'Rhonex', 'Sorvak', 'Talven', 'Umbros', 'Vireth', 'Worrik', 'Xelvar', 'Yornak', 'Zethros',
+        'Ankaris', 'Braxxis', 'Cireth', 'Dulvos', 'Enthor', 'Feyrax', 'Garnyx', 'Hylora', 'Ithros', 'Jarnor'];
     const suffixes = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X', 'Alpha', 'Bravo', 'Prime'];
     return `${prefixes[Math.floor(Math.random() * prefixes.length)]}-${suffixes[Math.floor(Math.random() * suffixes.length)]}`;
 };
