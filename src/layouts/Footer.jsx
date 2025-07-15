@@ -36,14 +36,14 @@ const Footer = ({ offsetX, offsetY, scale, stars, setOffsetX, setOffsetY, goToSy
                 <button
                     onClick={() => {
                         if (!home || !home.name) {
-                            alert("Ya gotta set a home system first, bro.");
+                            alert("Set a home system first.");
                             return;
                         }
 
-                        console.log("Going home to", home.name);
-                        if (confirm("Are you sure you want to go home to " + home.name + "?")) {
-                            goToSystem(home);
-                        }
+                        goToSystem(home);
+                        // if (confirm("Are you sure you want to go home to " + home.name + "?")) {
+                        //     goToSystem(home);
+                        // }
                     }}
                     className={`underline transition-colors relative group ${home && home.name
                         ? "text-green-400 hover:text-green-200"

@@ -82,9 +82,11 @@ export const createHandleClick = ({
             p.angle = p.angle ?? Math.random() * Math.PI * 2;
         });
 
-        saveStarToLocalStorage(clickedStar, stars); // Save to local storage
+        //--- Save this specific system for later use.
+        saveStarToLocalStorage(clickedStar, stars);
 
-        setSelectedStar(clickedStar); // ✅ This triggers the sidebar
+        //--- Load up the SideBar.
+        setSelectedStar(clickedStar);
 
         // Update visited list
         const visited = JSON.parse(localStorage.getItem('visitedStars') || '[]');

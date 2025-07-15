@@ -204,6 +204,7 @@ const StarMap = ({
         return () => cancelAnimationFrame(animationFrameRef.current);
     }, [stars, offsetX, offsetY, scale, factionFilter, selectedStar, hoveredStar]);
 
+    
     //--- This is a smooth zoom from where ever you are to the selected system.
     //--- Right now this is done from the visited systems history panel.
     //--- We will send you back there and show you the planets in orbit. 
