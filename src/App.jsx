@@ -5,6 +5,8 @@ import { useLazyStarField } from './hooks/useLazyStarField';
 
 
 const App = () => {
+
+  //--- These are all things we need for moving along the canvas.
   const [offsetX, setOffsetX] = useState(0);
   const [offsetY, setOffsetY] = useState(0);
   const [scale, setScale] = useState(1);

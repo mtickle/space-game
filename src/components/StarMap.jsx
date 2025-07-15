@@ -6,12 +6,21 @@
 
 import AdminPanel from '@components/AdminPanel';
 import Sidebar from '@components/Sidebar';
-import { getStarTooltip, saveStarToLocalStorage } from '@hooks/useLazyStarField';
+import { getStarTooltip } from '@hooks/useLazyStarField';
 import Footer from '@layouts/Footer';
 import Header from '@layouts/Header';
 import { generatePlanets } from '@utils/planetUtils';
+import { saveStarToLocalStorage } from '@utils/storageUtils';
 import { useEffect, useRef, useState } from 'react';
-//const { loginWithRedirect, logout, isAuthenticated, user, isLoading } = useAuth0();
+
+import {
+    createHandleClick,
+    createHandleContextMenu,
+    createHandleMouseDown,
+    createHandleMouseMove,
+    createHandleMouseUp,
+    createHandleWheel
+} from '@utils/mouseUtils';
 
 const StarMap = ({
     stars,
@@ -52,6 +61,40 @@ const StarMap = ({
         return () => resizeObserver.unobserve(container);
     }, [setCanvasSize]);
 
+    //--- Mouse handler delegation using mouseUtils.
+    const handleMouseDown = createHandleMouseDown(setIsDragging, setDragStart);
+    const handleMouseMove = createHandleMouseMove({
+        canvasRef,
+        offsetX,
+        offsetY,
+        scale,
+        isDragging,
+        setOffsetX,
+        setOffsetY,
+        dragStart,
+        setDragStart,
+        stars,
+        setHoveredStar
+    });
+    const handleMouseUp = createHandleMouseUp(setIsDragging);
+    const handleWheel = createHandleWheel(scale, setScale);
+    const handleClick = createHandleClick({
+        isDragging,
+        canvasRef,
+        offsetX,
+        offsetY,
+        scale,
+        stars,
+        setSelectedStar
+    });
+    const handleContextMenu = createHandleContextMenu({
+        canvasRef,
+        offsetX,
+        offsetY,
+        scale,
+        stars
+    });
+
     //--- This function draws the star map scene, including stars, planets, and tooltips.
     const drawScene = () => {
         const canvas = canvasRef.current;
@@ -75,6 +118,8 @@ const StarMap = ({
             const alpha = 1 - depth * 0.8;
             const blur = 10 * (1 - depth);
 
+            //--- Draw a circle, fill it in, give it a glow and some shadow and 
+            //--- a star is born.
             ctx.beginPath();
             ctx.arc(star.x, star.y, star.size, 0, Math.PI * 2);
             ctx.fillStyle = star.color;
@@ -85,7 +130,7 @@ const StarMap = ({
             ctx.shadowBlur = 0;
             ctx.globalAlpha = 1;
 
-            // Home outline
+            //--- This is a skinny white circle we place around our "home" system.
             if (home.name === star.name) {
                 ctx.beginPath();
                 ctx.arc(star.x, star.y, star.size + 4 / scale, 0, Math.PI * 2);
@@ -94,11 +139,14 @@ const StarMap = ({
                 ctx.stroke();
             }
 
+            //--- Here is your star system name
             ctx.fillStyle = '#FFFFFF';
             ctx.font = `${12 / scale}px Courier New, monospace`;
             ctx.textAlign = 'center';
             ctx.fillText(star.name, star.x, star.y - star.size - 6 / scale);
 
+            //--- This is a little green dot we place at each system
+            //--- as a visual cue that we have visited it.            
             if (visited.includes(star.name)) {
                 ctx.beginPath();
                 ctx.arc(star.x, star.y - star.size - 12 / scale, 2 / scale, 0, Math.PI * 2);
@@ -106,6 +154,9 @@ const StarMap = ({
                 ctx.fill();
             }
 
+            //--- Now, you've gone and either hovered over a system or clicked it.
+            //--- We already have the planets created, we just need to render them 
+            //--- based on their attributes.
             if ((selectedStar?.name === star.name || hoveredStar?.name === star.name) && star.planets) {
                 star.planets.forEach((planet) => {
                     ctx.beginPath();
@@ -128,6 +179,7 @@ const StarMap = ({
 
         ctx.restore();
 
+        //--- Here's a tooltip. I want to make this better and more informative.
         if (hoveredStar) {
             const tooltip = getStarTooltip(hoveredStar);
             ctx.save();
@@ -142,6 +194,7 @@ const StarMap = ({
         }
     };
 
+    //--- Make the planets actually orbit.
     useEffect(() => {
         const animate = () => {
             drawScene();
@@ -151,13 +204,13 @@ const StarMap = ({
         return () => cancelAnimationFrame(animationFrameRef.current);
     }, [stars, offsetX, offsetY, scale, factionFilter, selectedStar, hoveredStar]);
 
-    const handleMouseDown = (e) => {
-        setIsDragging(true);
-        setDragStart({ x: e.clientX, y: e.clientY });
-    };
-
+    //--- This is a smooth zoom from where ever you are to the selected system.
+    //--- Right now this is done from the visited systems history panel.
+    //--- We will send you back there and show you the planets in orbit. 
     const goToSystem = (targetStar) => {
-        const fullStar = stars.find(s => s.name === targetStar.name);
+        // Try to get the full star object from localStorage
+        const saved = localStorage.getItem(`star_${targetStar.name}`);
+        let fullStar = saved ? JSON.parse(saved) : stars.find(s => s.name === targetStar.name);
         if (!fullStar) return;
 
         const duration = 600;
@@ -183,7 +236,7 @@ const StarMap = ({
             if (currentStep < steps) {
                 requestAnimationFrame(animate);
             } else {
-                // Ensure planets are loaded
+                // Ensure planets are loaded (from save or generate fresh)
                 if (!fullStar.planets || fullStar.planets.length === 0) {
                     fullStar.planets = generatePlanets(fullStar.name);
                     fullStar.planets.forEach(p => {
@@ -191,13 +244,16 @@ const StarMap = ({
                     });
                 }
 
-                setSelectedStar(fullStar);
+                saveStarToLocalStorage(fullStar, stars);
+
+                setSelectedStar(fullStar); //--- Show the planets in orbit.
             }
         };
 
         requestAnimationFrame(animate);
     };
 
+    //--- Here some smooth motion to return you back to the galactic center of 0,0.
     const goToZeroCommaZero = () => {
         const duration = 600;
         const frameRate = 60;
@@ -225,86 +281,6 @@ const StarMap = ({
         };
 
         requestAnimationFrame(animate);
-    };
-
-
-    const handleMouseMove = (e) => {
-        const canvas = canvasRef.current;
-        const rect = canvas.getBoundingClientRect();
-        const mouseX = (e.clientX - rect.left - canvas.width / 2 - offsetX) / scale;
-        const mouseY = (e.clientY - rect.top - canvas.height / 2 - offsetY) / scale;
-
-        if (isDragging) {
-            setOffsetX(offsetX + (e.clientX - dragStart.x) / scale);
-            setOffsetY(offsetY + (e.clientY - dragStart.y) / scale);
-            setDragStart({ x: e.clientX, y: e.clientY });
-        } else {
-            const hovered = stars.find(star => {
-                const dx = mouseX - star.x;
-                const dy = mouseY - star.y;
-                return Math.sqrt(dx * dx + dy * dy) < star.size + 4;
-            });
-            setHoveredStar(hovered ? { ...hovered, clientX: e.clientX - rect.left, clientY: e.clientY - rect.top } : null);
-        }
-    };
-
-    const handleMouseUp = () => setIsDragging(false);
-
-    const handleWheel = (e) => {
-        const zoomSpeed = 0.1;
-        const newScale = Math.min(Math.max(scale - e.deltaY * zoomSpeed * 0.001, 0.5), 2);
-        setScale(newScale);
-    };
-
-    const handleClick = (e) => {
-        if (!isDragging) {
-            const canvas = canvasRef.current;
-            const rect = canvas.getBoundingClientRect();
-            const mouseX = (e.clientX - rect.left - canvas.width / 2 - offsetX) / scale;
-            const mouseY = (e.clientY - rect.top - canvas.height / 2 - offsetY) / scale;
-
-            const clickedStar = stars.find(star => {
-                const dx = mouseX - star.x;
-                const dy = mouseY - star.y;
-                return Math.sqrt(dx * dx + dy * dy) < star.size + 4;
-            });
-
-            if (clickedStar) {
-                if (!clickedStar.planets || clickedStar.planets.length === 0) {
-                    clickedStar.planets = generatePlanets(clickedStar.name);
-                }
-                clickedStar.planets.forEach(p => {
-                    p.angle = p.angle ?? Math.random() * Math.PI * 2;
-                });
-                saveStarToLocalStorage(clickedStar, stars);
-                setSelectedStar(clickedStar);
-
-                const visited = JSON.parse(localStorage.getItem('visitedStars') || '[]');
-                if (!visited.includes(clickedStar.name)) {
-                    visited.push(clickedStar.name);
-                    localStorage.setItem('visitedStars', JSON.stringify(visited));
-                }
-            }
-        }
-    };
-
-    const handleContextMenu = (e) => {
-        e.preventDefault();
-        const canvas = canvasRef.current;
-        const rect = canvas.getBoundingClientRect();
-        const mouseX = (e.clientX - rect.left - canvas.width / 2 - offsetX) / scale;
-        const mouseY = (e.clientY - rect.top - canvas.height / 2 - offsetY) / scale;
-
-        const clickedStar = stars.find(star => {
-            const dx = mouseX - star.x;
-            const dy = mouseY - star.y;
-            return Math.sqrt(dx * dx + dy * dy) < star.size + 4;
-        });
-
-        if (clickedStar) {
-            localStorage.setItem('homeSystem', JSON.stringify({ name: clickedStar.name, x: clickedStar.x, y: clickedStar.y }));
-            alert(`${clickedStar.name} is now your home system.`);
-        }
     };
 
     return (
