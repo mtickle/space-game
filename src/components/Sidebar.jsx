@@ -6,7 +6,7 @@ import PlanetPanel from './PlanetPanel'; // adjust path as needed
 import StarSystemViewer from './StarSystemViewer';
 
 
-const Sidebar = ({ selectedStar }) => {
+const Sidebar = ({ selectedStar, setActiveSystem }) => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [selectedPlanet, setSelectedPlanet] = useState(null);
     const home = JSON.parse(localStorage.getItem('homeSystem') || '{}');
@@ -39,11 +39,12 @@ const Sidebar = ({ selectedStar }) => {
                     <p className="mt-2 text-base text-gray-300">{selectedStar.description}</p>
 
                     <button
-                        onClick={() => setShowSystemMap(true)}
+                        onClick={() => setActiveSystem(selectedStar)}
                         className="mt-2 px-2 py-1 bg-purple-700 text-white text-xs rounded hover:bg-purple-600"
                     >
-                        STAR SYSTEM MAP
-                    </button>
+                        Star System Map
+                    </button>&nbsp;
+
 
                     {selectedStar.name === homeSystem.name ? (
                         <button

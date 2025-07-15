@@ -40,7 +40,7 @@ const AdminPanel = ({ stars, goToSystem }) => {
                         <ul className="relative space-y-4 z-10">
                             <li>
                                 <button onClick={() => {
-                                    console.log("Going home to", home.name);
+                                    // console.log("Going home to", home.name);
                                     if (confirm("Are you sure you want to go home to " + home.name + "?")) {
 
                                         goToSystem(home);

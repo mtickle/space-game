@@ -108,6 +108,8 @@ const StarSystemViewer = ({ starSystem, onClose }) => {
 
             ctx.beginPath();
             ctx.fillStyle = starSystem.color || '#FFD700';
+            ctx.font = '16px monospace';
+            ctx.fillText(starSystem.name, cx + 30, cy + 5);
             ctx.arc(cx, cy, 20, 0, Math.PI * 2);
             ctx.fill();
 
@@ -203,9 +205,10 @@ const StarSystemViewer = ({ starSystem, onClose }) => {
 
     return (
         <div>
-            <div className="fixed inset-0 bg-black bg-opacity-90 z-50 flex flex-col items-center justify-center">
-                <div ref={wrapperRef} className="relative w-[98vw] h-[95vh] border-[10px] border-gray-700 rounded-xl shadow-inner bg-black overflow-hidden">
+            <div className="absolute inset-0 bg-black bg-opacity-90 z-20 flex flex-col">
+                <div ref={wrapperRef} className="relative w-full h-full bg-black border-l border-gray-800">
                     <canvas ref={canvasRef} className="w-full h-full z-10" />
+
                     {hoveredMoon && (
                         <div
                             className="absolute text-xs bg-gray-900 text-white px-2 py-1 rounded border border-gray-700 pointer-events-none"
@@ -215,9 +218,9 @@ const StarSystemViewer = ({ starSystem, onClose }) => {
                             Type: {hoveredMoon.type}<br />
                             Resource: {hoveredMoon.resource || 'None'}
                         </div>
-
                     )}
 
+                    {/* Top bar */}
                     <div className="absolute top-0 left-0 right-0 flex justify-start items-center gap-4 bg-black bg-opacity-80 px-6 py-3 border-b border-gray-800 z-20">
                         {zoomedPlanet && (
                             <button
@@ -250,7 +253,8 @@ const StarSystemViewer = ({ starSystem, onClose }) => {
                             )}
                         </button>
                     </div>
-                    {/* Vintage Systems Panel */}
+
+                    {/* Bottom bar */}
                     <div className="absolute bottom-0 left-0 right-0 flex items-center justify-between px-4 py-2 bg-black bg-opacity-70 border-t border-gray-800 z-20 font-mono text-xs text-lime-400">
                         <div className="flex gap-4">
                             <div>
@@ -271,9 +275,9 @@ const StarSystemViewer = ({ starSystem, onClose }) => {
                             [SYSCHK] OK :: [SIG] ∆0.00421 :: [CPU] 87.3% :: [LNGSCN] ∞Σ=13.07 :: [THRML] STABLE :: [RDR-PLS] ⋰⋰⋰
                         </div>
                     </div>
-
                 </div>
             </div>
+
         </div>
     );
 };

@@ -6,6 +6,7 @@
 
 import AdminPanel from '@components/AdminPanel';
 import Sidebar from '@components/Sidebar';
+import StarSystemViewer from '@components/StarSystemViewer';
 import { getStarTooltip } from '@hooks/useLazyStarField';
 import Footer from '@layouts/Footer';
 import Header from '@layouts/Header';
@@ -33,6 +34,7 @@ const StarMap = ({
     setCanvasSize,
 }) => {
 
+    const [activeSystem, setActiveSystem] = useState(null);
     const canvasRef = useRef(null);
     const [selectedStar, setSelectedStar] = useState(null);
     const [hoveredStar, setHoveredStar] = useState(null);
@@ -44,6 +46,7 @@ const StarMap = ({
     const [selectedPlanet, setSelectedPlanet] = useState(null);
     const animationFrameRef = useRef(null);
     const [showVisited, setShowVisited] = useState(false);
+
 
     //--- This effect sets the initial canvas size and listens for window resize events to adjust the canvas size dynamically.
     useEffect(() => {
@@ -204,7 +207,7 @@ const StarMap = ({
         return () => cancelAnimationFrame(animationFrameRef.current);
     }, [stars, offsetX, offsetY, scale, factionFilter, selectedStar, hoveredStar]);
 
-    
+
     //--- This is a smooth zoom from where ever you are to the selected system.
     //--- Right now this is done from the visited systems history panel.
     //--- We will send you back there and show you the planets in orbit. 
@@ -295,7 +298,11 @@ const StarMap = ({
             />
 
             <div className="flex flex-row flex-1 overflow-hidden">
-                <Sidebar selectedStar={selectedStar} onMapClick={() => { }} />
+                <Sidebar
+                    selectedStar={selectedStar}
+                    onMapClick={() => { }}
+                    setActiveSystem={setActiveSystem}
+                />
                 <div className="flex flex-1 items-center justify-center relative">
                     <canvas
                         ref={canvasRef}
@@ -308,7 +315,15 @@ const StarMap = ({
                         onClick={handleClick}
                         onContextMenu={handleContextMenu}
                     />
+
+                    {activeSystem && (
+                        <StarSystemViewer
+                            starSystem={activeSystem}
+                            onClose={() => setActiveSystem(null)}
+                        />
+                    )}
                 </div>
+
             </div>
             <AdminPanel stars={stars} goToSystem={goToSystem} />
             <Footer

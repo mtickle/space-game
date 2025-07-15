@@ -54,6 +54,7 @@ export const generatePlanetName = (starName, index, uniqueNames) => {
 };
 
 // Import economy names
+import { v4 as uuidv4 } from 'uuid';
 import { economyNames } from './economyUtils.js';
 
 // Generate planetary system (updated for inhabited planets, settlements, population, random capital, and economy)
@@ -75,6 +76,7 @@ export const generatePlanets = (starName) => {
             }
         }
         const planet = {
+            id: uuidv4(),
             name: generatePlanetName(starName, i, availableUniqueNames.length > 0 ? availableUniqueNames : null),
             type: planetType.type,
             color: planetType.color,
@@ -154,9 +156,9 @@ export function generateMoons(planetName, planetType) {
             settlements: isNamed ? generateMoonSettlements(name) : [],
         };
 
-        console.log('[PlanetUtils] Generated moon ' + moon.type + '  for planet ' + planetName);
+       // console.log('[PlanetUtils] Generated moon ' + moon.type + '  for planet ' + planetName);
         if (moon.settlements.length) {
-            console.log(`[MoonDebug] 🛰 ${moon.name} has settlements:`, moon.settlements);
+            //console.log(`[MoonDebug] 🛰 ${moon.name} has settlements:`, moon.settlements);
         }
         moons.push(moon);
     }
