@@ -109,7 +109,7 @@ const StarSystemViewer = ({ starSystem, onClose }) => {
             ctx.beginPath();
             ctx.fillStyle = starSystem.color || '#FFD700';
             ctx.font = '16px monospace';
-            ctx.fillText(starSystem.name, cx + 30, cy + 5);
+            //ctx.fillText(starSystem.name, cx + 30, cy + 5);
             ctx.arc(cx, cy, 20, 0, Math.PI * 2);
             ctx.fill();
 
