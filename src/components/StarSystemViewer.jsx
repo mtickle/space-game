@@ -1,9 +1,11 @@
 import { getMoonColor, getPlanetColor } from '@utils/colorUtils';
 import { generateElementalMineral } from '@utils/mineralUtils';
+import { Pause, Play, SquareArrowLeft } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 
 const StarSystemViewer = ({ starSystem, onClose }) => {
     const canvasRef = useRef(null);
+    const wrapperRef = useRef(null);
     const requestRef = useRef();
     const orbitState = useRef({});
     const [zoomedPlanet, setZoomedPlanet] = useState(null);
@@ -38,13 +40,14 @@ const StarSystemViewer = ({ starSystem, onClose }) => {
     useEffect(() => {
         const canvas = canvasRef.current;
         const ctx = canvas.getContext('2d');
-        const width = canvas.width = window.innerWidth;
-        const height = canvas.height = window.innerHeight;
+        const wrapper = wrapperRef.current;
+        const rect = wrapper.getBoundingClientRect();
+        const width = canvas.width = rect.width;
+        const height = canvas.height = rect.height;
         const cx = width / 2;
         const cy = height / 2;
 
         function handleClick(event) {
-            const rect = canvas.getBoundingClientRect();
             const x = event.clientX - rect.left;
             const y = event.clientY - rect.top;
 
@@ -61,7 +64,6 @@ const StarSystemViewer = ({ starSystem, onClose }) => {
         }
 
         function handleMouseMove(event) {
-            const rect = canvas.getBoundingClientRect();
             const x = event.clientX - rect.left;
             const y = event.clientY - rect.top;
             setMousePos({ x, y });
@@ -95,8 +97,8 @@ const StarSystemViewer = ({ starSystem, onClose }) => {
     useEffect(() => {
         const canvas = canvasRef.current;
         const ctx = canvas.getContext('2d');
-        const width = canvas.width = window.innerWidth;
-        const height = canvas.height = window.innerHeight;
+        const width = canvas.width;
+        const height = canvas.height;
         const cx = width / 2;
         const cy = height / 2;
 
@@ -131,8 +133,6 @@ const StarSystemViewer = ({ starSystem, onClose }) => {
                 ctx.fillText(zoomedPlanet.name, px + 25, py);
 
                 orbit.moons?.forEach((moon) => {
-
-
                     if (!motionPausedRef.current) {
                         moon.angle += moon.speed;
                     }
@@ -204,37 +204,75 @@ const StarSystemViewer = ({ starSystem, onClose }) => {
     return (
         <div>
             <div className="fixed inset-0 bg-black bg-opacity-90 z-50 flex flex-col items-center justify-center">
-                {zoomedPlanet && (
-                    <button
-                        onClick={() => setZoomedPlanet(null)}
-                        className="absolute top-4 left-4 bg-gray-800 text-white px-4 py-2 rounded hover:bg-gray-700"
-                    >
-                        Back to Star View
-                    </button>
-                )}
-                <canvas ref={canvasRef} className="w-full h-full" />
-                {hoveredMoon && (
-                    <div
-                        className="absolute text-xs bg-gray-900 text-white px-2 py-1 rounded border border-gray-700 pointer-events-none"
-                        style={{ top: mousePos.y + 12, left: mousePos.x + 12 }}
-                    >
-                        <strong>{hoveredMoon.name}</strong><br />
-                        Type: {hoveredMoon.type}<br />
-                        Resource: {hoveredMoon.resource || 'None'}
+                <div ref={wrapperRef} className="relative w-[98vw] h-[95vh] border-[10px] border-gray-700 rounded-xl shadow-inner bg-black overflow-hidden">
+                    <canvas ref={canvasRef} className="w-full h-full z-10" />
+                    {hoveredMoon && (
+                        <div
+                            className="absolute text-xs bg-gray-900 text-white px-2 py-1 rounded border border-gray-700 pointer-events-none"
+                            style={{ top: mousePos.y + 12, left: mousePos.x + 12 }}
+                        >
+                            <strong>{hoveredMoon.name}</strong><br />
+                            Type: {hoveredMoon.type}<br />
+                            Resource: {hoveredMoon.resource || 'None'}
+                        </div>
+
+                    )}
+
+                    <div className="absolute top-0 left-0 right-0 flex justify-start items-center gap-4 bg-black bg-opacity-80 px-6 py-3 border-b border-gray-800 z-20">
+                        {zoomedPlanet && (
+                            <button
+                                onClick={() => setZoomedPlanet(null)}
+                                className="bg-gray-800 text-white px-4 py-2 rounded hover:bg-gray-700"
+                            >
+                                <SquareArrowLeft className="inline w-4 h-4 mr-1 text-blue-400" /> Back to Star View
+                            </button>
+                        )}
+                        <button
+                            onClick={onClose}
+                            className="bg-gray-800 text-white px-4 py-2 rounded hover:bg-gray-700"
+                        >
+                            <SquareArrowLeft className="inline w-4 h-4 mr-1 text-red-400" /> Back to Galaxy Map
+                        </button>
+                        <button
+                            onClick={toggleMotion}
+                            className="flex items-center bg-gray-800 text-white px-4 py-2 rounded hover:bg-gray-700"
+                        >
+                            {motionPausedRef.current ? (
+                                <>
+                                    <Play className="inline w-4 h-4 mr-2 text-green-400" />
+                                    Resume Motion
+                                </>
+                            ) : (
+                                <>
+                                    <Pause className="inline w-4 h-4 mr-2 text-yellow-400" />
+                                    Pause Motion
+                                </>
+                            )}
+                        </button>
                     </div>
-                )}
-                <button
-                    onClick={toggleMotion}
-                    className="absolute bottom-4 left-1/2 transform -translate-x-1/2 bg-gray-800 text-white px-4 py-2 rounded hover:bg-gray-700 z-50"
-                >
-                    {motionPausedRef.current ? 'Resume Motion' : 'Pause Motion'}
-                </button>
-                <button
-                    onClick={onClose}
-                    className="absolute top-4 right-4 bg-gray-800 text-white px-4 py-2 rounded hover:bg-gray-700"
-                >
-                    Close Map
-                </button>
+                    {/* Vintage Systems Panel */}
+                    <div className="absolute bottom-0 left-0 right-0 flex items-center justify-between px-4 py-2 bg-black bg-opacity-70 border-t border-gray-800 z-20 font-mono text-xs text-lime-400">
+                        <div className="flex gap-4">
+                            <div>
+                                SYS TEMP: <span className="text-amber-300">237K</span>
+                            </div>
+                            <div>
+                                COORDS: <span className="text-blue-400">X-231, Y+883</span>
+                            </div>
+                            <div className="animate-pulse text-red-400">
+                                COMMS: UPLINK LOST
+                            </div>
+                        </div>
+                        <div className="flex gap-2 items-center">
+                            <div className="w-2 h-2 bg-green-400 rounded-full animate-ping"></div>
+                            <div>RADAR SWEEP ACTIVE</div>
+                        </div>
+                        <div className="overflow-hidden whitespace-nowrap w-full text-green-400 text-[11px] font-mono animate-marquee">
+                            [SYSCHK] OK :: [SIG] ∆0.00421 :: [CPU] 87.3% :: [LNGSCN] ∞Σ=13.07 :: [THRML] STABLE :: [RDR-PLS] ⋰⋰⋰
+                        </div>
+                    </div>
+
+                </div>
             </div>
         </div>
     );
