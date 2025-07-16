@@ -1,7 +1,6 @@
 // Updated Sidebar.jsx with Home System Button
 import { useState } from 'react';
 import { useHomeSystem } from '../hooks/useHomeSystem'; // adjust path as needed
-import PlanetMapModal from './PlanetMapModal';
 import PlanetPanel from './PlanetPanel'; // adjust path as needed
 import StarSystemViewer from './StarSystemViewer';
 

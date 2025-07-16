@@ -1,5 +1,5 @@
 import { generateMineral } from '@utils/mineralUtils';
-import { Crown, Diameter, Droplet, Earth, Factory, FlaskConical, LandPlot, MapPin, MapPlus, Radiation, ThermometerSnowflake, ThermometerSun, Wind } from 'lucide-react';
+import { Crown, Diameter, Droplet, Earth, Factory, FlaskConical, LandPlot, MapPin, Radiation, ThermometerSnowflake, ThermometerSun, Wind } from 'lucide-react';
 import { useMemo, useState } from 'react';
 
 const PlanetPanel = ({ planet, factionColor, onMapClick }) => {
@@ -23,7 +23,6 @@ const PlanetPanel = ({ planet, factionColor, onMapClick }) => {
         return resources;
     }, [planet.type]);
 
-
     return (
         <div className="border-t border-gray-700 py-2">
             <button
@@ -42,9 +41,9 @@ const PlanetPanel = ({ planet, factionColor, onMapClick }) => {
                         <ul className="ml-4 list-disc text-gray-200 text-sm">
                             <li><LandPlot className="inline w-4 h-4 mr-1 text-red-400" /><strong>Type:</strong> {planet.type}</li>
                             <li><Diameter className="inline w-4 h-4 mr-1 text-red-400" /><strong>Size:</strong> {planet.size > 6 ? 'Large' : planet.size > 3 ? 'Medium' : 'Small'}</li>
-                            <li><MapPlus className="inline w-4 h-4 mr-1 text-red-400" /><strong>Map:</strong><button onClick={() => onMapClick(planet)} className="ml-2 text-green-400 hover:text-green-300">
+                            {/* <li><MapPlus className="inline w-4 h-4 mr-1 text-red-400" /><strong>Map:</strong><button onClick={() => onMapClick(planet)} className="ml-2 text-green-400 hover:text-green-300">
                                 Open Map
-                            </button></li>
+                            </button></li> */}
                         </ul>
                     </div>
 

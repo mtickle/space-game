@@ -46,6 +46,8 @@ const StarMap = ({
     const [selectedPlanet, setSelectedPlanet] = useState(null);
     const animationFrameRef = useRef(null);
     const [showVisited, setShowVisited] = useState(false);
+    const orbitState = useRef({});
+
 
 
     //--- This effect sets the initial canvas size and listens for window resize events to adjust the canvas size dynamically.
@@ -63,6 +65,23 @@ const StarMap = ({
         resizeObserver.observe(container);
         return () => resizeObserver.unobserve(container);
     }, [setCanvasSize]);
+
+    useEffect(() => {
+        const state = {};
+
+        stars.forEach(star => {
+            if (!star.planets || star.planets.length === 0) return;
+
+            state[star.name] = star.planets.map((planet, i) => ({
+                angle: Math.random() * Math.PI * 2,
+                speed: 0.001 + Math.random() * 0.001,
+                radius: planet.orbitRadius || (20 + i * 8),
+            }));
+        });
+
+        orbitState.current = state;
+    }, [stars]);
+
 
     //--- Mouse handler delegation using mouseUtils.
     const handleMouseDown = createHandleMouseDown(setIsDragging, setDragStart);
@@ -121,8 +140,8 @@ const StarMap = ({
             const alpha = 1 - depth * 0.8;
             const blur = 10 * (1 - depth);
 
-            //--- Draw a circle, fill it in, give it a glow and some shadow and 
-            //--- a star is born.
+            //--- This is drawing the GALACTIC MAP.
+            //--- Draw a circle, fill it in, give it a glow and some shadow and a star is born.
             ctx.beginPath();
             ctx.arc(star.x, star.y, star.size, 0, Math.PI * 2);
             ctx.fillStyle = star.color;
@@ -157,6 +176,7 @@ const StarMap = ({
                 ctx.fill();
             }
 
+            //--- THIS IS DRAWING THE STAR SYSTEM MAP
             //--- Now, you've gone and either hovered over a system or clicked it.
             //--- We already have the planets created, we just need to render them 
             //--- based on their attributes.
@@ -168,9 +188,33 @@ const StarMap = ({
                     ctx.lineWidth = .5 / scale;
                     ctx.stroke();
 
-                    planet.angle = (planet.angle ?? Math.random() * Math.PI * 2) + 0.01;
                     const px = star.x + Math.cos(planet.angle) * planet.orbitRadius;
                     const py = star.y + Math.sin(planet.angle) * planet.orbitRadius;
+
+                    const orbits = orbitState.current[star.name] || [];
+
+                    star.planets.forEach((planet, i) => {
+                        const orbit = orbits[i];
+                        if (!orbit) return;
+
+                        orbit.angle += orbit.speed;
+
+                        ctx.beginPath();
+                        ctx.arc(star.x, star.y, orbit.radius, 0, Math.PI * 2);
+                        ctx.strokeStyle = planet.color + '33';
+                        ctx.lineWidth = 0.5 / scale;
+                        ctx.stroke();
+
+                        const px = star.x + Math.cos(orbit.angle) * orbit.radius;
+                        const py = star.y + Math.sin(orbit.angle) * orbit.radius;
+
+                        ctx.beginPath();
+                        const renderSize = Math.min(planet.size ?? 1.5, 4);
+                        ctx.arc(px, py, renderSize, 0, Math.PI * 2);
+                        ctx.fillStyle = planet.color;
+                        ctx.fill();
+                    });
+
                     ctx.beginPath();
                     const renderSize = Math.min(planet.size ?? 1.5, 4);
                     ctx.arc(px, py, renderSize, 0, Math.PI * 2);
