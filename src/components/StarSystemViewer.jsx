@@ -103,7 +103,8 @@ const StarSystemViewer = ({ starSystem, onClose }) => {
         const cy = height / 2;
 
         function draw() {
-            ctx.fillStyle = '#000';
+            //ctx.fillStyle = '#000';
+            ctx.fillStyle = '#1A202C';
             ctx.fillRect(0, 0, width, height);
 
             ctx.beginPath();
@@ -221,7 +222,7 @@ const StarSystemViewer = ({ starSystem, onClose }) => {
                     )}
 
                     {/* Top bar */}
-                    <div className="absolute top-0 left-0 right-0 flex justify-start items-center gap-4 bg-black bg-opacity-80 px-6 py-3 border-b border-gray-800 z-20">
+                    <div className="absolute top-0 left-0 right-0 flex justify-start items-center gap-4 bg-map-background bg-opacity-80 px-6 py-3 border-b border-gray-800 z-20">
                         {zoomedPlanet && (
                             <button
                                 onClick={() => setZoomedPlanet(null)}
@@ -255,7 +256,7 @@ const StarSystemViewer = ({ starSystem, onClose }) => {
                     </div>
 
                     {/* Bottom bar */}
-                    <div className="absolute bottom-0 left-0 right-0 flex items-center justify-between px-4 py-2 bg-black bg-opacity-70 border-t border-gray-800 z-20 font-mono text-xs text-lime-400">
+                    {/* <div className="absolute bottom-0 left-0 right-0 flex items-center justify-between px-4 py-2 bg-black bg-opacity-70 border-t border-gray-800 z-20 font-mono text-xs text-lime-400">
                         <div className="flex gap-4">
                             <div>
                                 SYS TEMP: <span className="text-amber-300">237K</span>
@@ -274,7 +275,8 @@ const StarSystemViewer = ({ starSystem, onClose }) => {
                         <div className="overflow-hidden whitespace-nowrap w-full text-green-400 text-[11px] font-mono animate-marquee">
                             [SYSCHK] OK :: [SIG] ∆0.00421 :: [CPU] 87.3% :: [LNGSCN] ∞Σ=13.07 :: [THRML] STABLE :: [RDR-PLS] ⋰⋰⋰
                         </div>
-                    </div>
+                    </div> */}
+
                 </div>
             </div>
 

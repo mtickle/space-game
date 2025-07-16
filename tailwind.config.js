@@ -3,6 +3,9 @@ export default {
   content: ['./index.html', './src/**/*.{js,ts,jsx,tsx}'],
   theme: {
     extend: {
+      colors: {
+        'map-background': '#1A202C',
+      },
       animation: {
         marquee: 'marquee 20s linear infinite',
       },

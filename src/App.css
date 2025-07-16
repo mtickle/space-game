@@ -1,3 +1,40 @@
 @import url("https://fonts.googleapis.com/css2?family=Baumans&display=swap");
 
 @import "tailwindcss";
+
+@keyframes colorPulse {
+  0%,
+  100% {
+    color: #f59e0b;
+  }
+  50% {
+    color: #ec4899;
+  }
+}
+@keyframes colorShift {
+  0%,
+  100% {
+    color: #60a5fa;
+  }
+  50% {
+    color: #a78bfa;
+  }
+}
+@keyframes pulseGlow {
+  0%,
+  100% {
+    text-shadow: 0 0 10px rgba(255, 105, 180, 0.9);
+  }
+  50% {
+    text-shadow: 0 0 15px rgba(255, 105, 180, 1);
+  }
+}
+@keyframes pingGlow {
+  0%,
+  100% {
+    box-shadow: 0 0 12px rgba(0, 255, 0, 0.8);
+  }
+  75% {
+    box-shadow: 0 0 20px rgba(0, 255, 0, 1);
+  }
+}

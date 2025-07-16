@@ -30,6 +30,19 @@ const Footer = ({ offsetX, offsetY, scale, stars, setOffsetX, setOffsetY, goToSy
                 </span>
 
             </div>
+            <div className="flex gap-4">
+                <div>
+                    <span className="text-cyan-300 drop-shadow-[0_0_4px_rgba(0,255,255,0.7)]">SYS TEMP:</span>{' '}
+                    <span className="text-amber-400 animate-[colorPulse_3s_ease-in-out_infinite] [text-shadow:0_0_8px_rgba(255,191,0,0.8)]">237K</span>
+                </div>
+                <div className="animate-pulse text-red-400">
+                    COMMS: UPLINK LOST
+                </div>
+                <div className="flex gap-2 items-center">
+                    <div className="w-2 h-2 bg-green-400 rounded-full animate-ping"></div>
+                    <div>SCANNER SWEEP ACTIVE</div>
+                </div>
+            </div>
 
             <div className="space-x-4">
 
