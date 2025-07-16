@@ -48,27 +48,55 @@ const StarSystemViewer = ({ starSystem, onClose }) => {
         });
     }, [starSystem]);
 
-
     useEffect(() => {
-        if (selectedPlanet) {
-            const width = canvasRef.current?.width || 800;
-            const height = canvasRef.current?.height || 600;
-            const cx = width / 2;
-            const cy = height / 2;
-            const settlementCount = selectedPlanet.settlements?.length || 5;
-            const positions = [];
-            for (let i = 0; i < settlementCount; i++) {
-                const angle = Math.random() * Math.PI * 2;
-                const radius = Math.random() * 80;
-                const sx = cx + Math.cos(angle) * radius;
-                const sy = cy + Math.sin(angle) * radius;
-                positions.push({ x: sx, y: sy, name: selectedPlanet.settlements?.[i]?.name || `Settlement ${i + 1} ` });
-            }
-            setSettlementPositions(positions);
-        } else {
+        if (!selectedPlanet || !selectedPlanet.settlements || selectedPlanet.settlements.length === 0) {
             setSettlementPositions([]);
+            return;
         }
+
+        const width = canvasRef.current?.width || 800;
+        const height = canvasRef.current?.height || 600;
+        const cx = width / 2;
+        const cy = height / 2;
+        const positions = [];
+
+        const settlementCount = selectedPlanet.settlements.length;
+
+        for (let i = 0; i < settlementCount; i++) {
+            const angle = Math.random() * Math.PI * 2;
+            const radius = Math.random() * 80;
+            const sx = cx + Math.cos(angle) * radius;
+            const sy = cy + Math.sin(angle) * radius;
+            positions.push({
+                x: sx,
+                y: sy,
+                name: selectedPlanet.settlements[i].name
+            });
+        }
+
+        setSettlementPositions(positions);
     }, [selectedPlanet]);
+
+    // useEffect(() => {
+    //     if (selectedPlanet) {
+    //         const width = canvasRef.current?.width || 800;
+    //         const height = canvasRef.current?.height || 600;
+    //         const cx = width / 2;
+    //         const cy = height / 2;
+    //         const settlementCount = selectedPlanet.settlements?.length || 5;
+    //         const positions = [];
+    //         for (let i = 0; i < settlementCount; i++) {
+    //             const angle = Math.random() * Math.PI * 2;
+    //             const radius = Math.random() * 80;
+    //             const sx = cx + Math.cos(angle) * radius;
+    //             const sy = cy + Math.sin(angle) * radius;
+    //             positions.push({ x: sx, y: sy, name: selectedPlanet.settlements?.[i]?.name || `Settlement ${i + 1} ` });
+    //         }
+    //         setSettlementPositions(positions);
+    //     } else {
+    //         setSettlementPositions([]);
+    //     }
+    // }, [selectedPlanet]);
 
     useEffect(() => {
         const canvas = canvasRef.current;
@@ -125,13 +153,18 @@ const StarSystemViewer = ({ starSystem, onClose }) => {
                 const px = cx;
                 const py = cy;
                 const orbit = orbitState.current[zoomedPlanet.name];
-                const hovered = orbit.moons?.find((moon) => {
-                    const mx = px + Math.cos(moon.angle) * moon.radius * 2.5;
-                    const my = py + Math.sin(moon.angle) * moon.radius * 2.5;
+                const hoveredIndex = orbit.moons?.findIndex((moon, mIndex) => {
+                    const moonGap = 14;
+                    const moonOrbitRadius = 30 + mIndex * moonGap;
+
+                    const mx = px + Math.cos(moon.angle) * moonOrbitRadius;
+                    const my = py + Math.sin(moon.angle) * moonOrbitRadius;
                     const dist = Math.sqrt((x - mx) ** 2 + (y - my) ** 2);
                     return dist < 12;
                 });
-                setHoveredMoon(hovered || null);
+
+                const hovered = hoveredIndex >= 0 ? orbit.moons[hoveredIndex] : null;
+                setHoveredMoon(hovered);
             } else {
                 setHoveredMoon(null);
             }
