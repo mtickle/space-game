@@ -1,9 +1,16 @@
-// floraUtils.js
-
 import { chance, getRandomInt, getRandomItem } from '@utils/randomUtils';
 
-const floraTypes = [
-    'Tree', 'Shrub', 'Flower', 'Vine', 'Seaweed', 'Fungus', 'Moss', 'Bush', 'Grass', 'Coral-like'
+export const floraTypes = [
+    { type: 'tree', name: 'Tree', icon: 'TreePine' },
+    { type: 'shrub', name: 'Shrub', icon: 'Shrub' },
+    { type: 'flower', name: 'Flower', icon: 'Flower' },
+    { type: 'vine', name: 'Vine', icon: 'Vine' },
+    { type: 'seaweed', name: 'Seaweed', icon: 'Waves' },
+    { type: 'fungus', name: 'Fungus', icon: 'Mushroom' },
+    { type: 'moss', name: 'Moss', icon: 'Leaf' },
+    { type: 'bush', name: 'Bush', icon: 'Shrub' },
+    { type: 'grass', name: 'Grass', icon: 'Grass' },
+    { type: 'coral-like', name: 'Coral-like', icon: 'Fish' }
 ];
 
 const utilities = [
@@ -52,14 +59,23 @@ function getFloraNote(type, appearance) {
     return getRandomItem(jokes);
 }
 
-function generateFlora(planetType, maxCount = 5) {
+export function generateFlora(planetType, maxCountParam = 5) {
+    // Ensure settings exist, default to no flora if unknown planet type
     const settings = typeFloraPresence[planetType] || { count: [0, 0] };
-    const count = getRandomInt(...settings.count);
-    const floraList = [];
+    const [minCount, settingsMaxCount] = settings.count || [0, 0];
+    const count = Math.min(getRandomInt(minCount, settingsMaxCount), maxCountParam); // Use parameter maxCount
 
-    for (let i = 0; i < count && i < maxCount; i++) {
+    if (count <= 0) {
+        console.warn(`No flora generated for ${planetType} (count: ${count})`);
+        return [];
+    }
+
+    const floraList = [];
+    const availableTypes = floraTypes.map(f => f.type);
+
+    for (let i = 0; i < count; i++) {
         const name = generateFloraName();
-        const type = settings.marineOnly ? 'Seaweed' : getRandomItem(floraTypes);
+        const type = settings.marineOnly ? 'seaweed' : getRandomItem(availableTypes);
         const appearance = settings.specialAppearance || getRandomItem(appearances);
 
         floraList.push({

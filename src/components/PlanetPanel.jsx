@@ -1,13 +1,15 @@
 import { generateFauna } from '@utils/faunaUtils'; // Added lifeformTypes import
+import { generateFlora } from '@utils/floraUtils';
 import { generateMineral } from '@utils/mineralUtils';
-import { Bug, Cpu, Crown, Diameter, Droplet, Earth, Factory, Feather, FlaskConical, LandPlot, Leaf, MapPin, MousePointer, Octagon, PawPrint, Radiation, Shell, Sparkles, ThermometerSnowflake, ThermometerSun, Turtle, Wind } from 'lucide-react';
+import { Bug, CircleQuestionMark, Cpu, Crown, Diameter, Droplet, Earth, Factory, Feather, Fish, FlaskConical, Flower, LandPlot, Leaf, MapPin, MousePointer, Octagon, PawPrint, Radiation, Shell, Shrub, Sparkles, ThermometerSnowflake, ThermometerSun, TreePalm, TreePine, Turtle, Waves, Wind } from 'lucide-react';
 import { useMemo, useState } from 'react';
 
 const PlanetPanel = ({ planet, factionColor, onMapClick }) => {
     const [open, setOpen] = useState(false);
 
     const faunaList = useMemo(() => generateFauna(planet.type), [planet.type]);
-    // console.log(faunaList)
+    const floraList = useMemo(() => generateFlora(planet.type), [planet.type]);
+    console.log(floraList)
 
     const resourceList = useMemo(() => {
         const resources = [];
@@ -43,6 +45,22 @@ const PlanetPanel = ({ planet, factionColor, onMapClick }) => {
             'Synthetic': <Cpu className="inline w-4 h-4 mr-1 text-gray-500" />
         };
         return iconMap[type] || <PawPrint className="inline w-4 h-4 mr-1 text-gray-400" />; // Default to PawPrint
+    };
+
+    const getFloraIcon = (type) => {
+        const iconMap = {
+            'tree': <TreePine className="inline w-4 h-4 mr-1 text-green-500" />,
+            'shrub': <Shrub className="inline w-4 h-4 mr-1 text-green-600" />,
+            'flower': <Flower className="inline w-4 h-4 mr-1 text-pink-500" />,
+            'vine': <TreePalm className="inline w-4 h-4 mr-1 text-green-700" />,
+            'seaweed': <Waves className="inline w-4 h-4 mr-1 text-blue-500" />,
+            'fungus': <Bug className="inline w-4 h-4 mr-1 text-purple-500" />,
+            'moss': <Leaf className="inline w-4 h-4 mr-1 text-lime-500" />,
+            'bush': <Shrub className="inline w-4 h-4 mr-1 text-green-600" />,
+            'grass': <Bug className="inline w-4 h-4 mr-1 text-lime-600" />,
+            'coral-like': <Fish className="inline w-4 h-4 mr-1 text-teal-500" />
+        };
+        return iconMap[type] || <CircleQuestionMark className="inline w-4 h-4 mr-1 text-gray-400" />; // Default to TreePine
     };
 
     return (
@@ -127,6 +145,26 @@ const PlanetPanel = ({ planet, factionColor, onMapClick }) => {
                             {resourceList}
                         </ul>
                     </div>
+
+                    {floraList.length > 0 && (
+                        <div>
+                            <div className="flex items-center gap-1 text-orange-400 font-bold">
+                                <PawPrint className="w-4 h-4" /> Flora
+                            </div>
+                            <ul className="ml-4 list-disc text-gray-200 text-sm">
+                                {floraList.map((f, i) => (
+                                    <li key={i} className="mb-1">{getFloraIcon(f.type)}
+                                        {f.name} ({f.type})
+                                        {/* <ul className="ml-4 list-disc text-xs text-gray-400">
+                                            <li>Type: {f.type.name}</li>
+                                            <li>Behavior: {f.behavior}</li>
+                                        </ul> */}
+                                    </li>
+                                ))}
+                            </ul>
+                        </div>
+                    )}
+
 
                     {faunaList.length > 0 && (
                         <div>
