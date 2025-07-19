@@ -2,7 +2,8 @@
 import * as Icons from 'lucide-react';
 
 const LifeformIcon = ({ type, className = 'inline w-4 h-4 mr-1 text-green-400' }) => {
-    const iconName = lifeformIconMap[type];
+    const matched = lifeformTypes.find(l => l.type === type);
+    const iconName = matched?.icon || 'QuestionMark';
     const LucideIcon = Icons[iconName] || Icons.QuestionMark;
 
     return <LucideIcon className={className} />;

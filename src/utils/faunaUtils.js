@@ -6,17 +6,17 @@ export const behaviorTypes = [
 ];
 
 export const lifeformTypes = [
-    { type: 'mammal', icon: 'PawPrint' },
-    { type: 'reptile', icon: 'Turtle' },
-    { type: 'avian', icon: 'Feather' },
-    { type: 'amphibian', icon: 'Droplet' },
-    { type: 'insectoid', icon: 'Bug' },
-    { type: 'crustacean', icon: 'Shell' },
-    { type: 'rodent', icon: 'MousePointer' }, // Closest match for a small, twitchy critter
-    { type: 'cephalopod', icon: 'Octagon' },   // Placeholder — could be replaced with a better icon
-    { type: 'plantimal', icon: 'Leaf' },
-    { type: 'hybrid', icon: 'Sparkles' },
-    { type: 'synthetic', icon: 'Cpu' }
+    { type: 'mammal', name: 'Mammal', icon: 'PawPrint' },
+    { type: 'reptile', name: 'Reptile', icon: 'Turtle' },
+    { type: 'avian', name: 'Avian', icon: 'Feather' },
+    { type: 'amphibian', name: 'Amphibian', icon: 'Droplet' },
+    { type: 'insectoid', name: 'Insectoid', icon: 'Bug' },
+    { type: 'crustacean', name: 'Crustacean', icon: 'Shell' },
+    { type: 'rodent', name: 'Rodent', icon: 'MousePointer' },
+    { type: 'cephalopod', name: 'Cephalopod', icon: 'Octagon' },
+    { type: 'plantimal', name: 'Plantimal', icon: 'Leaf' },
+    { type: 'hybrid', name: 'Hybrid', icon: 'Sparkles' },
+    { type: 'synthetic', name: 'Synthetic', icon: 'Cpu' }
 ];
 
 //--- Biomes
@@ -77,6 +77,7 @@ export function generateFauna({ planetType }) {
         const hasGender = Math.random() > 0.2;
         const laysEggs = ['reptile', 'avian', 'insectoid', 'amphibian'].includes(type);
         const description = `A ${behavior} ${type} that prefers the ${biome} biome.`;
+        
 
         creatures.push({
             name,

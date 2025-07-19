@@ -1,13 +1,13 @@
-import { generateFauna } from '@utils/faunaUtils';
-import LifeformIcon from '@utils/LifeformIconUtils';
+import { generateFauna } from '@utils/faunaUtils'; // Added lifeformTypes import
 import { generateMineral } from '@utils/mineralUtils';
-import { Crown, Diameter, Droplet, Earth, Factory, FlaskConical, LandPlot, MapPin, PawPrint, Radiation, ThermometerSnowflake, ThermometerSun, Wind } from 'lucide-react';
+import { Bug, Cpu, Crown, Diameter, Droplet, Earth, Factory, Feather, FlaskConical, LandPlot, Leaf, MapPin, MousePointer, Octagon, PawPrint, Radiation, Shell, Sparkles, ThermometerSnowflake, ThermometerSun, Turtle, Wind } from 'lucide-react';
 import { useMemo, useState } from 'react';
 
 const PlanetPanel = ({ planet, factionColor, onMapClick }) => {
     const [open, setOpen] = useState(false);
 
     const faunaList = useMemo(() => generateFauna(planet.type), [planet.type]);
+    // console.log(faunaList)
 
     const resourceList = useMemo(() => {
         const resources = [];
@@ -27,6 +27,24 @@ const PlanetPanel = ({ planet, factionColor, onMapClick }) => {
         return resources;
     }, [planet.type]);
 
+    // Map lifeform types to Lucide icons
+    const getFaunaIcon = (type) => {
+        const iconMap = {
+            'Mammal': <PawPrint className="inline w-4 h-4 mr-1 text-red-400" />,
+            'Reptile': <Turtle className="inline w-4 h-4 mr-1 text-green-400" />,
+            'Avian': <Feather className="inline w-4 h-4 mr-1 text-yellow-400" />,
+            'Amphibian': <Droplet className="inline w-4 h-4 mr-1 text-blue-400" />,
+            'Insectoid': <Bug className="inline w-4 h-4 mr-1 text-purple-400" />,
+            'Crustacean': <Shell className="inline w-4 h-4 mr-1 text-teal-400" />,
+            'Rodent': <MousePointer className="inline w-4 h-4 mr-1 text-gray-400" />,
+            'Cephalopod': <Octagon className="inline w-4 h-4 mr-1 text-indigo-400" />,
+            'Plantimal': <Leaf className="inline w-4 h-4 mr-1 text-lime-400" />,
+            'Hybrid': <Sparkles className="inline w-4 h-4 mr-1 text-pink-400" />,
+            'Synthetic': <Cpu className="inline w-4 h-4 mr-1 text-gray-500" />
+        };
+        return iconMap[type] || <PawPrint className="inline w-4 h-4 mr-1 text-gray-400" />; // Default to PawPrint
+    };
+
     return (
         <div className="border-t border-gray-700 py-2">
             <button
@@ -45,9 +63,6 @@ const PlanetPanel = ({ planet, factionColor, onMapClick }) => {
                         <ul className="ml-4 list-disc text-gray-200 text-sm">
                             <li><LandPlot className="inline w-4 h-4 mr-1 text-red-400" /><strong>Type:</strong> {planet.type}</li>
                             <li><Diameter className="inline w-4 h-4 mr-1 text-red-400" /><strong>Size:</strong> {planet.size > 6 ? 'Large' : planet.size > 3 ? 'Medium' : 'Small'}</li>
-                            {/* <li><MapPlus className="inline w-4 h-4 mr-1 text-red-400" /><strong>Map:</strong><button onClick={() => onMapClick(planet)} className="ml-2 text-green-400 hover:text-green-300">
-                                Open Map
-                            </button></li> */}
                         </ul>
                     </div>
 
@@ -60,7 +75,6 @@ const PlanetPanel = ({ planet, factionColor, onMapClick }) => {
                             <p className="ml-4 text-xs text-gray-400 italic">{planet.economy.description}</p>
                         </div>
                     )}
-
 
                     {Array.isArray(planet.moons) && planet.moons.length > 0 && (
                         <div>
@@ -84,7 +98,6 @@ const PlanetPanel = ({ planet, factionColor, onMapClick }) => {
                             </ul>
                         </div>
                     )}
-
 
                     {planet.settlements && (
                         <div>
@@ -122,12 +135,12 @@ const PlanetPanel = ({ planet, factionColor, onMapClick }) => {
                             </div>
                             <ul className="ml-4 list-disc text-gray-200 text-sm">
                                 {faunaList.map((f, i) => (
-                                    <li key={i}>
-                                        <LifeformIcon type={f.type} />
+                                    <li key={i} className="mb-1">{getFaunaIcon(f.type.name)}
                                         {f.name}
-                                        <span className="text-gray-400">
-                                            ({f.type}, {f.behavior}, {f.biome})
-                                        </span>
+                                        <ul className="ml-4 list-disc text-xs text-gray-400">
+                                            <li>Type: {f.type.name}</li>
+                                            <li>Behavior: {f.behavior}</li>
+                                        </ul>
                                     </li>
                                 ))}
                             </ul>
