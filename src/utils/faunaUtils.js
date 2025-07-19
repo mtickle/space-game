@@ -5,9 +5,18 @@ export const behaviorTypes = [
     'peaceful', 'edible', 'hostile', 'territorial', 'skittish', 'parasitic', 'symbiotic', 'curious', 'sentient', 'pack hunter'
 ];
 
-//--- Lifeform Types
 export const lifeformTypes = [
-    'mammal', 'reptile', 'avian', 'amphibian', 'insectoid', 'crustacean', 'rodent', 'cephalopod', 'plantimal', 'hybrid', 'synthetic'
+    { type: 'mammal', icon: 'PawPrint' },
+    { type: 'reptile', icon: 'Turtle' },
+    { type: 'avian', icon: 'Feather' },
+    { type: 'amphibian', icon: 'Droplet' },
+    { type: 'insectoid', icon: 'Bug' },
+    { type: 'crustacean', icon: 'Shell' },
+    { type: 'rodent', icon: 'MousePointer' }, // Closest match for a small, twitchy critter
+    { type: 'cephalopod', icon: 'Octagon' },   // Placeholder — could be replaced with a better icon
+    { type: 'plantimal', icon: 'Leaf' },
+    { type: 'hybrid', icon: 'Sparkles' },
+    { type: 'synthetic', icon: 'Cpu' }
 ];
 
 //--- Biomes

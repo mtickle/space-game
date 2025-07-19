@@ -1,9 +1,13 @@
+import { generateFauna } from '@utils/faunaUtils';
+import LifeformIcon from '@utils/LifeformIconUtils';
 import { generateMineral } from '@utils/mineralUtils';
-import { Crown, Diameter, Droplet, Earth, Factory, FlaskConical, LandPlot, MapPin, Radiation, ThermometerSnowflake, ThermometerSun, Wind } from 'lucide-react';
+import { Crown, Diameter, Droplet, Earth, Factory, FlaskConical, LandPlot, MapPin, PawPrint, Radiation, ThermometerSnowflake, ThermometerSun, Wind } from 'lucide-react';
 import { useMemo, useState } from 'react';
 
 const PlanetPanel = ({ planet, factionColor, onMapClick }) => {
     const [open, setOpen] = useState(false);
+
+    const faunaList = useMemo(() => generateFauna(planet.type), [planet.type]);
 
     const resourceList = useMemo(() => {
         const resources = [];
@@ -110,6 +114,25 @@ const PlanetPanel = ({ planet, factionColor, onMapClick }) => {
                             {resourceList}
                         </ul>
                     </div>
+
+                    {faunaList.length > 0 && (
+                        <div>
+                            <div className="flex items-center gap-1 text-orange-400 font-bold">
+                                <PawPrint className="w-4 h-4" /> Fauna
+                            </div>
+                            <ul className="ml-4 list-disc text-gray-200 text-sm">
+                                {faunaList.map((f, i) => (
+                                    <li key={i}>
+                                        <LifeformIcon type={f.type} />
+                                        {f.name}
+                                        <span className="text-gray-400">
+                                            ({f.type}, {f.behavior}, {f.biome})
+                                        </span>
+                                    </li>
+                                ))}
+                            </ul>
+                        </div>
+                    )}
 
                     <div>
                         <div className="flex items-center gap-1 text-orange-400 font-bold">
