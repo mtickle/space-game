@@ -72,6 +72,8 @@ export const createHandleClick = ({
         return Math.sqrt(dx * dx + dy * dy) < star.size + 4;
     });
 
+    console.log("THATS A CLICKED STAR RIGHT THERE: " + clickedStar.name)
+
     if (clickedStar) {
         // Ensure planets are generated
         if (!clickedStar.planets || clickedStar.planets.length === 0) {
