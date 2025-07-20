@@ -76,8 +76,8 @@ export function generateFauna({ planetType }) {
         const feet = type === 'cephalopod' ? 8 : type === 'synthetic' ? randomInt(0, 12) : randomInt(0, 6);
         const hasGender = Math.random() > 0.2;
         const laysEggs = ['reptile', 'avian', 'insectoid', 'amphibian'].includes(type);
-        const description = `A ${behavior} ${type} that prefers the ${biome} biome.`;
-        
+        const description = `A ${behavior} ${type.name} that prefers the ${biome} biome.`;
+
 
         creatures.push({
             name,

@@ -9,7 +9,7 @@ const PlanetPanel = ({ planet, factionColor, onMapClick }) => {
 
     const faunaList = useMemo(() => generateFauna(planet.type), [planet.type]);
     const floraList = useMemo(() => generateFlora(planet.type), [planet.type]);
-    console.log(floraList)
+   
 
     const resourceList = useMemo(() => {
         const resources = [];

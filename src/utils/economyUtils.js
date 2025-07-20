@@ -48,3 +48,8 @@ export const economyNames = [
         "description": "Labor time is the currency. You literally pay with your time, which is fine until someone figures out how to counterfeit hours."
     }
 ]
+
+
+export function generateEconomy() {
+    return economyNames[Math.floor(Math.random() * economyNames.length)];
+}

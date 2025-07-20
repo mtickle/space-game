@@ -1,11 +1,35 @@
 
 import { useAuth0 } from '@auth0/auth0-react';
+import { synthesizeStarSystem } from '@utils/synthesisUtils';
 import { useEffect, useState } from 'react';
 
 const Header = ({ stars, factionFilter, setFactionFilter, starTypeFilter, setStarTypeFilter }) => {
     const [uniqueFactions, setUniqueFactions] = useState(['All']);
     const [uniqueStarTypes, setUniqueStarTypes] = useState(['All']);
     const { loginWithRedirect, logout, isAuthenticated, user, isLoading } = useAuth0();
+
+    //--- Testing Star System Synthesis
+    function handleSynthesizeTest() {
+        const mockStar = {
+            name: 'Testarion',
+            id: 'a3a6cb76-0b1d-4f42-aa88-274d2b9ea40d',
+            type: 'Yellow Dwarf',
+            x: 0,
+            y: 0,
+            z: 0,
+            faction: { name: 'Test Faction', symbol: '🧪' }
+        };
+
+        const fullSystem = synthesizeStarSystem(mockStar);
+        console.log('Synthesized Star System:', fullSystem);
+
+        // const existing = JSON.parse(localStorage.getItem('savedStarSystems')) || [];
+        // existing.push(fullSystem);
+        // localStorage.setItem('savedStarSystems', JSON.stringify(existing));
+        // alert(`System "${fullSystem.name}" saved with ${fullSystem.planets.length} planets.`);
+    }
+
+
 
     useEffect(() => {
         setUniqueFactions(['All', ...new Set(stars.map(star => star.faction?.name).filter(Boolean))]);
@@ -17,6 +41,12 @@ const Header = ({ stars, factionFilter, setFactionFilter, starTypeFilter, setSta
             <h1 className="text-4xl font-baumans tracking-wide" style={{ fontFamily: '"Baumans", cursive' }}>Starweave 2478</h1>
             <div className="flex space-x-4">
                 <div>
+                    <button
+                        onClick={handleSynthesizeTest}
+                        className="ml-4 px-3 py-1 border border-yellow-500 text-yellow-400 hover:bg-yellow-900 transition"
+                    >
+                        🌟 Test Synth Star System
+                    </button>
                     {isAuthenticated ? (
                         <div className="flex items-center gap-4">
                             <span className="text-sm font-medium">
