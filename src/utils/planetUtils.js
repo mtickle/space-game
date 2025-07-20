@@ -1,10 +1,9 @@
 import { getRandomConditions } from '@utils/conditionUtils';
+import { economyNames } from '@utils/economyUtils';
 import { generateFauna } from '@utils/faunaUtils';
 import { generateFlora } from '@utils/floraUtils';
 import { generateMineral } from '@utils/mineralUtils';
-import { generateEconomy } from './economyUtils';
 import { v4 as uuidv4 } from 'uuid';
-import { economyNames } from '@utils/economyUtils';
 
 // New list of potential unique planet names
 const uniquePlanetNames = [
@@ -135,6 +134,7 @@ export const synthesizePlanetarySystem = (starName, starId) => {
 
         const planet = {
             starId,
+            starName,
             planetId: uuidv4(),
             planetName,
             planetType: planetType.type,
