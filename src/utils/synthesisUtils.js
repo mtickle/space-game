@@ -1,71 +1,35 @@
-import { v4 as uuidv4 } from 'uuid';
-//import { generateEconomy } from './economyUtils';
-//import { generateResourcesForPlanet } from './resourceUtils';
-//import { getRandomInt } from './randomUtils';
-//import { generateSettlementsForPlanet } from './settlementUtils';
 import { synthesizePlanetarySystem } from '@utils/planetUtils';
+import { saveStarSystemToStorage } from '@utils/storageUtils';
 
 export function synthesizeStarSystem(star) {
-    const starId = uuidv4();
-    //const planetCount = getRandomInt(1, 6);
+    if (!star || !star.id || !star.name) {
+        console.warn('[Synthesis] Invalid star object:', star);
+        return null;
+    }
 
-    const planets = synthesizePlanetarySystem(star.name, star.id)
+    const planets = synthesizePlanetarySystem(star.name, star.id);
 
-    console.log(planets)
+    if (!planets || !Array.isArray(planets)) {
+        console.warn('[Synthesis] Failed to generate planets for star:', star.name);
+        return null;
+    }
 
-    // for (let i = 0; i < planetCount; i++) {
-    //     const planetId = uuidv4();
-    //     const typeData = getRandomItem(planetTypes);
-    //     const type = typeData.type;
-    //     const name = `${getPlanetNameFragment()}-${i + 1}`;
+    const catalogedFlora = planets.flatMap(p => p.floraList || []);
+    const catalogedFauna = planets.flatMap(p => p.faunaList || []);
 
-    //     const moonCount = type === 'Gas Giant' ? getRandomInt(2, 5) : getRandomInt(0, 2);
-    //     const moons = Array.from({ length: moonCount }).map((_, idx) => ({
-    //         id: uuidv4(),
-    //         name: `${name.toLowerCase()} ${String.fromCharCode(97 + idx)}`,
-    //         type: getRandomItem(['Rocky', 'Metallic', 'Carbonaceous', 'Ice World']),
-    //         flora: generateFlora(type),
-    //         fauna: generateFauna(type),
-    //     }));
+    const starSystem = {
+        id: star.id,
+        name: star.name,
+        planets,
+        catalogedFauna,
+        catalogedFlora,
+        version: 1,
+    };
 
-    //     const planet = {
-    //         id: planetId,
-    //         name,
-    //         type,
-    //         color: typeData.color,
-    //         orbitRadius: 50 + i * 40,
-    //         size: 3 + Math.random() * 6,
-    //         angle: Math.random() * Math.PI * 2,
-    //         moons,
-    //         conditions: getConditionsForPlanetType(type),
-    //         resources: generateResourcesForPlanet(type),
-    //         settlements: generateSettlementsForPlanet(type),
-    //         flora: generateFloraForPlanet(type),
-    //         fauna: generateFaunaForPlanet(type),
-    //     };
+    console.log('[Synthesis] Star system generated:', starSystem);
 
-    //     planets.push(planet);
-    // }
+    saveStarSystemToStorage(starSystem);
 
-    //const fauna = planets.flatMap(p => p.fauna);
-    //const flora = planets.flatMap(p => p.flora);
-
-    // return {
-    //     id: starId,
-    //     name: star.name,
-    //     type: star.type,
-    //     position: { x: star.x, y: star.y, z: star.z || 0 },
-    //     faction: star.faction || null,
-    //     economy: generateEconomy(),
-    //     planets,
-    //     catalogedFauna: fauna,
-    //     catalogedFlora: flora,
-    //     version: 1
-    // };
+    return starSystem;
 }
 
-// Placeholder until a better naming utility is added
-//function getPlanetNameFragment() {
-//    const parts = ['Tor', 'Xen', 'Myra', 'Vel', 'Zar', 'Lun', 'Ar', 'Nex', 'Drax', 'Jor'];
-//    return getRandomItem(parts);
-//}

@@ -21,7 +21,7 @@ const Header = ({ stars, factionFilter, setFactionFilter, starTypeFilter, setSta
         };
 
         const fullSystem = synthesizeStarSystem(mockStar);
-        console.log('Synthesized Star System:', fullSystem);
+
 
         // const existing = JSON.parse(localStorage.getItem('savedStarSystems')) || [];
         // existing.push(fullSystem);
