@@ -48,8 +48,6 @@ const StarMap = ({
     const [showVisited, setShowVisited] = useState(false);
     const orbitState = useRef({});
 
-
-
     //--- This effect sets the initial canvas size and listens for window resize events to adjust the canvas size dynamically.
     useEffect(() => {
         const canvas = canvasRef.current;
@@ -250,7 +248,6 @@ const StarMap = ({
         animate();
         return () => cancelAnimationFrame(animationFrameRef.current);
     }, [stars, offsetX, offsetY, scale, factionFilter, selectedStar, hoveredStar]);
-
 
     //--- This is a smooth zoom from where ever you are to the selected system.
     //--- Right now this is done from the visited systems history panel.

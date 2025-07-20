@@ -29,8 +29,11 @@ export const saveStarSystemToStorage = (starSystem) => {
         return;
     }
 
-    const existing = JSON.parse(localStorage.getItem('savedStarSystems') || '[]');
+    const existingRaw = JSON.parse(localStorage.getItem('savedStarSystems') || '[]');
+    const existing = existingRaw.filter(s => s && s.id); // <-- safety filter
+
     const updated = existing.filter(s => s.id !== id);
     updated.push(starSystem);
+
     localStorage.setItem('savedStarSystems', JSON.stringify(updated));
 };

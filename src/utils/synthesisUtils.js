@@ -8,6 +8,7 @@ export function synthesizeStarSystem(star) {
     }
 
     const planets = synthesizePlanetarySystem(star.name, star.id);
+    console.log(planets)
 
     if (!planets || !Array.isArray(planets)) {
         console.warn('[Synthesis] Failed to generate planets for star:', star.name);
@@ -25,8 +26,6 @@ export function synthesizeStarSystem(star) {
         catalogedFlora,
         version: 1,
     };
-
-    console.log('[Synthesis] Star system generated:', starSystem);
 
     saveStarSystemToStorage(starSystem);
 

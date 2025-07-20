@@ -66,7 +66,7 @@ export function generateFlora(planetType, maxCountParam = 5) {
     const count = Math.min(getRandomInt(minCount, settingsMaxCount), maxCountParam); // Use parameter maxCount
 
     if (count <= 0) {
-        console.warn(`No flora generated for ${planetType} (count: ${count})`);
+       // console.warn(`No flora generated for ${planetType} (count: ${count})`);
         return [];
     }
 
