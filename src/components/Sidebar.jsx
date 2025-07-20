@@ -4,7 +4,6 @@ import { useHomeSystem } from '../hooks/useHomeSystem'; // adjust path as needed
 import PlanetPanel from './PlanetPanel'; // adjust path as needed
 import StarSystemViewer from './StarSystemViewer';
 
-
 const Sidebar = ({ selectedStar, setActiveSystem }) => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [selectedPlanet, setSelectedPlanet] = useState(null);

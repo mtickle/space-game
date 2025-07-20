@@ -154,11 +154,12 @@ const PlanetPanel = ({ planet, factionColor, onMapClick }) => {
                             <ul className="ml-4 list-disc text-gray-200 text-sm">
                                 {floraList.map((f, i) => (
                                     <li key={i} className="mb-1">{getFloraIcon(f.type)}
-                                        {f.name} ({f.type})
-                                        {/* <ul className="ml-4 list-disc text-xs text-gray-400">
-                                            <li>Type: {f.type.name}</li>
-                                            <li>Behavior: {f.behavior}</li>
-                                        </ul> */}
+                                        {f.name}
+                                        <ul className="ml-4 list-disc text-xs text-gray-400">
+                                            <li>Type: {f.type}</li>
+                                            <li>Rarity: {f.rarity}</li>
+                                            <li>Appearance: {f.appearance}</li>
+                                        </ul>
                                     </li>
                                 ))}
                             </ul>
