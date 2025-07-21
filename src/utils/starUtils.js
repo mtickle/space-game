@@ -30,6 +30,22 @@ export const generateStarName = () => {
     return `${prefixes[Math.floor(Math.random() * prefixes.length)]}-${suffixes[Math.floor(Math.random() * suffixes.length)]}`;
 };
 
+const starTypes = ['O', 'B', 'A', 'F', 'G', 'K', 'M']; // Standard spectral types
+
+export function getStarTemperature(type) {
+    const tempMap = {
+        O: 'Extremely Hot',
+        B: 'Very Hot',
+        A: 'Hot',
+        F: 'Warm',
+        G: 'Moderate',
+        K: 'Cool',
+        M: 'Cold',
+    };
+    return tempMap[type] || 'Unknown';
+}
+
+
 
 // Star descriptions based on MK class
 export const getStarDescription = (type) => {
@@ -60,4 +76,19 @@ export function loadOrGenerateStars(generateFn) {
     }
     generateFn();
     return null;
+}
+
+// export function generateStarType() {
+//     return starTypes[Math.floor(Math.random() * starTypes.length)];
+// }
+
+export function generateStarType() {
+    return starTypes[Math.floor(Math.random() * starTypes.length)];
+}
+
+export function generateFullStarProfile() {
+    const type = generateStarType();         // e.g., 'G'
+    const temp = getStarTemperature(type);   // e.g., 'Moderate'
+    const description = getStarDescription(type); // existing function
+    return { type, temp, description };
 }

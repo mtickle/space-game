@@ -144,3 +144,9 @@ export const getRandomConditions = () => {
     };
     return conditions;
 };
+
+
+export function generateConditions(type) {
+    if (typeof type !== 'string') return getRandomConditions();
+    return getConditionsForPlanetType(type);
+}

@@ -41,12 +41,12 @@ const Header = ({ stars, factionFilter, setFactionFilter, starTypeFilter, setSta
             <h1 className="text-4xl font-baumans tracking-wide" style={{ fontFamily: '"Baumans", cursive' }}>Starweave 2478</h1>
             <div className="flex space-x-4">
                 <div>
-                    <button
+                    {/* <button
                         onClick={handleSynthesizeTest}
-                        className="ml-4 px-3 py-1 border border-yellow-500 text-yellow-400 hover:bg-yellow-900 transition"
+                        className="bg-red-600 hover:bg-red-700 px-4 py-2 rounded-lg text-white text-sm shadow-md transition-all"
                     >
-                        🌟 Test Synth Star System
-                    </button>
+                        Test Synthesis
+                    </button>&nbsp; */}
                     {isAuthenticated ? (
                         <div className="flex items-center gap-4">
                             <span className="text-sm font-medium">

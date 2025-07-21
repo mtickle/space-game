@@ -2,6 +2,7 @@
 
 import { saveStarToLocalStorage } from '@hooks/useLazyStarField';
 import { generatePlanets, synthesizePlanetarySystem } from '@utils/planetUtils';
+import { synthesizeStarSystem } from '@utils/synthesisUtils';
 
 export const createHandleMouseDown = (setIsDragging, setDragStart) => (e) => {
     setIsDragging(true);
@@ -73,9 +74,11 @@ export const createHandleClick = ({
     });
 
     //--- We have clicked on a star and are now synthesizing a planetary system for the selected star.
-    const fullSystem = synthesizePlanetarySystem(clickedStar.name, clickedStar.id, clickedStar.x, clickedStar);
-    console.log("FULL SYSTEM:")
-    console.log(fullSystem)
+    //const fullSystem = synthesizePlanetarySystem(clickedStar.name, clickedStar.id, clickedStar.x, clickedStar.y);
+    const fullSystem = synthesizeStarSystem(clickedStar);
+
+    // console.log("FULL SYSTEM:")
+     console.log(fullSystem)
 
     if (clickedStar) {
         // Ensure planets are generated

@@ -1,3 +1,4 @@
+import { generateConditions } from '@utils/conditionUtils';
 import { economyNames } from '@utils/economyUtils';
 import { generateFauna } from '@utils/faunaUtils';
 import { generateFlora } from '@utils/floraUtils';
@@ -68,7 +69,7 @@ export const generatePlanets = (starName) => {
     return planets;
 };
 
-export const synthesizePlanetarySystem = (starName, starId, starX, starY) => {
+export const synthesizePlanetarySystem = (starName, starId) => {
     const numPlanets = Math.floor(Math.random() * 5) + 2; // 2–6 planets
     const planets = [];
     const availableUniqueNames = [...uniquePlanetNames];
@@ -92,10 +93,9 @@ export const synthesizePlanetarySystem = (starName, starId, starX, starY) => {
         const planet = {
             starId,
             starName,
-            starX,
-            starY,
             planetId: uuidv4(),
             planetName,
+            planetConditions: generateConditions(planetType.type),
             planetType: planetType.type,
             planetColor: planetType.color,
             planetSize: Math.floor(Math.random() * 10) + 1,

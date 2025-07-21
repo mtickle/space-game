@@ -81,3 +81,7 @@ export const assignFactionsToStars = (stars) => {
         faction: assignFactionToStar(star.name)
     }));
 };
+
+export function generateFaction() {
+    return factions[Math.floor(Math.random() * factions.length)];
+}
