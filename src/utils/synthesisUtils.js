@@ -9,7 +9,7 @@ import { generateFaction } from '@utils/factionUtils';
 
 export function synthesizeStarSystem(star) {
     if (!star || !star.id || !star.name) {
-        console.warn('[Synthesis] Invalid star object:', star);
+        // console.warn('[Synthesis] Invalid star object:', star);
         return null;
     }
 
@@ -18,7 +18,7 @@ export function synthesizeStarSystem(star) {
 
 
     if (!planets || !Array.isArray(planets)) {
-        console.warn('[Synthesis] Failed to generate planets for star:', star.name);
+        // console.warn('[Synthesis] Failed to generate planets for star:', star.name);
         return null;
     }
 
