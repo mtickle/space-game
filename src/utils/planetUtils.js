@@ -68,7 +68,7 @@ export const generatePlanets = (starName) => {
     return planets;
 };
 
-export const synthesizePlanetarySystem = (starName, starId) => {
+export const synthesizePlanetarySystem = (starName, starId, starX, starY) => {
     const numPlanets = Math.floor(Math.random() * 5) + 2; // 2–6 planets
     const planets = [];
     const availableUniqueNames = [...uniquePlanetNames];
@@ -92,6 +92,8 @@ export const synthesizePlanetarySystem = (starName, starId) => {
         const planet = {
             starId,
             starName,
+            starX,
+            starY,
             planetId: uuidv4(),
             planetName,
             planetType: planetType.type,

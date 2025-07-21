@@ -73,7 +73,8 @@ export const createHandleClick = ({
     });
 
     //--- We have clicked on a star and are now synthesizing a planetary system for the selected star.
-    const fullSystem = synthesizePlanetarySystem(clickedStar.name, clickedStar.id);
+    const fullSystem = synthesizePlanetarySystem(clickedStar.name, clickedStar.id, clickedStar.x, clickedStar);
+    console.log("FULL SYSTEM:")
     console.log(fullSystem)
 
     if (clickedStar) {

@@ -7,6 +7,16 @@ import { useMemo, useState } from 'react';
 const PlanetPanel = ({ planet, factionColor, onMapClick }) => {
     const [open, setOpen] = useState(false);
 
+
+        // --- Guard clause: Don't render if planet is undefined
+    if (!planet) {
+        return (
+            <div className="text-gray-400 italic px-4 py-2">
+                No planet selected.
+            </div>
+        );
+    }
+
     const faunaList = useMemo(() => generateFauna(planet.type), [planet.type]);
     const floraList = useMemo(() => generateFlora(planet.type), [planet.type]);
    
