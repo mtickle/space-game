@@ -45,6 +45,23 @@ const nameSyllables = [
     'zor', 'vex', 'tal', 'nir', 'lux', 'garn', 'ska', 'dro', 'fel', 'mek', 'quor', 'zin', 'rax', 'yil', 'xen', 'um', 'ol', 'tra'
 ];
 
+// export const getFaunaIcon(type) => {
+//     const iconMap = {
+//         'Mammal': <PawPrint className="inline w-4 h-4 mr-1 text-red-400" />,
+//         'Reptile': <Turtle className="inline w-4 h-4 mr-1 text-green-400" />,
+//         'Avian': <Feather className="inline w-4 h-4 mr-1 text-yellow-400" />,
+//         'Amphibian': <Droplet className="inline w-4 h-4 mr-1 text-blue-400" />,
+//         'Insectoid': <Bug className="inline w-4 h-4 mr-1 text-purple-400" />,
+//         'Crustacean': <Shell className="inline w-4 h-4 mr-1 text-teal-400" />,
+//         'Rodent': <MousePointer className="inline w-4 h-4 mr-1 text-gray-400" />,
+//         'Cephalopod': <Octagon className="inline w-4 h-4 mr-1 text-indigo-400" />,
+//         'Plantimal': <Leaf className="inline w-4 h-4 mr-1 text-lime-400" />,
+//         'Hybrid': <Sparkles className="inline w-4 h-4 mr-1 text-pink-400" />,
+//         'Synthetic': <Cpu className="inline w-4 h-4 mr-1 text-gray-500" />
+//     };
+//     return iconMap[type] || <PawPrint className="inline w-4 h-4 mr-1 text-gray-400" />; // Default to PawPrint
+// };
+
 export function generateCreatureName() {
     const syllableCount = Math.floor(Math.random() * 2) + 2;
     let name = '';

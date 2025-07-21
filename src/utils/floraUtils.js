@@ -41,6 +41,22 @@ const typeFloraPresence = {
     'Carbonaceous': { count: [3, 7] }
 };
 
+// export const getFloraIcon = (type) => {
+//     const iconMap = {
+//         'tree': <TreePine className="inline w-4 h-4 mr-1 text-green-500" />,
+//         'shrub': <Shrub className="inline w-4 h-4 mr-1 text-green-600" />,
+//         'flower': <Flower className="inline w-4 h-4 mr-1 text-pink-500" />,
+//         'vine': <TreePalm className="inline w-4 h-4 mr-1 text-green-700" />,
+//         'seaweed': <Waves className="inline w-4 h-4 mr-1 text-blue-500" />,
+//         'fungus': <Bug className="inline w-4 h-4 mr-1 text-purple-500" />,
+//         'moss': <Leaf className="inline w-4 h-4 mr-1 text-lime-500" />,
+//         'bush': <Shrub className="inline w-4 h-4 mr-1 text-green-600" />,
+//         'grass': <Bug className="inline w-4 h-4 mr-1 text-lime-600" />,
+//         'coral-like': <Fish className="inline w-4 h-4 mr-1 text-teal-500" />
+//     };
+//     return iconMap[type] || <CircleQuestionMark className="inline w-4 h-4 mr-1 text-gray-400" />; // Default to TreePine
+// };
+
 function generateFloraName() {
     const prefixes = ['Zor', 'Xan', 'Blor', 'Neh', 'Tri', 'Lum', 'Vel', 'Quar', 'Thy', 'Irr'];
     const middles = ['ro', 'li', 'ka', 'zu', 'mi', 'the', 'pha', 'chi'];
@@ -66,7 +82,7 @@ export function generateFlora(planetType, maxCountParam = 5) {
     const count = Math.min(getRandomInt(minCount, settingsMaxCount), maxCountParam); // Use parameter maxCount
 
     if (count <= 0) {
-       // console.warn(`No flora generated for ${planetType} (count: ${count})`);
+        // console.warn(`No flora generated for ${planetType} (count: ${count})`);
         return [];
     }
 

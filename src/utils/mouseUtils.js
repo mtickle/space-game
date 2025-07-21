@@ -1,8 +1,7 @@
 //--- Welcome to mouseUtils. Here are tools for the mouse actions.
 
-import { saveStarToLocalStorage } from '@hooks/useLazyStarField';
-import { generatePlanets } from '@utils/planetUtils';
 import { synthesizeStarSystem } from '@utils/synthesisUtils';
+import { getHydratedStarSystem, isStarSystemHydrated } from './storageUtils';
 
 export const createHandleMouseDown = (setIsDragging, setDragStart) => (e) => {
     setIsDragging(true);
@@ -51,6 +50,7 @@ export const createHandleWheel = (scale, setScale) => (e) => {
     setScale(newScale);
 };
 
+
 export const createHandleClick = ({
     isDragging,
     canvasRef,
@@ -73,37 +73,90 @@ export const createHandleClick = ({
         return Math.sqrt(dx * dx + dy * dy) < star.size + 4;
     });
 
-    //--- We have clicked on a star and are now synthesizing a planetary system for the selected star.
-    //const fullSystem = synthesizePlanetarySystem(clickedStar.name, clickedStar.id, clickedStar.x, clickedStar.y);
-    const fullSystem = synthesizeStarSystem(clickedStar);
+    if (!clickedStar) return;
 
-    // console.log("FULL SYSTEM:")
-    console.log(fullSystem)
+    // 💫 Generate full system from master synthesis
+    let fullSystem;
 
-    if (clickedStar) {
-        // Ensure planets are generated
-        if (!clickedStar.planets || clickedStar.planets.length === 0) {
-            clickedStar.planets = generatePlanets(clickedStar.name);
-        }
+    if (isStarSystemHydrated(clickedStar.id)) {
+        fullSystem = getHydratedStarSystem(clickedStar.id);
+        console.log(`[Cache] Loaded hydrated system for ${clickedStar.name}`);
+    } else {
+        fullSystem = synthesizeStarSystem(clickedStar);
+        console.log(`[Synthesis] Created new system for ${clickedStar.name}`);
+        console.log(fullSystem)
+    }
 
-        clickedStar.planets.forEach(p => {
-            p.angle = p.angle ?? Math.random() * Math.PI * 2;
-        });
+    // 🎯 Set orbital angles if not already present
+    fullSystem.planets.forEach(p => {
+        p.angle = p.angle ?? Math.random() * Math.PI * 2;
+    });
 
-        //--- Save this specific system for later use.
-        saveStarToLocalStorage(clickedStar, stars);
+    // 📥 Hydrate the sidebar
+    setSelectedStar(fullSystem);
 
-        //--- Load up the SideBar.
-        setSelectedStar(clickedStar);
-
-        // Update visited list
-        const visited = JSON.parse(localStorage.getItem('visitedStars') || '[]');
-        if (!visited.includes(clickedStar.name)) {
-            visited.push(clickedStar.name);
-            localStorage.setItem('visitedStars', JSON.stringify(visited));
-        }
+    // ✅ Track visit
+    const visited = JSON.parse(localStorage.getItem('visitedStars') || '[]');
+    if (!visited.includes(fullSystem.name)) {
+        visited.push(fullSystem.name);
+        localStorage.setItem('visitedStars', JSON.stringify(visited));
     }
 };
+
+
+// export const createHandleClick = ({
+//     isDragging,
+//     canvasRef,
+//     offsetX,
+//     offsetY,
+//     scale,
+//     stars,
+//     setSelectedStar,
+// }) => (e) => {
+//     if (isDragging) return;
+
+//     const canvas = canvasRef.current;
+//     const rect = canvas.getBoundingClientRect();
+//     const mouseX = (e.clientX - rect.left - canvas.width / 2 - offsetX) / scale;
+//     const mouseY = (e.clientY - rect.top - canvas.height / 2 - offsetY) / scale;
+
+//     const clickedStar = stars.find(star => {
+//         const dx = mouseX - star.x;
+//         const dy = mouseY - star.y;
+//         return Math.sqrt(dx * dx + dy * dy) < star.size + 4;
+//     });
+
+//     //--- We have clicked on a star and are now synthesizing a planetary system for the selected star.
+//     //const fullSystem = synthesizePlanetarySystem(clickedStar.name, clickedStar.id, clickedStar.x, clickedStar.y);
+//     const fullSystem = synthesizeStarSystem(clickedStar);
+
+//     // console.log("FULL SYSTEM:")
+//     console.log(fullSystem)
+
+//     if (clickedStar) {
+//         // Ensure planets are generated
+//         if (!clickedStar.planets || clickedStar.planets.length === 0) {
+//             clickedStar.planets = generatePlanets(clickedStar.name);
+//         }
+
+//         clickedStar.planets.forEach(p => {
+//             p.angle = p.angle ?? Math.random() * Math.PI * 2;
+//         });
+
+//         //--- Save this specific system for later use.
+//         saveStarToLocalStorage(clickedStar, stars);
+
+//         //--- Load up the SideBar.
+//         setSelectedStar(clickedStar);
+
+//         // Update visited list
+//         const visited = JSON.parse(localStorage.getItem('visitedStars') || '[]');
+//         if (!visited.includes(clickedStar.name)) {
+//             visited.push(clickedStar.name);
+//             localStorage.setItem('visitedStars', JSON.stringify(visited));
+//         }
+//     }
+// };
 
 export const createHandleContextMenu = ({
     canvasRef,

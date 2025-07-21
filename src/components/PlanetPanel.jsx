@@ -1,14 +1,10 @@
-import { generateFauna } from '@utils/faunaUtils'; // Added lifeformTypes import
-import { generateFlora } from '@utils/floraUtils';
-import { generateMineral } from '@utils/mineralUtils';
-import { Bug, CircleQuestionMark, Cpu, Crown, Diameter, Droplet, Earth, Factory, Feather, Fish, FlaskConical, Flower, LandPlot, Leaf, MapPin, MousePointer, Octagon, PawPrint, Radiation, Shell, Shrub, Sparkles, ThermometerSnowflake, ThermometerSun, TreePalm, TreePine, Turtle, Waves, Wind } from 'lucide-react';
-import { useMemo, useState } from 'react';
+import { Bug, Cpu, Crown, Diameter, Droplet, Earth, Factory, Feather, Fish, FlaskConical, Flower, LandPlot, Leaf, MapPin, MousePointer, Octagon, PawPrint, Radiation, Shell, Shrub, Sparkles, Sprout, ThermometerSnowflake, ThermometerSun, TreePalm, TreePine, Turtle, Waves, Wind } from 'lucide-react';
+import { useState } from 'react';
 
 const PlanetPanel = ({ planet, factionColor, onMapClick }) => {
     const [open, setOpen] = useState(false);
 
-
-        // --- Guard clause: Don't render if planet is undefined
+    // --- Guard clause: Don't render if planet is undefined
     if (!planet) {
         return (
             <div className="text-gray-400 italic px-4 py-2">
@@ -16,28 +12,7 @@ const PlanetPanel = ({ planet, factionColor, onMapClick }) => {
             </div>
         );
     }
-
-    const faunaList = useMemo(() => generateFauna(planet.type), [planet.type]);
-    const floraList = useMemo(() => generateFlora(planet.type), [planet.type]);
-   
-
-    const resourceList = useMemo(() => {
-        const resources = [];
-        const count = Math.floor(Math.random() * 3) + 2;
-        for (let i = 0; i < count; i++) {
-            const mineral = generateMineral(planet.type);
-            resources.push(
-                <li key={i} className="text-sm text-gray-200">
-                    <FlaskConical className="inline w-4 h-4 mr-1 text-pink-400" />
-                    {mineral.mineralName} ({mineral.elements.join(', ')})
-                    {mineral.unknownElements && (
-                        <span className="text-purple-400"> + {mineral.unknownElements.map(e => e.symbol).join(', ')} (Unknown)</span>
-                    )}
-                </li>
-            );
-        }
-        return resources;
-    }, [planet.type]);
+    console.log(planet)
 
     // Map lifeform types to Lucide icons
     const getFaunaIcon = (type) => {
@@ -79,7 +54,7 @@ const PlanetPanel = ({ planet, factionColor, onMapClick }) => {
                 className="w-full text-left text-lg text-yellow-300 font-semibold hover:text-yellow-200"
                 onClick={() => setOpen(!open)}
             >
-                {open ? '▼' : '▶'} <span style={{ color: factionColor }}>{planet.name}</span> <span className="text-sm text-gray-400">({planet.type})</span>
+                {open ? '▼' : '▶'} <span style={{ color: factionColor }}>{planet.planetName}</span> <span className="text-sm text-gray-400">({planet.planetType})</span>
             </button>
 
             {open && (
@@ -94,15 +69,19 @@ const PlanetPanel = ({ planet, factionColor, onMapClick }) => {
                         </ul>
                     </div>
 
-                    {planet.economy && (
-                        <div>
-                            <div className="flex items-center gap-1 text-orange-400 font-bold">
-                                <Factory className="w-4 h-4" /> Economy
-                            </div>
-                            <p className="ml-4 text-sm text-gray-200"><strong>{planet.economy.name}</strong></p>
-                            <p className="ml-4 text-xs text-gray-400 italic">{planet.economy.description}</p>
+                    <div>
+                        <div className="flex items-center gap-1 text-orange-400 font-bold">
+                            <Factory className="w-4 h-4" /> Economy
                         </div>
-                    )}
+                        {planet.economy ? (
+                            <>
+                                <p className="ml-4 text-sm text-gray-200 font-semibold">{planet.economy.name}</p>
+                                <p className="ml-4 text-xs text-gray-400 italic">{planet.economy.description}</p>
+                            </>
+                        ) : (
+                            <p className="ml-4 text-sm text-gray-400 italic">Economy data not available.</p>
+                        )}
+                    </div>
 
                     {Array.isArray(planet.moons) && planet.moons.length > 0 && (
                         <div>
@@ -127,11 +106,12 @@ const PlanetPanel = ({ planet, factionColor, onMapClick }) => {
                         </div>
                     )}
 
-                    {planet.settlements && (
-                        <div>
-                            <div className="flex items-center gap-1 text-orange-400 font-bold">
-                                <Factory className="w-4 h-4" /> Settlements
-                            </div>
+                    <div>
+                        <div className="flex items-center gap-1 text-orange-400 font-bold">
+                            <MapPin className="w-4 h-4" /> Settlements
+                        </div>
+
+                        {(planet.settlements && planet.settlements.length > 0) ? (
                             <ul className="ml-4 list-disc text-gray-200 text-sm">
                                 {planet.settlements.map((s, i) => (
                                     <li key={i}>
@@ -144,25 +124,39 @@ const PlanetPanel = ({ planet, factionColor, onMapClick }) => {
                                     </li>
                                 ))}
                             </ul>
+                        ) : (
+                            <p className="ml-4 text-sm text-gray-400 italic">No known settlements.</p>
+                        )}
+                    </div>
+
+
+                    {planet.resources?.length > 0 && (
+                        <div>
+                            <div className="flex items-center gap-1 text-orange-400 font-bold">
+                                <FlaskConical className="w-4 h-4" /> Resources
+                            </div>
+                            <ul className="ml-4 list-disc text-gray-200 text-sm">
+                                {planet.resources.map((mineral, i) => (
+                                    <li key={i}>
+                                        <FlaskConical className="inline w-4 h-4 mr-1 text-pink-400" />
+                                        {mineral.mineralName} ({mineral.elements.join(', ')})
+                                        {mineral.unknownElements && (
+                                            <span className="text-purple-400"> + {mineral.unknownElements.map(e => e.symbol).join(', ')} (Unknown)</span>
+                                        )}
+                                    </li>
+                                ))}
+                            </ul>
                         </div>
                     )}
 
-                    <div>
-                        <div className="flex items-center gap-1 text-orange-400 font-bold">
-                            <FlaskConical className="w-4 h-4" /> Resources
-                        </div>
-                        <ul className="ml-4 list-disc text-gray-200">
-                            {resourceList}
-                        </ul>
-                    </div>
 
-                    {floraList.length > 0 && (
+                    {planet.floraList?.length > 0 && (
                         <div>
                             <div className="flex items-center gap-1 text-orange-400 font-bold">
-                                <PawPrint className="w-4 h-4" /> Flora
+                                <Sprout className="w-4 h-4" /> Flora
                             </div>
                             <ul className="ml-4 list-disc text-gray-200 text-sm">
-                                {floraList.map((f, i) => (
+                                {planet.floraList.map((f, i) => (
                                     <li key={i} className="mb-1">{getFloraIcon(f.type)}
                                         {f.name}
                                         <ul className="ml-4 list-disc text-xs text-gray-400">
@@ -177,13 +171,13 @@ const PlanetPanel = ({ planet, factionColor, onMapClick }) => {
                     )}
 
 
-                    {faunaList.length > 0 && (
+                    {planet.faunaList?.length > 0 && (
                         <div>
                             <div className="flex items-center gap-1 text-orange-400 font-bold">
                                 <PawPrint className="w-4 h-4" /> Fauna
                             </div>
                             <ul className="ml-4 list-disc text-gray-200 text-sm">
-                                {faunaList.map((f, i) => (
+                                {planet.faunaList.map((f, i) => (
                                     <li key={i} className="mb-1">{getFaunaIcon(f.type.name)}
                                         {f.name}
                                         <ul className="ml-4 list-disc text-xs text-gray-400">
@@ -195,6 +189,7 @@ const PlanetPanel = ({ planet, factionColor, onMapClick }) => {
                             </ul>
                         </div>
                     )}
+
 
                     <div>
                         <div className="flex items-center gap-1 text-orange-400 font-bold">

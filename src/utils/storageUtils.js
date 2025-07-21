@@ -1,4 +1,15 @@
 // saveStarToLocalStorage.js
+export function isStarSystemHydrated(starId) {
+    const systems = JSON.parse(localStorage.getItem('savedStarSystems') || '[]');
+    return systems.some(system => system.id === starId);
+}
+
+export function getHydratedStarSystem(starId) {
+    const systems = JSON.parse(localStorage.getItem('savedStarSystems') || '[]');
+    return systems.find(system => system.id === starId) || null;
+}
+
+
 
 export const saveStarToLocalStorage = (star, stars) => {
     if (!star || !star.name) return;
