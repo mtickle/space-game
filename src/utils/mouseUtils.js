@@ -1,7 +1,7 @@
 //--- Welcome to mouseUtils. Here are tools for the mouse actions.
 
 import { saveStarToLocalStorage } from '@hooks/useLazyStarField';
-import { generatePlanets } from '@utils/planetUtils';
+import { generatePlanets, synthesizePlanetarySystem } from '@utils/planetUtils';
 
 export const createHandleMouseDown = (setIsDragging, setDragStart) => (e) => {
     setIsDragging(true);
@@ -72,7 +72,9 @@ export const createHandleClick = ({
         return Math.sqrt(dx * dx + dy * dy) < star.size + 4;
     });
 
-    console.log("THATS A CLICKED STAR RIGHT THERE: " + clickedStar.name)
+    //--- We have clicked on a star and are now synthesizing a planetary system for the selected star.
+    const fullSystem = synthesizePlanetarySystem(clickedStar.name, clickedStar.id);
+    console.log(fullSystem)
 
     if (clickedStar) {
         // Ensure planets are generated
