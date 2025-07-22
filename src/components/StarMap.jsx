@@ -47,6 +47,7 @@ const StarMap = ({
     const animationFrameRef = useRef(null);
     const [showVisited, setShowVisited] = useState(false);
     const orbitState = useRef({});
+    const [isSystemViewerOpen, setSystemViewerOpen] = useState(false);
 
     //--- This effect sets the initial canvas size and listens for window resize events to adjust the canvas size dynamically.
     useEffect(() => {
@@ -105,7 +106,8 @@ const StarMap = ({
         offsetY,
         scale,
         stars,
-        setSelectedStar
+        setSelectedStar,
+        setActiveSystem
     });
     const handleContextMenu = createHandleContextMenu({
         canvasRef,
@@ -178,7 +180,9 @@ const StarMap = ({
             //--- Now, you've gone and either hovered over a system or clicked it.
             //--- We already have the planets created, we just need to render them 
             //--- based on their attributes.
-            if ((selectedStar?.name === star.name || hoveredStar?.name === star.name) && star.planets) {
+            //if ((selectedStar?.name === star.name || hoveredStar?.name === star.name) && star.planets) {
+            if (selectedStar?.name === star.name && star.planets) {
+
                 star.planets.forEach((planet) => {
                     ctx.beginPath();
                     ctx.arc(star.x, star.y, planet.orbitRadius, 0, Math.PI * 2);
@@ -230,7 +234,7 @@ const StarMap = ({
             ctx.save();
             ctx.font = '12px monospace';
             ctx.fillStyle = 'rgba(0,0,0,0.8)';
-            const text = `★ ${tooltip.name} | ${tooltip.faction} | ${tooltip.planets} planets`;
+            const text = `★ ${tooltip.name} | ${tooltip.faction}`;
             const metrics = ctx.measureText(text);
             ctx.fillRect(hoveredStar.clientX + 10, hoveredStar.clientY - 10, metrics.width + 10, 20);
             ctx.fillStyle = '#00ff88';
@@ -357,11 +361,8 @@ const StarMap = ({
                         onContextMenu={handleContextMenu}
                     />
 
-                    {activeSystem && (
-                        <StarSystemViewer
-                            starSystem={activeSystem}
-                            onClose={() => setActiveSystem(null)}
-                        />
+                    {isSystemViewerOpen && activeSystem && (
+                        <StarSystemViewer system={activeSystem} onClose={() => setSystemViewerOpen(false)} />
                     )}
                 </div>
 

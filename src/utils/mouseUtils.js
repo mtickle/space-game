@@ -59,6 +59,7 @@ export const createHandleClick = ({
     scale,
     stars,
     setSelectedStar,
+    setActiveSystem
 }) => (e) => {
     if (isDragging) return;
 
@@ -75,7 +76,6 @@ export const createHandleClick = ({
 
     if (!clickedStar) return;
 
-    // 💫 Generate full system from master synthesis
     let fullSystem;
 
     if (isStarSystemHydrated(clickedStar.id)) {
@@ -84,8 +84,27 @@ export const createHandleClick = ({
     } else {
         fullSystem = synthesizeStarSystem(clickedStar);
         console.log(`[Synthesis] Created new system for ${clickedStar.name}`);
-        console.log(fullSystem)
+        console.log(fullSystem);
     }
+
+    // ✅ Set the active system visually
+    setActiveSystem(fullSystem);
+
+    // Optional: Sidebar hydration (if needed separately)
+    setSelectedStar(fullSystem.star || clickedStar);
+
+
+    // 💫 Generate full system from master synthesis
+    // let fullSystem;
+
+    // if (isStarSystemHydrated(clickedStar.id)) {
+    //     fullSystem = getHydratedStarSystem(clickedStar.id);
+    //     console.log(`[Cache] Loaded hydrated system for ${clickedStar.name}`);
+    // } else {
+    //     fullSystem = synthesizeStarSystem(clickedStar);
+    //     console.log(`[Synthesis] Created new system for ${clickedStar.name}`);
+    //     console.log(fullSystem)
+    // }
 
     // 🎯 Set orbital angles if not already present
     fullSystem.planets.forEach(p => {
