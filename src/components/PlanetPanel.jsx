@@ -1,4 +1,6 @@
-import { Bug, Cpu, Crown, Diameter, Droplet, Earth, Factory, Feather, Fish, FlaskConical, Flower, LandPlot, Leaf, MapPin, MousePointer, Octagon, PawPrint, Radiation, Shell, Shrub, Sparkles, Sprout, ThermometerSnowflake, ThermometerSun, TreePalm, TreePine, Turtle, Waves, Wind } from 'lucide-react';
+import { getFaunaIcon } from '@utils/faunaUtils';
+import { getFloraIcon } from '@utils/floraUtils';
+import { Crown, Diameter, Droplet, Earth, Factory, FlaskConical, HandCoins, LandPlot, MapPin, PawPrint, Radiation, Sprout, ThermometerSnowflake, ThermometerSun, Wind } from 'lucide-react';
 import { useState } from 'react';
 
 const PlanetPanel = ({ planet, factionColor, onMapClick }) => {
@@ -12,41 +14,6 @@ const PlanetPanel = ({ planet, factionColor, onMapClick }) => {
             </div>
         );
     }
-    console.log(planet)
-
-    // Map lifeform types to Lucide icons
-    const getFaunaIcon = (type) => {
-        const iconMap = {
-            'Mammal': <PawPrint className="inline w-4 h-4 mr-1 text-red-400" />,
-            'Reptile': <Turtle className="inline w-4 h-4 mr-1 text-green-400" />,
-            'Avian': <Feather className="inline w-4 h-4 mr-1 text-yellow-400" />,
-            'Amphibian': <Droplet className="inline w-4 h-4 mr-1 text-blue-400" />,
-            'Insectoid': <Bug className="inline w-4 h-4 mr-1 text-purple-400" />,
-            'Crustacean': <Shell className="inline w-4 h-4 mr-1 text-teal-400" />,
-            'Rodent': <MousePointer className="inline w-4 h-4 mr-1 text-gray-400" />,
-            'Cephalopod': <Octagon className="inline w-4 h-4 mr-1 text-indigo-400" />,
-            'Plantimal': <Leaf className="inline w-4 h-4 mr-1 text-lime-400" />,
-            'Hybrid': <Sparkles className="inline w-4 h-4 mr-1 text-pink-400" />,
-            'Synthetic': <Cpu className="inline w-4 h-4 mr-1 text-gray-500" />
-        };
-        return iconMap[type] || <PawPrint className="inline w-4 h-4 mr-1 text-gray-400" />; // Default to PawPrint
-    };
-
-    const getFloraIcon = (type) => {
-        const iconMap = {
-            'tree': <TreePine className="inline w-4 h-4 mr-1 text-green-500" />,
-            'shrub': <Shrub className="inline w-4 h-4 mr-1 text-green-600" />,
-            'flower': <Flower className="inline w-4 h-4 mr-1 text-pink-500" />,
-            'vine': <TreePalm className="inline w-4 h-4 mr-1 text-green-700" />,
-            'seaweed': <Waves className="inline w-4 h-4 mr-1 text-blue-500" />,
-            'fungus': <Bug className="inline w-4 h-4 mr-1 text-purple-500" />,
-            'moss': <Leaf className="inline w-4 h-4 mr-1 text-lime-500" />,
-            'bush': <Shrub className="inline w-4 h-4 mr-1 text-green-600" />,
-            'grass': <Bug className="inline w-4 h-4 mr-1 text-lime-600" />,
-            'coral-like': <Fish className="inline w-4 h-4 mr-1 text-teal-500" />
-        };
-        return iconMap[type] || <CircleQuestionMark className="inline w-4 h-4 mr-1 text-gray-400" />; // Default to TreePine
-    };
 
     return (
         <div className="border-t border-gray-700 py-2">
@@ -64,24 +31,11 @@ const PlanetPanel = ({ planet, factionColor, onMapClick }) => {
                             <Earth className="w-4 h-4" /> Planetary Details
                         </div>
                         <ul className="ml-4 list-disc text-gray-200 text-sm">
-                            <li><LandPlot className="inline w-4 h-4 mr-1 text-red-400" /><strong>Type:</strong> {planet.type}</li>
+                            <li><LandPlot className="inline w-4 h-4 mr-1 text-red-400" /><strong>Type:</strong> {planet.planetType}</li>
                             <li><Diameter className="inline w-4 h-4 mr-1 text-red-400" /><strong>Size:</strong> {planet.size > 6 ? 'Large' : planet.size > 3 ? 'Medium' : 'Small'}</li>
                         </ul>
                     </div>
 
-                    <div>
-                        <div className="flex items-center gap-1 text-orange-400 font-bold">
-                            <Factory className="w-4 h-4" /> Economy
-                        </div>
-                        {planet.economy ? (
-                            <>
-                                <p className="ml-4 text-sm text-gray-200 font-semibold">{planet.economy.name}</p>
-                                <p className="ml-4 text-xs text-gray-400 italic">{planet.economy.description}</p>
-                            </>
-                        ) : (
-                            <p className="ml-4 text-sm text-gray-400 italic">Economy data not available.</p>
-                        )}
-                    </div>
 
                     {Array.isArray(planet.moons) && planet.moons.length > 0 && (
                         <div>
@@ -106,28 +60,61 @@ const PlanetPanel = ({ planet, factionColor, onMapClick }) => {
                         </div>
                     )}
 
-                    <div>
-                        <div className="flex items-center gap-1 text-orange-400 font-bold">
-                            <MapPin className="w-4 h-4" /> Settlements
-                        </div>
 
-                        {(planet.settlements && planet.settlements.length > 0) ? (
-                            <ul className="ml-4 list-disc text-gray-200 text-sm">
-                                {planet.settlements.map((s, i) => (
-                                    <li key={i}>
-                                        {s.isCapital ? (
-                                            <Crown className="inline w-5 h-5 mr-1 text-yellow-400" />
-                                        ) : (
-                                            <MapPin className="inline w-4 h-4 mr-1 text-gray-400" />
-                                        )}
-                                        {s.name} (Pop: {s.population.toLocaleString()})
-                                    </li>
-                                ))}
-                            </ul>
-                        ) : (
-                            <p className="ml-4 text-sm text-gray-400 italic">No known settlements.</p>
-                        )}
-                    </div>
+                    {planet.settlements && planet.settlements.length > 0 && (
+                        <>
+                            {/* Economy */}
+                            <div>
+                                <div className="flex items-center gap-1 text-orange-400 font-bold">
+                                    <HandCoins className="w-4 h-4" /> Economy
+                                </div>
+                                {planet.economy ? (
+                                    <>
+                                        <p className="ml-4 text-sm text-gray-200 font-semibold">{planet.economy.name}</p>
+                                        <p className="ml-4 text-xs text-gray-400 italic">{planet.economy.description}</p>
+                                    </>
+                                ) : (
+                                    <p className="ml-4 text-sm text-gray-400 italic">Economy scan failed.</p>
+                                )}
+                            </div>
+
+                            {/* Industry */}
+                            <div>
+                                <div className="flex items-center gap-1 text-orange-400 font-bold">
+                                    <Factory className="w-4 h-4" /> Industry
+                                </div>
+                                {planet.industry ? (
+                                    <>
+                                        <p className="ml-4 text-sm text-gray-200 font-semibold">{planet.industry.name}</p>
+                                        <p className="ml-4 text-xs text-gray-400 italic">{planet.industry.description}</p>
+                                    </>
+                                ) : (
+                                    <p className="ml-4 text-sm text-gray-400 italic">Industry scan failed.</p>
+                                )}
+                            </div>
+
+                            {/* Settlements */}
+                            <div>
+                                <div className="flex items-center gap-1 text-orange-400 font-bold">
+                                    <MapPin className="w-4 h-4" /> Settlements
+                                </div>
+                                <ul className="ml-4 list-disc text-gray-200 text-sm">
+                                    {planet.settlements.map((s, i) => (
+                                        <li key={i}>
+                                            {s.isCapital ? (
+                                                <Crown className="inline w-5 h-5 mr-1 text-yellow-400" />
+                                            ) : (
+                                                <MapPin className="inline w-4 h-4 mr-1 text-gray-400" />
+                                            )}
+                                            {s.name} (Pop: {s.population.toLocaleString()})
+                                        </li>
+                                    ))}
+                                </ul>
+                            </div>
+                        </>
+                    )}
+
+
 
 
                     {planet.resources?.length > 0 && (

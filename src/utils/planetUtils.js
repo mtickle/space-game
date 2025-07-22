@@ -1,8 +1,3 @@
-import { generateConditions } from '@utils/conditionUtils';
-import { economyNames } from '@utils/economyUtils';
-import { generateFauna } from '@utils/faunaUtils';
-import { generateFlora } from '@utils/floraUtils';
-import { generateMineral } from '@utils/mineralUtils';
 import { generateMoons } from '@utils/moonUtils';
 import { planetTypes, settlementNames, uniquePlanetNames } from '@utils/namingUtils';
 import { v4 as uuidv4 } from 'uuid';
@@ -69,76 +64,78 @@ export const generatePlanets = (starName) => {
     return planets;
 };
 
-export const synthesizePlanetarySystem = (starName, starId) => {
-    const numPlanets = Math.floor(Math.random() * 5) + 2; // 2–6 planets
-    const planets = [];
-    const availableUniqueNames = [...uniquePlanetNames];
+// export const synthesizePlanetarySystem = (starName, starId) => {
+//     const numPlanets = Math.floor(Math.random() * 5) + 2; // 2–6 planets
+//     const planets = [];
+//     const availableUniqueNames = [...uniquePlanetNames];
 
-    for (let i = 0; i < numPlanets; i++) {
-        // Weighted planet type selection
-        const rand = Math.random();
-        let cumulative = 0;
-        let planetType = planetTypes[planetTypes.length - 1];
-        for (const p of planetTypes) {
-            cumulative += p.weight;
-            if (rand < cumulative) {
-                planetType = p;
-                break;
-            }
-        }
+//     for (let i = 0; i < numPlanets; i++) {
+//         // Weighted planet type selection
+//         const rand = Math.random();
+//         let cumulative = 0;
+//         let planetType = planetTypes[planetTypes.length - 1];
+//         for (const p of planetTypes) {
+//             cumulative += p.weight;
+//             if (rand < cumulative) {
+//                 planetType = p;
+//                 break;
+//             }
+//         }
 
-        const planetName = generatePlanetName(starName, i, availableUniqueNames);
-        const isUniqueName = !planetName.includes(starName);
+//         const planetName = generatePlanetName(starName, i, availableUniqueNames);
+//         const isUniqueName = !planetName.includes(starName);
 
-        const planet = {
-            starId,
-            starName,
-            planetId: uuidv4(),
-            planetName,
-            planetConditions: generateConditions(planetType.type),
-            planetType: planetType.type,
-            planetColor: planetType.color,
-            planetSize: Math.floor(Math.random() * 10) + 1,
-            orbitRadius: 20 + i * 15,
-            isUniqueName,
-            floraList: generateFlora(planetType.type),
-            faunaList: generateFauna(planetType.type),
-            resourceList: [],
-            moons: generateMoons(planetName, planetType.type),
-            settlements: [],
-        };
+//         const planet = {
+//             starId,
+//             starName,
+//             planetId: uuidv4(),
+//             planetName,
+//             planetConditions: generateConditions(planetType.type),
+//             planetType: planetType.type,
+//             planetColor: planetType.color,
+//             planetSize: Math.floor(Math.random() * 10) + 1,
+//             orbitRadius: 20 + i * 15,
+//             isUniqueName,
+//             floraList: generateFlora(planetType.type),
+//             faunaList: generateFauna(planetType.type),
+//             resourceList: [],
+//             moons: generateMoons(planetName, planetType.type),
+//             settlements: [],
+//         };
 
-        // Generate resources (2–4)
-        const resourceCount = Math.floor(Math.random() * 3) + 2;
-        for (let r = 0; r < resourceCount; r++) {
-            planet.resourceList.push(generateMineral(planetType.type));
-        }
+//         // Generate resources (2–4)
+//         const resourceCount = Math.floor(Math.random() * 3) + 2;
+//         for (let r = 0; r < resourceCount; r++) {
+//             planet.resourceList.push(generateMineral(planetType.type));
+//         }
 
-        // Settlements + Economy (only for uniquely named planets)
-        if (isUniqueName) {
-            const numSettlements = Math.floor(Math.random() * 11);
-            const availableSettlementNames = [...settlementNames];
+//         // Settlements + Economy (only for uniquely named planets)
+//         if (isUniqueName) {
+//             const numSettlements = Math.floor(Math.random() * 11);
+//             const availableSettlementNames = [...settlementNames];
 
-            for (let j = 0; j < numSettlements; j++) {
-                const settlementName = availableSettlementNames[Math.floor(Math.random() * availableSettlementNames.length)];
-                availableSettlementNames.splice(availableSettlementNames.indexOf(settlementName), 1);
-                planet.settlements.push({
-                    name: settlementName,
-                    population: j === 0
-                        ? Math.floor(Math.random() * 200001) + 900000
-                        : Math.floor(Math.random() * 499001) + 1000,
-                });
-            }
+//             for (let j = 0; j < numSettlements; j++) {
+//                 const settlementName = availableSettlementNames[Math.floor(Math.random() * availableSettlementNames.length)];
+//                 availableSettlementNames.splice(availableSettlementNames.indexOf(settlementName), 1);
+//                 planet.settlements.push({
+//                     name: settlementName,
+//                     population: j === 0
+//                         ? Math.floor(Math.random() * 200001) + 900000
+//                         : Math.floor(Math.random() * 499001) + 1000,
+//                 });
+//             }
 
-            if (planet.settlements.length > 0) {
-                const capitalIndex = Math.floor(Math.random() * planet.settlements.length);
-                planet.settlements[capitalIndex].isCapital = true;
-                planet.economy = economyNames[Math.floor(Math.random() * economyNames.length)];
-            }
-        }
+//             if (planet.settlements.length > 0) {
+//                 const capitalIndex = Math.floor(Math.random() * planet.settlements.length);
+//                 planet.settlements[capitalIndex].isCapital = true;
+//                 //planet.economy = economyNames[Math.floor(Math.random() * economyNames.length)];
+//                 planet.economy = generateEconomy()
+//                 planet.industry = generateIndustry()
+//             }
+//         }
 
-        planets.push(planet);
-    }
+//         planets.push(planet);
+//     }
 
-    return planets;
-};
+//     return planets;
+// };
