@@ -1,5 +1,7 @@
+import { generateEconomy } from '@utils/economyUtils';
 import { generateMoons } from '@utils/moonUtils';
 import { planetTypes, settlementNames, uniquePlanetNames } from '@utils/namingUtils';
+//import { generatePlanetName } from '@utils/planetUtils';
 import { v4 as uuidv4 } from 'uuid';
 
 // Procedural planet name generator (updated to support unique names)
@@ -55,7 +57,8 @@ export const generatePlanets = (starName) => {
                     planet.settlements[capitalIndex].isCapital = true;
                 }
                 // Assign a random economy
-                planet.economy = economyNames[Math.floor(Math.random() * economyNames.length)];
+                //planet.economy = economyNames[Math.floor(Math.random() * economyNames.length)];
+                planet.economy = generateEconomy()
             }
         }
         planet.moons = generateMoons(planet.name, planet.type);
@@ -64,7 +67,7 @@ export const generatePlanets = (starName) => {
     return planets;
 };
 
-// export const synthesizePlanetarySystem = (starName, starId) => {
+
 //     const numPlanets = Math.floor(Math.random() * 5) + 2; // 2–6 planets
 //     const planets = [];
 //     const availableUniqueNames = [...uniquePlanetNames];

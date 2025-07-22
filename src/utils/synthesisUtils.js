@@ -117,7 +117,6 @@ export const synthesizePlanetarySystem = (starName, starId) => {
             if (planet.settlements.length > 0) {
                 const capitalIndex = Math.floor(Math.random() * planet.settlements.length);
                 planet.settlements[capitalIndex].isCapital = true;
-                //planet.economy = economyNames[Math.floor(Math.random() * economyNames.length)];
                 planet.economy = generateEconomy()
                 planet.industry = generateIndustry()
             }
