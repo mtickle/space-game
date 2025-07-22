@@ -30,6 +30,8 @@ const Sidebar = ({ selectedStar, setActiveSystem }) => {
                         </h2>
                     </div>
                     {/* <p className="text-green-400"><strong>Unique ID:</strong> {selectedStar.id}</p> */}
+                    <p className="text-green-400"><strong>X:</strong> {selectedStar.x}</p>
+                    <p className="text-green-400"><strong>Y:</strong> {selectedStar.y}</p>
                     <p className="text-green-400"><strong>Star Type:</strong> {selectedStar.type}</p>
                     <p className="text-green-400"><strong>Temperature:</strong> {selectedStar.temp}</p>
                     <p className="text-green-400"><strong>Faction:</strong> {selectedStar.faction?.name || 'Unknown'}</p>
