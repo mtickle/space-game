@@ -10,8 +10,7 @@ import StarSystemViewer from '@components/StarSystemViewer';
 import { getStarTooltip } from '@hooks/useLazyStarField';
 import Footer from '@layouts/Footer';
 import Header from '@layouts/Header';
-import { generatePlanets } from '@utils/planetUtils';
-import { saveStarToLocalStorage } from '@utils/storageUtils';
+import { hydrateOrSynthesizeSystem } from '@utils/planetUtils'; // adjust path
 import { useEffect, useRef, useState } from 'react';
 
 import {
@@ -21,7 +20,7 @@ import {
     createHandleMouseMove,
     createHandleMouseUp,
     createHandleWheel
-} from '@utils/mouseUtils';
+} from '@utils/mouseUtils.jsx';
 
 const StarMap = ({
     stars,
@@ -95,7 +94,8 @@ const StarMap = ({
         dragStart,
         setDragStart,
         stars,
-        setHoveredStar
+        setHoveredStar,
+        orbitState
     });
     const handleMouseUp = createHandleMouseUp(setIsDragging);
     const handleWheel = createHandleWheel(scale, setScale);
@@ -116,6 +116,8 @@ const StarMap = ({
         scale,
         stars
     });
+
+
 
     //--- This function draws the star map scene, including stars, planets, and tooltips.
     const drawScene = () => {
@@ -180,50 +182,86 @@ const StarMap = ({
             //--- Now, you've gone and either hovered over a system or clicked it.
             //--- We already have the planets created, we just need to render them 
             //--- based on their attributes.
-            //if ((selectedStar?.name === star.name || hoveredStar?.name === star.name) && star.planets) {
-            if (selectedStar?.name === star.name && star.planets) {
+            const isVisited = visited.includes(star.name);
+            const isSelected = selectedStar?.name === star.name;
+            const shouldRenderSystem = isSelected && isVisited;
 
-                star.planets.forEach((planet) => {
+            if (shouldRenderSystem && Array.isArray(star.planets)) {
+                const orbits = orbitState.current[star.name] || [];
+
+                star.planets.forEach((planet, i) => {
+                    const orbit = orbits[i];
+                    if (!orbit) return;
+
+                    // Orbit path
                     ctx.beginPath();
-                    ctx.arc(star.x, star.y, planet.orbitRadius, 0, Math.PI * 2);
+                    ctx.arc(star.x, star.y, orbit.radius, 0, Math.PI * 2);
                     ctx.strokeStyle = planet.color + '33';
-                    ctx.lineWidth = .5 / scale;
+                    ctx.lineWidth = 0.5 / scale;
                     ctx.stroke();
 
-                    const px = star.x + Math.cos(planet.angle) * planet.orbitRadius;
-                    const py = star.y + Math.sin(planet.angle) * planet.orbitRadius;
-
-                    const orbits = orbitState.current[star.name] || [];
-
-                    star.planets.forEach((planet, i) => {
-                        const orbit = orbits[i];
-                        if (!orbit) return;
-
-                        orbit.angle += orbit.speed;
-
-                        ctx.beginPath();
-                        ctx.arc(star.x, star.y, orbit.radius, 0, Math.PI * 2);
-                        ctx.strokeStyle = planet.color + '33';
-                        ctx.lineWidth = 0.5 / scale;
-                        ctx.stroke();
-
-                        const px = star.x + Math.cos(orbit.angle) * orbit.radius;
-                        const py = star.y + Math.sin(orbit.angle) * orbit.radius;
-
-                        ctx.beginPath();
-                        const renderSize = Math.min(planet.size ?? 1.5, 4);
-                        ctx.arc(px, py, renderSize, 0, Math.PI * 2);
-                        ctx.fillStyle = planet.color;
-                        ctx.fill();
-                    });
+                    // Orbiting planet
+                    orbit.angle += orbit.speed;
+                    const px = star.x + Math.cos(orbit.angle) * orbit.radius;
+                    const py = star.y + Math.sin(orbit.angle) * orbit.radius;
 
                     ctx.beginPath();
                     const renderSize = Math.min(planet.size ?? 1.5, 4);
                     ctx.arc(px, py, renderSize, 0, Math.PI * 2);
                     ctx.fillStyle = planet.color;
                     ctx.fill();
+
+                    // Optional: label the planet
+                     ctx.fillStyle = '#aaa';
+                     ctx.font = `${10 / scale}px Courier New`;
+                     ctx.fillText(planet.planetName || `P${i}`, px + 4, py + 4);
                 });
             }
+
+            //if ((selectedStar?.name === star.name || hoveredStar?.name === star.name) && star.planets) {
+            // if (selectedStar?.name === star.name && star.planets) {
+
+            //     star.planets.forEach((planet) => {
+            //         ctx.beginPath();
+            //         ctx.arc(star.x, star.y, planet.orbitRadius, 0, Math.PI * 2);
+            //         ctx.strokeStyle = planet.color + '33';
+            //         ctx.lineWidth = .5 / scale;
+            //         ctx.stroke();
+
+            //         const px = star.x + Math.cos(planet.angle) * planet.orbitRadius;
+            //         const py = star.y + Math.sin(planet.angle) * planet.orbitRadius;
+
+            //         const orbits = orbitState.current[star.name] || [];
+
+            //         star.planets.forEach((planet, i) => {
+            //             const orbit = orbits[i];
+            //             if (!orbit) return;
+
+            //             orbit.angle += orbit.speed;
+
+            //             ctx.beginPath();
+            //             ctx.arc(star.x, star.y, orbit.radius, 0, Math.PI * 2);
+            //             ctx.strokeStyle = planet.color + '33';
+            //             ctx.lineWidth = 0.5 / scale;
+            //             ctx.stroke();
+
+            //             const px = star.x + Math.cos(orbit.angle) * orbit.radius;
+            //             const py = star.y + Math.sin(orbit.angle) * orbit.radius;
+
+            //             ctx.beginPath();
+            //             const renderSize = Math.min(planet.size ?? 1.5, 4);
+            //             ctx.arc(px, py, renderSize, 0, Math.PI * 2);
+            //             ctx.fillStyle = planet.color;
+            //             ctx.fill();
+            //         });
+
+            //         ctx.beginPath();
+            //         const renderSize = Math.min(planet.size ?? 1.5, 4);
+            //         ctx.arc(px, py, renderSize, 0, Math.PI * 2);
+            //         ctx.fillStyle = planet.color;
+            //         ctx.fill();
+            //     });
+            // }
         });
 
         ctx.restore();
@@ -253,31 +291,26 @@ const StarMap = ({
         return () => cancelAnimationFrame(animationFrameRef.current);
     }, [stars, offsetX, offsetY, scale, factionFilter, selectedStar, hoveredStar]);
 
+
+
     //--- This is a smooth zoom from where ever you are to the selected system.
     //--- Right now this is done from the visited systems history panel.
     //--- We will send you back there and show you the planets in orbit. 
     const goToSystem = (targetStar) => {
-        // Try to get the full star object from localStorage
-        const saved = localStorage.getItem(`star_${targetStar.name}`);
-        let fullStar = saved ? JSON.parse(saved) : stars.find(s => s.name === targetStar.name);
-        if (!fullStar) return;
-
         const duration = 600;
         const frameRate = 60;
         const steps = Math.round((duration / 1000) * frameRate);
         const startX = offsetX;
         const startY = offsetY;
-        const deltaX = -fullStar.x - startX;
-        const deltaY = -fullStar.y - startY;
+        const deltaX = -targetStar.x - startX;
+        const deltaY = -targetStar.y - startY;
 
         let currentStep = 0;
 
         const animate = () => {
             currentStep++;
             const t = currentStep / steps;
-            const ease = t < 0.5
-                ? 2 * t * t
-                : -1 + (4 - 2 * t) * t;
+            const ease = t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
 
             setOffsetX(startX + deltaX * ease);
             setOffsetY(startY + deltaY * ease);
@@ -285,22 +318,59 @@ const StarMap = ({
             if (currentStep < steps) {
                 requestAnimationFrame(animate);
             } else {
-                // Ensure planets are loaded (from save or generate fresh)
-                if (!fullStar.planets || fullStar.planets.length === 0) {
-                    fullStar.planets = generatePlanets(fullStar.name);
-                    fullStar.planets.forEach(p => {
-                        p.angle = p.angle ?? Math.random() * Math.PI * 2;
-                    });
-                }
-
-                saveStarToLocalStorage(fullStar, stars);
-
-                setSelectedStar(fullStar); //--- Show the planets in orbit.
+                const system = hydrateOrSynthesizeSystem(targetStar, orbitState, stars);
+                setSelectedStar(system);
+                setActiveSystem(system);
             }
         };
 
         requestAnimationFrame(animate);
     };
+    // const goToSystem = (targetStar) => {
+    //     // Try to get the full star object from localStorage
+    //     const saved = localStorage.getItem(`star_${targetStar.name}`);
+    //     let fullStar = saved ? JSON.parse(saved) : stars.find(s => s.name === targetStar.name);
+    //     if (!fullStar) return;
+
+    //     const duration = 600;
+    //     const frameRate = 60;
+    //     const steps = Math.round((duration / 1000) * frameRate);
+    //     const startX = offsetX;
+    //     const startY = offsetY;
+    //     const deltaX = -fullStar.x - startX;
+    //     const deltaY = -fullStar.y - startY;
+
+    //     let currentStep = 0;
+
+    //     const animate = () => {
+    //         currentStep++;
+    //         const t = currentStep / steps;
+    //         const ease = t < 0.5
+    //             ? 2 * t * t
+    //             : -1 + (4 - 2 * t) * t;
+
+    //         setOffsetX(startX + deltaX * ease);
+    //         setOffsetY(startY + deltaY * ease);
+
+    //         if (currentStep < steps) {
+    //             requestAnimationFrame(animate);
+    //         } else {
+    //             // Ensure planets are loaded (from save or generate fresh)
+    //             if (!fullStar.planets || fullStar.planets.length === 0) {
+    //                 fullStar.planets = generatePlanets(fullStar.name);
+    //                 fullStar.planets.forEach(p => {
+    //                     p.angle = p.angle ?? Math.random() * Math.PI * 2;
+    //                 });
+    //             }
+
+    //             saveStarToLocalStorage(fullStar, stars);
+
+    //             setSelectedStar(fullStar); //--- Show the planets in orbit.
+    //         }
+    //     };
+
+    //     requestAnimationFrame(animate);
+    // };
 
     //--- Here some smooth motion to return you back to the galactic center of 0,0.
     const goToZeroCommaZero = () => {

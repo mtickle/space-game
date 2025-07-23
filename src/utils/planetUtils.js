@@ -2,6 +2,9 @@ import { generateEconomy } from '@utils/economyUtils';
 import { generateMoons } from '@utils/moonUtils';
 import { planetTypes, settlementNames, uniquePlanetNames } from '@utils/namingUtils';
 //import { generatePlanetName } from '@utils/planetUtils';
+//import { initializeOrbitStateForStar } from '@utils/planetUtils'; // adjust path
+import { getHydratedStarSystem, isStarSystemHydrated, saveHydratedStarSystem } from '@utils/storageUtils';
+import { synthesizeStarSystem } from '@utils/synthesisUtils'; // adjust path
 import { v4 as uuidv4 } from 'uuid';
 
 // Procedural planet name generator (updated to support unique names)
@@ -66,6 +69,52 @@ export const generatePlanets = (starName) => {
     }
     return planets;
 };
+
+export function initializeOrbitStateForStar(orbitRef, star) {
+    if (!orbitRef || !star || !star.planets) return;
+
+    const state = star.planets.map((planet, i) => ({
+        angle: Math.random() * Math.PI * 2,
+        speed: 0.001 + Math.random() * 0.001,
+        radius: planet.orbitRadius || (20 + i * 8),
+    }));
+
+    orbitRef.current[star.name] = state;
+}
+
+
+export function hydrateOrSynthesizeSystem(clickedStar, orbitStateRef, allStars) {
+    let fullSystem;
+
+    if (isStarSystemHydrated(clickedStar.id)) {
+        fullSystem = getHydratedStarSystem(clickedStar.id);
+        console.log(`[Hydration] Loaded cached system for ${clickedStar.name}`);
+    } else {
+        fullSystem = synthesizeStarSystem(clickedStar);
+        saveHydratedStarSystem(fullSystem);
+        console.log(`[Synthesis] Created new system for ${clickedStar.name}`);
+    }
+
+    // Always initialize orbit state
+    initializeOrbitStateForStar(orbitStateRef, fullSystem);
+
+    // Ensure angles are set
+    fullSystem.planets.forEach(p => {
+        p.angle = p.angle ?? Math.random() * Math.PI * 2;
+    });
+
+    // Track visit
+    const visited = JSON.parse(localStorage.getItem('visitedStars') || '[]');
+    if (!visited.includes(fullSystem.name)) {
+        visited.push(fullSystem.name);
+        localStorage.setItem('visitedStars', JSON.stringify(visited));
+    }
+
+    // Optional: save legacy star key (used by goToSystem)
+    localStorage.setItem(`star_${fullSystem.name}`, JSON.stringify(fullSystem));
+
+    return fullSystem;
+}
 
 
 //     const numPlanets = Math.floor(Math.random() * 5) + 2; // 2–6 planets

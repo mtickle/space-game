@@ -67,7 +67,25 @@ export const useLazyStarField = ({ offsetX, offsetY, canvasWidth, canvasHeight, 
                             y: sy * SECTOR_SIZE + rng.current() * SECTOR_SIZE,
                         };
                     });
-                    localStorage.setItem(localKey, JSON.stringify(newStars));
+
+                    const safeStars = newStars.map(star => ({
+                        id: star.id,
+                        name: star.name,
+                        x: star.x,
+                        y: star.y,
+                        z: star.z,
+                        size: star.size,
+                        color: star.color,
+                        type: star.type,
+                        faction: star.faction,  // Optional: if needed for color/symbol
+                    }));
+                    try {
+                        localStorage.setItem(localKey, JSON.stringify(safeStars));
+                    } catch (e) {
+                        console.warn(`⚠️ Storage quota exceeded for sector ${localKey}`, e);
+                    }
+
+                    //localStorage.setItem(localKey, JSON.stringify(newStars));
                 }
             } catch (e) {
                 console.warn(`Error loading or generating sector ${localKey}:`, e);
