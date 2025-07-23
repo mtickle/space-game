@@ -215,6 +215,7 @@ const StarMap = ({
                      ctx.fillStyle = '#aaa';
                      ctx.font = `${10 / scale}px Courier New`;
                      ctx.fillText(planet.planetName || `P${i}`, px + 4, py + 4);
+                     //boo
                 });
             }
 
