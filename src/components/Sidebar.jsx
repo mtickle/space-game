@@ -92,7 +92,7 @@ const Sidebar = ({ selectedStar, setActiveSystem }) => {
                 </div>
             ) : (
                 <div>
-                    <h2 className="text-2xl font-bold text-orange-400">Welcome to StarWeave '78</h2>
+                    <h2 className="text-2xl font-bold text-orange-400">Welcome</h2>
                     <p className="text-gray-300">Click a star to explore its system. Journey through the cosmos and uncover faction secrets!</p>
                 </div>
             )}

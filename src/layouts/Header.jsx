@@ -38,7 +38,7 @@ const Header = ({ stars, factionFilter, setFactionFilter, starTypeFilter, setSta
 
     return (
         <header className="w-full bg-gray-900 p-4 flex items-center justify-between text-xl text-orange-400">
-            <h1 className="text-4xl font-baumans tracking-wide" style={{ fontFamily: '"Baumans", cursive' }}>Starweave 2478</h1>
+            <h1 className="text-4xl font-baumans tracking-wide" style={{ fontFamily: '"Baumans", cursive' }}>Galactic Map Lab</h1>
             <div className="flex space-x-4">
                 <div>
                     {/* <button

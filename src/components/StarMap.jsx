@@ -227,51 +227,6 @@ const StarMap = ({
                 });
             }
 
-
-            //if ((selectedStar?.name === star.name || hoveredStar?.name === star.name) && star.planets) {
-            // if (selectedStar?.name === star.name && star.planets) {
-
-            //     star.planets.forEach((planet) => {
-            //         ctx.beginPath();
-            //         ctx.arc(star.x, star.y, planet.orbitRadius, 0, Math.PI * 2);
-            //         ctx.strokeStyle = planet.color + '33';
-            //         ctx.lineWidth = .5 / scale;
-            //         ctx.stroke();
-
-            //         const px = star.x + Math.cos(planet.angle) * planet.orbitRadius;
-            //         const py = star.y + Math.sin(planet.angle) * planet.orbitRadius;
-
-            //         const orbits = orbitState.current[star.name] || [];
-
-            //         star.planets.forEach((planet, i) => {
-            //             const orbit = orbits[i];
-            //             if (!orbit) return;
-
-            //             orbit.angle += orbit.speed;
-
-            //             ctx.beginPath();
-            //             ctx.arc(star.x, star.y, orbit.radius, 0, Math.PI * 2);
-            //             ctx.strokeStyle = planet.color + '33';
-            //             ctx.lineWidth = 0.5 / scale;
-            //             ctx.stroke();
-
-            //             const px = star.x + Math.cos(orbit.angle) * orbit.radius;
-            //             const py = star.y + Math.sin(orbit.angle) * orbit.radius;
-
-            //             ctx.beginPath();
-            //             const renderSize = Math.min(planet.size ?? 1.5, 4);
-            //             ctx.arc(px, py, renderSize, 0, Math.PI * 2);
-            //             ctx.fillStyle = planet.color;
-            //             ctx.fill();
-            //         });
-
-            //         ctx.beginPath();
-            //         const renderSize = Math.min(planet.size ?? 1.5, 4);
-            //         ctx.arc(px, py, renderSize, 0, Math.PI * 2);
-            //         ctx.fillStyle = planet.color;
-            //         ctx.fill();
-            //     });
-            // }
         });
 
         ctx.restore();
