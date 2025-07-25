@@ -7,10 +7,19 @@ import { generateIndustry } from '@utils/industryUtils';
 import { generateMineral } from '@utils/mineralUtils';
 import { generateMoons } from '@utils/moonUtils';
 import { planetTypes, settlementNames, uniquePlanetNames } from '@utils/namingUtils';
-import { generatePlanetName } from '@utils/planetUtils';
+//import { generatePlanetName } from '@utils/planetUtils';
 import { generateFullStarProfile } from '@utils/starUtils';
 import { v4 as uuidv4 } from 'uuid';
 
+const generatePlanetName = (starName, index, uniqueNames) => {
+    if (uniqueNames && uniqueNames.length > 0 && Math.random() < 0.4) { // 40% chance for a unique name
+        const name = uniqueNames[Math.floor(Math.random() * uniqueNames.length)];
+        uniqueNames.splice(uniqueNames.indexOf(name), 1); // Remove used name to avoid duplicates
+        return name;
+    }
+    const letters = ['a', 'b', 'c', 'd', 'e', 'f'];
+    return `${starName} ${letters[index]}`;
+};
 
 export function synthesizeStarSystem(star) {
     if (!star || !star.id || !star.name) {

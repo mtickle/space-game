@@ -10,6 +10,7 @@ const VisitedSystemsPanel = ({ stars, goToSystem }) => {
             {visited.map(star => (
                 <div key={star.name} className="mb-2 border-b border-green-700 pb-2">
                     <div className="font-bold text-green-200">★ {star.name}</div>
+                    <div>ID: {star.id}</div>
                     <div>Faction: {star.faction?.name || 'Unknown'}</div>
                     <div>Planets: {star.planets?.length || 0}</div>
                     <button

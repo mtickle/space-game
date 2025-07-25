@@ -182,42 +182,51 @@ const StarMap = ({
             //--- Now, you've gone and either hovered over a system or clicked it.
             //--- We already have the planets created, we just need to render them 
             //--- based on their attributes.
-            const isVisited = visited.includes(star.name);
-            const isSelected = selectedStar?.name === star.name;
+            const isVisited = visited.includes(star.id);
+            const isSelected = selectedStar?.id === star.id;
             const shouldRenderSystem = isSelected && isVisited;
 
-            if (shouldRenderSystem && Array.isArray(star.planets)) {
-                const orbits = orbitState.current[star.name] || [];
+            // console.log({
+            //     starId: star.id,
+            //     selectedId: selectedStar?.id,
+            //     isSelected,
+            //     isVisited,
+            //     shouldRenderSystem,
+            // });
 
+            if (shouldRenderSystem && Array.isArray(star.planets)) {
+                const orbits = orbitState.current[star.id] || [];
+                console.log('Orbit state keys:', Object.keys(orbitState.current));
                 star.planets.forEach((planet, i) => {
                     const orbit = orbits[i];
                     if (!orbit) return;
 
-                    // Orbit path
+                    // Update angle
+                    orbit.angle += orbit.speed;
+
+                    // Draw orbit path
                     ctx.beginPath();
                     ctx.arc(star.x, star.y, orbit.radius, 0, Math.PI * 2);
                     ctx.strokeStyle = planet.color + '33';
                     ctx.lineWidth = 0.5 / scale;
                     ctx.stroke();
 
-                    // Orbiting planet
-                    orbit.angle += orbit.speed;
+                    // Draw planet
                     const px = star.x + Math.cos(orbit.angle) * orbit.radius;
                     const py = star.y + Math.sin(orbit.angle) * orbit.radius;
 
                     ctx.beginPath();
-                    const renderSize = Math.min(planet.size ?? 1.5, 4);
-                    ctx.arc(px, py, renderSize, 0, Math.PI * 2);
+                    ctx.arc(px, py, Math.min(planet.size ?? 1.5, 4), 0, Math.PI * 2);
                     ctx.fillStyle = planet.color;
                     ctx.fill();
 
-                    // Optional: label the planet
-                     ctx.fillStyle = '#aaa';
-                     ctx.font = `${10 / scale}px Courier New`;
-                     ctx.fillText(planet.planetName || `P${i}`, px + 4, py + 4);
-                     //boo
+                    // Optional: Planet label
+                    ctx.fillStyle = '#aaa';
+                    ctx.font = `${10 / scale}px Courier New`;
+                    ctx.fillText(planet.planetName || `P${i}`, px + 4, py + 4);
                 });
             }
+
 
             //if ((selectedStar?.name === star.name || hoveredStar?.name === star.name) && star.planets) {
             // if (selectedStar?.name === star.name && star.planets) {
@@ -327,6 +336,9 @@ const StarMap = ({
 
         requestAnimationFrame(animate);
     };
+
+
+
     // const goToSystem = (targetStar) => {
     //     // Try to get the full star object from localStorage
     //     const saved = localStorage.getItem(`star_${targetStar.name}`);

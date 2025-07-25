@@ -1,7 +1,6 @@
 // utils/systemUtils.js
 
 import { assignFaction } from '@utils/factionUtils';
-import { generatePlanets } from '@utils/planetUtils';
 import { generateStarName, getStarDescription } from '@utils/starUtils';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -16,7 +15,7 @@ export const STAR_CLASSES = [
     { type: 'M', color: '#F56565', temp: '<3,700K', size: 3, weight: 0.4 },
 ];
 
-// Generate a single star system with planets
+//--- This creates the star systems as we move about the galactic map.
 export const generateStarSystem = (index = 0) => {
     const rand = Math.random();
     let cumulative = 0;
@@ -45,7 +44,7 @@ export const generateStarSystem = (index = 0) => {
         faction,
         x: Math.random() * 1200 - 600,
         y: Math.random() * 800 - 400,
-        planets: generatePlanets(name),
+        //planets: generatePlanets(name),
     };
 };
 

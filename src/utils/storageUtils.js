@@ -13,7 +13,7 @@ export const isHydrated = (id) =>
     !!localStorage.getItem(`hydrated_star_${id}`);
 
 export const getHydratedStarSystem = (id) => {
-    const raw = localStorage.getItem(`hydrated_star_${id}`);
+    const raw = localStorage.getItem(`star_${id}`);
     return raw ? JSON.parse(raw) : null;
 };
 
@@ -22,11 +22,14 @@ export const getAllHydratedSystems = () => {
 };
 
 
+
+//--- This is saving a star system as "star_StarName"
+//--- We should be saving a star_starId
 export const saveStarToLocalStorage = (star, stars) => {
     if (!star || !star.name) return;
 
     // Save the updated star itself
-    localStorage.setItem(`star_${star.name}`, JSON.stringify(star));
+    localStorage.setItem(`zzz_star_${star.id}`, JSON.stringify(star));
 
     // Also update the global visited list if not already in it
     const visited = JSON.parse(localStorage.getItem('visitedStars') || '[]');
@@ -62,6 +65,7 @@ export const saveStarSystemToStorage = (starSystem) => {
 
 
 
+//--- THis is an actual and good save function!!!
 export const saveHydratedStarSystem = (starSystem) => {
     if (!starSystem || typeof starSystem !== 'object' || !starSystem.id || !starSystem.name) {
         console.warn('[Storage] Invalid star system passed to saveHydratedStarSystem:', starSystem);
@@ -69,7 +73,7 @@ export const saveHydratedStarSystem = (starSystem) => {
     }
 
     // Save full object by ID
-    localStorage.setItem(`hydrated_star_${starSystem.id}`, JSON.stringify(starSystem));
+    localStorage.setItem(`star_${starSystem.id}`, JSON.stringify(starSystem));
 
     // Optionally also store it in a full array
     const existingRaw = JSON.parse(localStorage.getItem('savedStarSystems') || '[]');

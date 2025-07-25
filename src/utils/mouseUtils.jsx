@@ -62,7 +62,7 @@ export const createHandleClick = ({
     orbitState
 }) => (e) => {
     if (isDragging) return;
-
+    //const orbitState = useRef({});
     const canvas = canvasRef.current;
     const rect = canvas.getBoundingClientRect();
     const mouseX = (e.clientX - rect.left - canvas.width / 2 - offsetX) / scale;
@@ -81,18 +81,6 @@ export const createHandleClick = ({
     setSelectedStar(fullSystem);
     setActiveSystem(fullSystem);
 
-    // if (isStarSystemHydrated(clickedStar.id)) {
-    //     fullSystem = getHydratedStarSystem(clickedStar.id);
-    //     console.log(`[Cache] LOADED hydrated system for ${clickedStar.name}`);
-    // } else {
-    //     fullSystem = synthesizeStarSystem(clickedStar);
-    //     console.log(`[Synthesis] Created new system for ${clickedStar.name}`);
-    //     saveHydratedStarSystem(fullSystem); // This should also handle marking as visited
-    // }
-
-    // // ✅ Ensure orbits match the actual planets in the hydrated system
-    // initializeOrbitStateForStar(orbitState, fullSystem);
-
     // ✅ Set angles if missing
     fullSystem.planets.forEach(p => {
         p.angle = p.angle ?? Math.random() * Math.PI * 2;
@@ -104,8 +92,8 @@ export const createHandleClick = ({
 
     // ✅ Track visit manually if not handled inside saveHydratedStarSystem
     const visited = JSON.parse(localStorage.getItem('visitedStars') || '[]');
-    if (!visited.includes(fullSystem.name)) {
-        visited.push(fullSystem.name);
+    if (!visited.includes(fullSystem.id)) {
+        visited.push(fullSystem.id);
         localStorage.setItem('visitedStars', JSON.stringify(visited));
     }
 };
