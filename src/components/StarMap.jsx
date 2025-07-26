@@ -1,18 +1,11 @@
 // StarMap.jsx
 
-//--- Welcome to the StarMap component! 
-//--- This component renders a star map with interactive features like zooming, dragging, and selecting stars. 
-//--- It also includes a sidebar for star details and an admin panel for additional functionalities.
-
 import AdminPanel from '@components/AdminPanel';
 import Sidebar from '@components/Sidebar';
 import StarSystemViewer from '@components/StarSystemViewer';
 import { getStarTooltip } from '@hooks/useLazyStarField';
 import Footer from '@layouts/Footer';
 import Header from '@layouts/Header';
-import { hydrateOrSynthesizeSystem } from '@utils/planetUtils'; // adjust path
-import { useEffect, useRef, useState } from 'react';
-
 import {
     createHandleClick,
     createHandleContextMenu,
@@ -21,6 +14,8 @@ import {
     createHandleMouseUp,
     createHandleWheel
 } from '@utils/mouseUtils.jsx';
+import { hydrateOrSynthesizeSystem } from '@utils/planetUtils';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 const StarMap = ({
     stars,
@@ -32,86 +27,122 @@ const StarMap = ({
     setScale,
     setCanvasSize,
 }) => {
-
     const [activeSystem, setActiveSystem] = useState(null);
     const canvasRef = useRef(null);
     const [selectedStar, setSelectedStar] = useState(null);
     const [hoveredStar, setHoveredStar] = useState(null);
     const [isDragging, setIsDragging] = useState(false);
     const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
-    const [redrawTrigger, setRedrawTrigger] = useState(false);
     const [factionFilter, setFactionFilter] = useState('All');
     const [starTypeFilter, setStarTypeFilter] = useState('All');
-    const [selectedPlanet, setSelectedPlanet] = useState(null);
     const animationFrameRef = useRef(null);
     const [showVisited, setShowVisited] = useState(false);
     const orbitState = useRef({});
-    // const [isSystemViewerOpen, setSystemViewerOpen] = useState(false);
 
-    // *** Define the state to control StarSystemViewer visibility here ***
-    const [showSystemMap, setShowSystemMap] = useState(false); // THIS IS THE MASTER STATE
+    const [showSystemMap, setShowSystemMap] = useState(false);
 
-    //--- This effect sets the initial canvas size and listens for window resize events to adjust the canvas size dynamically.
+    // --- NEW: Ref to store static background stars ---
+    const backgroundStars = useRef([]);
+    const NEBULA_CLOUDS = useRef([]); // Also store nebula cloud properties
+
+    //--- Effect to manage canvas size and generate static background elements ---
     useEffect(() => {
         const canvas = canvasRef.current;
-        const container = canvas.parentElement;
+        const container = canvas?.parentElement;
+        if (!canvas || !container) return;
+
         const resizeObserver = new ResizeObserver(entries => {
             for (let entry of entries) {
-                canvas.width = entry.contentRect.width;
-                canvas.height = entry.contentRect.height;
-                setCanvasSize({ width: canvas.width, height: canvas.height });
-                setRedrawTrigger(prev => !prev);
+                const { width, height } = entry.contentRect;
+                canvas.width = width;
+                canvas.height = height;
+
+                if (setCanvasSize) {
+                    setCanvasSize({ width, height });
+                }
+
+                // --- Generate static background stars and nebulae ONCE on resize/mount ---
+                const numStars = 200;
+                const starsArray = [];
+                for (let i = 0; i < numStars; i++) {
+                    starsArray.push({
+                        x: Math.random() * width,
+                        y: Math.random() * height,
+                        radius: Math.random() * 1.5,
+                        opacity: 0.1 + Math.random() * 0.2
+                    });
+                }
+                backgroundStars.current = starsArray;
+
+                // Generate static nebula clouds
+                NEBULA_CLOUDS.current = [
+                    { x: width * 0.2, y: height * 0.3, radius: 150, color: 'rgba(100, 100, 255, 0.03)' },
+                    { x: width * 0.7, y: height * 0.8, radius: 180, color: 'rgba(255, 100, 100, 0.03)' }
+                ];
+
+                // Trigger a redraw after initial setup or resize
+                // drawScene is now explicitly called within the animation loop,
+                // so simply updating the ref will be picked up on the next frame.
+                // If you remove redrawTrigger, make sure drawScene dependencies are robust.
             }
         });
         resizeObserver.observe(container);
         return () => resizeObserver.unobserve(container);
-    }, [setCanvasSize]);
+    }, [setCanvasSize]); // Removed redrawTrigger as a dependency here, it's not needed.
+
 
     useEffect(() => {
         const state = {};
-
         stars.forEach(star => {
             if (!star.planets || star.planets.length === 0) return;
-
             state[star.id] = star.planets.map((planet, i) => ({
                 angle: Math.random() * Math.PI * 2,
                 speed: 0.001 + Math.random() * 0.001,
                 radius: planet.orbitRadius || (20 + i * 8),
             }));
         });
-
         orbitState.current = state;
     }, [stars]);
 
 
     //--- Mouse handler delegation using mouseUtils.
     const handleMouseDown = createHandleMouseDown(setIsDragging, setDragStart);
-    const handleMouseMove = createHandleMouseMove({
-        canvasRef,
-        offsetX,
-        offsetY,
-        scale,
-        isDragging,
-        setOffsetX,
-        setOffsetY,
-        dragStart,
-        setDragStart,
-        stars,
-        setHoveredStar,
-        orbitState
-    });
+    const handleMouseMove = useCallback((e) => {
+        createHandleMouseMove({
+            canvasRef,
+            offsetX,
+            offsetY,
+            scale,
+            isDragging,
+            setOffsetX,
+            setOffsetY,
+            dragStart,
+            setDragStart,
+            stars,
+            setHoveredStar,
+            orbitState
+        })(e);
+    }, [offsetX, offsetY, scale, isDragging, dragStart, stars, setOffsetX, setOffsetY, setDragStart, setHoveredStar, orbitState]);
+
     const handleMouseUp = createHandleMouseUp(setIsDragging);
-    const handleWheel = createHandleWheel(scale, setScale);
-    const handleClick = createHandleClick({
-        isDragging,
-        canvasRef,
-        offsetX,
-        offsetY,
-        scale,
-        stars,
-        setSelectedStar,
-        setActiveSystem
-    });
+    const handleWheel = useCallback((e) => {
+        createHandleWheel(scale, setScale)(e);
+    }, [scale, setScale]);
+
+    const handleClick = useCallback((e) => {
+        createHandleClick({
+            isDragging,
+            canvasRef,
+            offsetX,
+            offsetY,
+            scale,
+            stars,
+            setSelectedStar,
+            setActiveSystem,
+            setShowSystemMap
+        })(e);
+    }, [isDragging, canvasRef, offsetX, offsetY, scale, stars, setSelectedStar, setActiveSystem, setShowSystemMap]);
+
     const handleContextMenu = createHandleContextMenu({
         canvasRef,
         offsetX,
@@ -121,20 +152,49 @@ const StarMap = ({
     });
 
 
-
     //--- This function draws the star map scene, including stars, planets, and tooltips.
-    const drawScene = () => {
+    const drawScene = useCallback(() => {
         const canvas = canvasRef.current;
         if (!canvas) return;
+
         const ctx = canvas.getContext('2d');
-        ctx.fillStyle = '#1A202C';
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        const width = canvas.width;
+        const height = canvas.height;
+
+        // --- STATIC BACKGROUND IMPLEMENTATION (Now using stored data) ---
+        const backgroundGradient = ctx.createLinearGradient(0, 0, width, height);
+        backgroundGradient.addColorStop(0, '#1a1a2e');
+        backgroundGradient.addColorStop(0.5, '#3b3b5c');
+        backgroundGradient.addColorStop(1, '#1a1a2e');
+        ctx.fillStyle = backgroundGradient;
+        ctx.fillRect(0, 0, width, height);
+
+        // Draw static background stars
+        backgroundStars.current.forEach(star => {
+            ctx.beginPath();
+            ctx.arc(star.x, star.y, star.radius, 0, Math.PI * 2);
+            ctx.fillStyle = `rgba(255, 255, 255, ${star.opacity})`;
+            ctx.fill();
+        });
+
+        // Draw static nebulous clouds
+        ctx.filter = 'blur(8px)';
+        NEBULA_CLOUDS.current.forEach(cloud => {
+            ctx.fillStyle = cloud.color;
+            ctx.beginPath();
+            ctx.arc(cloud.x, cloud.y, cloud.radius, 0, Math.PI * 2);
+            ctx.fill();
+        });
+        ctx.filter = 'none'; // Reset filter!
+        // --- END STATIC BACKGROUND IMPLEMENTATION ---
+
 
         const visited = JSON.parse(localStorage.getItem('visitedStars') || '[]');
         const home = JSON.parse(localStorage.getItem('homeSystem') || '{}');
 
         ctx.save();
-        ctx.translate(canvas.width / 2 + offsetX, canvas.height / 2 + offsetY);
+        ctx.translate(width / 2 + offsetX, height / 2 + offsetY);
         ctx.scale(scale, scale);
 
         const filteredStars = factionFilter === 'All' ? stars : stars.filter(star => star.faction?.name === factionFilter);
@@ -145,8 +205,6 @@ const StarMap = ({
             const alpha = 1 - depth * 0.8;
             const blur = 10 * (1 - depth);
 
-            //--- This is drawing the GALACTIC MAP.
-            //--- Draw a circle, fill it in, give it a glow and some shadow and a star is born.
             ctx.beginPath();
             ctx.arc(star.x, star.y, star.size, 0, Math.PI * 2);
             ctx.fillStyle = star.color;
@@ -157,8 +215,7 @@ const StarMap = ({
             ctx.shadowBlur = 0;
             ctx.globalAlpha = 1;
 
-            //--- This is a skinny white circle we place around our "home" system.
-            if (home.name === star.name) {
+            if (home.id === star.id) {
                 ctx.beginPath();
                 ctx.arc(star.x, star.y, star.size + 4 / scale, 0, Math.PI * 2);
                 ctx.strokeStyle = '#FFFFFF';
@@ -166,90 +223,86 @@ const StarMap = ({
                 ctx.stroke();
             }
 
-            //--- Here is your star system name
             ctx.fillStyle = '#FFFFFF';
             ctx.font = `${12 / scale}px Courier New, monospace`;
             ctx.textAlign = 'center';
             ctx.fillText(star.name, star.x, star.y - star.size - 6 / scale);
 
-            //--- This is a little green dot we place at each system
-            //--- as a visual cue that we have visited it.            
-            if (visited.includes(star.name)) {
+            if (showVisited && visited.includes(star.id)) {
                 ctx.beginPath();
                 ctx.arc(star.x, star.y - star.size - 12 / scale, 2 / scale, 0, Math.PI * 2);
                 ctx.fillStyle = '#00FF00';
                 ctx.fill();
             }
 
-            //--- THIS IS DRAWING THE STAR SYSTEM MAP
-            //--- Now, you've gone and either hovered over a system or clicked it.
-            //--- We already have the planets created, we just need to render them 
-            //--- based on their attributes.
-            const isVisited = visited.includes(star.id);
             const isSelected = selectedStar?.id === star.id;
-            const shouldRenderSystem = isSelected && isVisited;
-
-            // console.log({
-            //     starId: star.id,
-            //     selectedId: selectedStar?.id,
-            //     isSelected,
-            //     isVisited,
-            //     shouldRenderSystem,
-            // });
-
-            if (shouldRenderSystem && Array.isArray(star.planets)) {
+            if (isSelected && visited.includes(star.id) && Array.isArray(star.planets)) {
                 const orbits = orbitState.current[star.id] || [];
-                console.log('Orbit state keys:', Object.keys(orbitState.current));
                 star.planets.forEach((planet, i) => {
                     const orbit = orbits[i];
                     if (!orbit) return;
 
-                    // Update angle
                     orbit.angle += orbit.speed;
 
-                    // Draw orbit path
                     ctx.beginPath();
                     ctx.arc(star.x, star.y, orbit.radius, 0, Math.PI * 2);
-                    ctx.strokeStyle = planet.color + '33';
+                    ctx.strokeStyle = (planet.color || '#FFFFFF') + '33';
                     ctx.lineWidth = 0.5 / scale;
                     ctx.stroke();
 
-                    // Draw planet
                     const px = star.x + Math.cos(orbit.angle) * orbit.radius;
                     const py = star.y + Math.sin(orbit.angle) * orbit.radius;
 
                     ctx.beginPath();
-                    ctx.arc(px, py, Math.min(planet.size ?? 1.5, 4), 0, Math.PI * 2);
-                    ctx.fillStyle = planet.color;
+                    ctx.arc(px, py, Math.min(planet.size ?? 1.5, 4) / scale, 0, Math.PI * 2);
+                    ctx.fillStyle = planet.color || '#FFFFFF';
                     ctx.fill();
 
-                    // Optional: Planet label
-                    ctx.fillStyle = '#aaa';
-                    ctx.font = `${10 / scale}px Courier New`;
-                    ctx.fillText(planet.planetName || `P${i}`, px + 4, py + 4);
+                    if (scale > 0.5) {
+                        ctx.fillStyle = '#aaa';
+                        ctx.font = `${10 / scale}px Courier New`;
+                        ctx.fillText(planet.planetName || `P${i}`, px + 4 / scale, py + 4 / scale);
+                    }
                 });
             }
-
         });
 
         ctx.restore();
 
-        //--- Here's a tooltip. I want to make this better and more informative.
         if (hoveredStar) {
             const tooltip = getStarTooltip(hoveredStar);
             ctx.save();
             ctx.font = '12px monospace';
             ctx.fillStyle = 'rgba(0,0,0,0.8)';
+
             const text = `★ ${tooltip.name} | ${tooltip.faction}`;
             const metrics = ctx.measureText(text);
-            ctx.fillRect(hoveredStar.clientX + 10, hoveredStar.clientY - 10, metrics.width + 10, 20);
+
+            // --- THE FIX IS HERE ---
+            // Get the bounding rectangle of the canvas element
+            const canvasRect = canvas.getBoundingClientRect();
+
+            // Calculate tooltip position relative to the canvas's top-left corner
+            // hoveredStar.clientX/Y are viewport coordinates
+            // canvasRect.left/top are canvas's viewport coordinates
+            const tooltipX = hoveredStar.clientX - canvasRect.left + 500;
+            const tooltipY = hoveredStar.clientY - canvasRect.top + 50;
+
+            ctx.fillRect(tooltipX, tooltipY, metrics.width + 10, 20);
             ctx.fillStyle = '#00ff88';
-            ctx.fillText(text, hoveredStar.clientX + 15, hoveredStar.clientY + 5);
+            ctx.fillText(text, tooltipX + 5, tooltipY + 15); // Adjust text position within the rect
             ctx.restore();
         }
-    };
+    }, [
+        stars, offsetX, offsetY, scale,
+        selectedStar, hoveredStar,
+        factionFilter, starTypeFilter, showVisited,
+        orbitState, // orbitState.current is directly mutated, but the object ref itself is stable
+        // No explicit redrawTrigger from resize observer needed here, as the initial generation
+        // in the useEffect and the animation loop handle it.
+    ]);
 
-    //--- Make the planets actually orbit.
+
     useEffect(() => {
         const animate = () => {
             drawScene();
@@ -257,14 +310,10 @@ const StarMap = ({
         };
         animate();
         return () => cancelAnimationFrame(animationFrameRef.current);
-    }, [stars, offsetX, offsetY, scale, factionFilter, selectedStar, hoveredStar]);
+    }, [drawScene]);
 
 
-
-    //--- This is a smooth zoom from where ever you are to the selected system.
-    //--- Right now this is done from the visited systems history panel.
-    //--- We will send you back there and show you the planets in orbit. 
-    const goToSystem = (targetStar) => {
+    const goToSystem = useCallback((targetStar) => {
         const duration = 600;
         const frameRate = 60;
         const steps = Math.round((duration / 1000) * frameRate);
@@ -274,8 +323,7 @@ const StarMap = ({
         const deltaY = -targetStar.y - startY;
 
         let currentStep = 0;
-
-        const animate = () => {
+        const animateFrame = () => {
             currentStep++;
             const t = currentStep / steps;
             const ease = t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
@@ -284,19 +332,17 @@ const StarMap = ({
             setOffsetY(startY + deltaY * ease);
 
             if (currentStep < steps) {
-                requestAnimationFrame(animate);
+                requestAnimationFrame(animateFrame);
             } else {
                 const system = hydrateOrSynthesizeSystem(targetStar, orbitState, stars);
                 setSelectedStar(system);
                 setActiveSystem(system);
             }
         };
+        requestAnimationFrame(animateFrame);
+    }, [offsetX, offsetY, setOffsetX, setOffsetY, setSelectedStar, setActiveSystem, stars, orbitState]);
 
-        requestAnimationFrame(animate);
-    };
-
-    //--- Here some smooth motion to return you back to the galactic center of 0,0.
-    const goToZeroCommaZero = () => {
+    const goToZeroCommaZero = useCallback(() => {
         const duration = 600;
         const frameRate = 60;
         const steps = Math.round((duration / 1000) * frameRate);
@@ -306,8 +352,7 @@ const StarMap = ({
         const deltaY = -startY;
 
         let currentStep = 0;
-
-        const animate = () => {
+        const animateFrame = () => {
             currentStep++;
             const t = currentStep / steps;
             const ease = t < 0.5
@@ -318,16 +363,14 @@ const StarMap = ({
             setOffsetY(startY + deltaY * ease);
 
             if (currentStep < steps) {
-                requestAnimationFrame(animate);
+                requestAnimationFrame(animateFrame);
             }
         };
+        requestAnimationFrame(animateFrame);
+    }, [offsetX, offsetY, setOffsetX, setOffsetY]);
 
-        requestAnimationFrame(animate);
-    };
 
     return (
-
-
         <div>
             <div className="w-screen h-screen bg-black flex flex-col text-white font-mono">
                 <Header
@@ -338,18 +381,13 @@ const StarMap = ({
                     setStarTypeFilter={setStarTypeFilter}
                 />
                 <div className="flex flex-row flex-1 overflow-hidden">
-                    {/* Sidebar stays left */}
                     <Sidebar
                         selectedStar={selectedStar}
-                        // onMapClick={() => {}} // This can probably be removed if not used for anything else specific
                         setActiveSystem={setActiveSystem}
-                        // *** Pass the setShowSystemMap and activeSystem setter down ***
                         setShowSystemMap={setShowSystemMap}
                     />
 
-                    {/* This wraps only the canvas + system viewer */}
                     <div className="relative flex-1">
-                        {/* Canvas always visible underneath */}
                         <canvas
                             ref={canvasRef}
                             className="bg-black cursor-pointer w-full h-full block"
@@ -362,20 +400,16 @@ const StarMap = ({
                             onContextMenu={handleContextMenu}
                         />
 
-                        {/* StarSystemViewer layered on top */}
-                        {/* Use the showSystemMap state from THIS component */}
-                        {showSystemMap && activeSystem && ( // Re-added activeSystem check for robustness
-                            <div className="absolute inset-0 z-10 bg-gray-900 overflow-hidden"> {/* Changed overflow-auto to overflow-hidden, removed p-6, border, shadow, rounded for full canvas fill */}
+                        {showSystemMap && activeSystem && (
+                            <div className="absolute inset-0 z-10 bg-gray-900 overflow-hidden">
                                 <StarSystemViewer
-                                    activeSystem={activeSystem} // <-- YES, CHANGE THIS LINE
-                                    // *** When closing, update the state in THIS component ***
+                                    activeSystem={activeSystem}
                                     onClose={() => setShowSystemMap(false)}
                                 />
                             </div>
                         )}
                     </div>
                 </div>
-
             </div>
             <AdminPanel stars={stars} goToSystem={goToSystem} />
             <Footer
@@ -391,8 +425,6 @@ const StarMap = ({
                 setShowVisited={setShowVisited}
                 showVisited={showVisited} />
         </div >
-
-
     );
 };
 

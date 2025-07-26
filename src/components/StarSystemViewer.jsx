@@ -51,8 +51,8 @@ const StarSystemViewer = ({ activeSystem, onClose }) => {
         const MIN_PLANET_RADIUS = 15; // Minimum visual radius for very small planets
 
         // Base distance for planets from the center
-        const BASE_ORBIT_DISTANCE = 80;
-        const ORBIT_INCREMENT = 80; // How much distance between conceptual "rings"
+        const BASE_ORBIT_DISTANCE = 30;
+        const ORBIT_INCREMENT = 40; // How much distance between conceptual "rings"
 
 
         // --- Drawing Function ---
