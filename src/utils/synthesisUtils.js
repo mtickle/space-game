@@ -82,11 +82,12 @@ export const synthesizePlanetarySystem = (starName, starId) => {
 
         const planetName = generatePlanetName(starName, i, availableUniqueNames);
         const isUniqueName = !planetName.includes(starName);
+        const planetId = uuidv4()
 
         const planet = {
             starId,
             starName,
-            planetId: uuidv4(),
+            planetId,
             planetName,
             planetConditions: generateConditions(planetType.type),
             planetType: planetType.type,
@@ -97,7 +98,7 @@ export const synthesizePlanetarySystem = (starName, starId) => {
             floraList: generateFlora(planetType.type),
             faunaList: generateFauna(planetType.type),
             resourceList: [],
-            moons: generateMoons(planetName, planetType.type),
+            moons: generateMoons(starId, planetName, planetId, planetType.type),
             settlements: [],
         };
 

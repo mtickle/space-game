@@ -1,274 +1,376 @@
-// StarSystemViewer.jsx
-import { getPlanetColor } from '@utils/colorUtils'; // This is useful for planets without explicit planetColor, or to derive gradient colors
-import { SquareArrowLeft } from 'lucide-react';
-import { useEffect, useRef, useState } from 'react';
+// @components/StarSystemViewer.jsx
 
-// Helper to darken a hex color (simple for now, can be more robust)
-const darkenColor = (hex, percent) => {
-    let f = parseInt(hex.slice(1), 16),
-        t = percent < 0 ? 0 : 255,
-        p = percent < 0 ? percent * -1 : percent,
-        R = f >> 16,
-        G = (f >> 8) & 0x00ff,
-        B = f & 0x0000ff;
-    return (
-        "#" +
-        (
-            0x1000000 +
-            (Math.round((t - R) * p) + R) * 0x10000 +
-            (Math.round((t - G) * p) + G) * 0x100 +
-            (Math.round((t - B) * p) + B)
-        )
-            .toString(16)
-            .slice(1)
-    );
-};
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 const StarSystemViewer = ({ activeSystem, onClose }) => {
     const canvasRef = useRef(null);
-    const wrapperRef = useRef(null);
-    const [selectedPlanet, setSelectedPlanet] = useState(null);
-    const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
+    const animationFrameId = useRef(null);
+    // systemOrbitState will store the calculated orbit radii, angles, and speeds for this viewer.
+    // It's a ref so it doesn't trigger re-renders when its internal properties (like angle) change.
+    const systemOrbitState = useRef({});
 
+    // State to hold canvas dimensions, triggering re-calculation of orbits on resize.
+    const [canvasDimensions, setCanvasDimensions] = useState({ width: 0, height: 0 });
+
+    // Helper function to determine a consistent visual size for planets and moons.
+    // It now intelligently uses 'moonSize' for moons and 'size' for planets.
+    const getPlanetVisualSize = useCallback((celestialBody) => {
+        if (!celestialBody) return 1;
+
+        // If the object has a 'moonId' property, it's a moon. Use moonSize, default to 4.
+        if (celestialBody.moonId) {
+            return celestialBody.moonSize || 4;
+        }
+        // Otherwise, assume it's a planet. Use size, default to 8.
+        return celestialBody.size || 8;
+    }, []);
+
+    // --- EFFECT: Handle Canvas Resizing and Initial Setup ---
     useEffect(() => {
         const canvas = canvasRef.current;
-        const ctx = canvas.getContext('2d');
-        const wrapper = wrapperRef.current;
+        if (!canvas) return;
 
-        if (!canvas || !ctx || !wrapper) {
-            console.warn("Canvas or wrapper not available, skipping drawing.");
+        const container = canvas.parentElement;
+        if (!container) return;
+
+        // Use ResizeObserver to dynamically adjust canvas dimensions to its parent container.
+        const resizeObserver = new ResizeObserver(entries => {
+            for (let entry of entries) {
+                const { width, height } = entry.contentRect;
+                canvas.width = width;
+                canvas.height = height;
+                setCanvasDimensions({ width, height }); // Update state to trigger orbit recalculation if needed
+            }
+        });
+
+        resizeObserver.observe(container);
+
+        // Cleanup observer on component unmount.
+        return () => resizeObserver.unobserve(container);
+    }, []); // Runs once on mount to set up the observer.
+
+
+    // --- EFFECT: Calculate Orbits When Active System or Canvas Dimensions Change ---
+    // This effect ensures that orbit radii and system scale are calculated dynamically.
+    useEffect(() => {
+        console.log("StarSystemViewer: Orbit calculation useEffect running...");
+        console.log("StarSystemViewer: activeSystem received:", activeSystem);
+        console.log("StarSystemViewer: canvasDimensions:", canvasDimensions);
+
+        if (!activeSystem || !canvasDimensions.width || !canvasDimensions.height) {
+            // If no active system or canvas dimensions are zero, reset and return.
+            systemOrbitState.current = { systemScale: 1, planetOrbits: {} };
+            console.warn("StarSystemViewer: Skipping orbit calculation due to missing activeSystem or canvas dimensions.");
             return;
         }
 
-        const rect = wrapper.getBoundingClientRect();
-        const width = canvas.width = rect.width;
-        const height = canvas.height = rect.height;
-        const cx = width / 2; // Center X of the canvas
-        const cy = height / 2; // Center Y of the canvas
+        const newOrbitState = {
+            systemScale: 1, // Will be calculated dynamically
+            planetOrbits: {} // Stores calculated radius, angle, speed for each planet/moon
+        };
 
-        // Base scale for planet radii
-        const PLANET_RADIUS_SCALE = 5; // Adjust this to make planets larger/smaller
-        const MIN_PLANET_RADIUS = 15; // Minimum visual radius for very small planets
+        const planets = activeSystem.planets || [];
+        if (planets.length === 0) {
+            systemOrbitState.current = newOrbitState;
+            console.warn("StarSystemViewer: Active system has no planets. Orbit calculation finished.");
+            return;
+        }
 
-        // Base distance for planets from the center
-        const BASE_ORBIT_DISTANCE = 30;
-        const ORBIT_INCREMENT = 40; // How much distance between conceptual "rings"
+        const minPlanetSpacing = 40; // Minimum distance between planet orbits
+        const minMoonSpacing = 15;    // Minimum distance between moon orbits
+        const basePlanetOrbitRadius = 60; // Starting radius for the first planet's orbit
 
+        let currentOrbitRadius = basePlanetOrbitRadius;
 
-        // --- Drawing Function ---
-        function draw() {
-            // NMS-like subtle gradient background for the entire canvas
-            const backgroundGradient = ctx.createLinearGradient(0, 0, width, height);
-            backgroundGradient.addColorStop(0, '#1a1a2e'); // Dark blue/purple
-            backgroundGradient.addColorStop(0.5, '#3b3b5c'); // Slightly lighter blue/purple
-            backgroundGradient.addColorStop(1, '#1a1a2e'); // Dark blue/purple
-            ctx.fillStyle = backgroundGradient;
-            ctx.fillRect(0, 0, width, height);
-
-            // Optional: Faint background "stars" or "nebula" dots
-            // You can generate a few random, very translucent circles for a nebula effect
-            for (let i = 0; i < 50; i++) {
-                ctx.beginPath();
-                ctx.arc(Math.random() * width, Math.random() * height, Math.random() * 1.5, 0, Math.PI * 2);
-                ctx.fillStyle = `rgba(255, 255, 255, ${0.1 + Math.random() * 0.2})`; // Faint white stars
-                ctx.fill();
+        planets.forEach((planet, planetIndex) => {
+            // --- Crucial ID check for planets (using planet.planetId) ---
+            if (planet.planetId === undefined || planet.planetId === null) {
+                console.error("StarSystemViewer: Planet skipped during orbit calculation due to missing planetId:", planet);
+                return; // Skip this planet if it doesn't have a valid ID
             }
 
-            // Optional: A couple of larger, very faint, blurred circles for nebulous clouds
-            ctx.filter = 'blur(8px)'; // Apply blur for a soft effect
-            ctx.fillStyle = 'rgba(100, 100, 255, 0.05)'; // Very faint blue
-            ctx.beginPath();
-            ctx.arc(width * 0.2, height * 0.3, 100, 0, Math.PI * 2);
-            ctx.fill();
-            ctx.fillStyle = 'rgba(255, 100, 100, 0.05)'; // Very faint red
-            ctx.beginPath();
-            ctx.arc(width * 0.7, height * 0.8, 120, 0, Math.PI * 2);
-            ctx.fill();
-            ctx.filter = 'none'; // Reset filter for crisp drawing of planets/text
+            const planetVisualSize = getPlanetVisualSize(planet);
+            // Calculate clearance needed for this planet's orbit lane
+            const planetClearance = planetVisualSize * 2;
 
-            if (!activeSystem || !activeSystem.planets) {
-                console.warn("Star system data is not available yet.");
-                ctx.fillStyle = '#fff';
-                ctx.font = '20px monospace';
-                ctx.textAlign = 'center';
-                ctx.fillText("Loading Star System...", cx, cy);
+            // Ensure current orbit radius is at least enough for this planet,
+            // factoring in previous orbits, spacing, and planet's own size.
+            currentOrbitRadius = Math.max(currentOrbitRadius, basePlanetOrbitRadius + (planetIndex * minPlanetSpacing) + (planetIndex * planetClearance));
+
+
+            // Store planet's initial orbit data (radius, angle, speed) (using planet.planetId)
+            newOrbitState.planetOrbits[planet.planetId] = {
+                radius: currentOrbitRadius,
+                angle: Math.random() * Math.PI * 2, // Start at a random angle
+                speed: (0.0005 + Math.random() * 0.0005) / (currentOrbitRadius / 100), // Slower for larger orbits
+                moons: {} // Placeholder for moon orbits for this planet
+            };
+
+            // --- Calculate Moons for this Planet ---
+            if (planet.moons && planet.moons.length > 0) {
+                // Moons orbit their parent planet, so their base radius is relative to the planet's visual size.
+                let currentMoonOrbitRadius = planetVisualSize + minMoonSpacing;
+
+                planet.moons.forEach((moon, moonIndex) => {
+                    // --- Crucial ID check for moons (NOW USING moon.moonId) ---
+                    if (moon.moonId === undefined || moon.moonId === null) {
+                        console.error(`StarSystemViewer: Moon of planet ${planet.planetId} skipped during orbit calculation due to missing moonId:`, moon);
+                        return; // Skip this moon if it doesn't have a valid ID
+                    }
+
+                    const moonVisualSize = getPlanetVisualSize(moon);
+                    const moonClearance = moonVisualSize * 2;
+
+                    // Calculate moon's orbit radius relative to its parent planet.
+                    currentMoonOrbitRadius = Math.max(currentMoonOrbitRadius, (planetVisualSize + minMoonSpacing) + (moonIndex * minMoonSpacing) + (moonIndex * moonClearance));
+
+                    // Store moon's initial orbit data (using planet.planetId and moon.moonId)
+                    newOrbitState.planetOrbits[planet.planetId].moons[moon.moonId] = {
+                        radius: currentMoonOrbitRadius,
+                        angle: Math.random() * Math.PI * 2, // Random initial angle for moon
+                        speed: (0.002 + Math.random() * 0.001) / (currentMoonOrbitRadius / 10), // Moons orbit faster
+                    };
+                });
+            }
+
+            // Advance currentOrbitRadius for the next planet's orbit.
+            currentOrbitRadius += planetClearance + minPlanetSpacing;
+        });
+
+        // --- Calculate System Scale to fit all orbits within the canvas ---
+        const maxOrbitRadius = Math.max(...Object.values(newOrbitState.planetOrbits).map(p => p.radius), 0);
+        const desiredPaddingRatio = 0.8; // Use 80% of the canvas for the system, leaving 20% padding
+
+        if (maxOrbitRadius > 0 && canvasDimensions.width > 0 && canvasDimensions.height > 0) {
+            // Determine the maximum available radius (half of the smallest canvas dimension)
+            const maxAvailableCanvasRadius = Math.min(canvasDimensions.width, canvasDimensions.height) / 2;
+
+            // Calculate scale based on fitting the largest orbit within the padded canvas radius.
+            newOrbitState.systemScale = (maxAvailableCanvasRadius * desiredPaddingRatio) / maxOrbitRadius;
+
+            // Prevent scaling up very small systems excessively.
+            newOrbitState.systemScale = Math.min(newOrbitState.systemScale, 1.0); // Max scale of 1 (no zoom-in beyond actual size)
+            newOrbitState.systemScale = Math.max(newOrbitState.systemScale, 0.1); // Min scale of 0.1 (prevent disappearing)
+        }
+
+        // Store the final calculated orbit state in the ref.
+        systemOrbitState.current = newOrbitState;
+        console.log("StarSystemViewer: Calculated systemOrbitState:", systemOrbitState.current);
+
+        // The drawScene effect will pick this up on the next animation frame.
+    }, [activeSystem, canvasDimensions, getPlanetVisualSize]); // Recalculate if system, canvas size, or visual size logic changes.
+
+
+    // --- Draw Scene Function ---
+    // This function is responsible for all canvas rendering.
+    const drawScene = useCallback(() => {
+        const canvas = canvasRef.current;
+        if (!canvas) return;
+
+        const ctx = canvas.getContext('2d');
+        const { width, height } = canvasDimensions;
+
+        // 1. Clear canvas
+        ctx.clearRect(0, 0, width, height);
+
+        // 2. Draw NMS-like subtle gradient background
+        const backgroundGradient = ctx.createLinearGradient(0, 0, width, height);
+        backgroundGradient.addColorStop(0, '#1a1a2e'); // Dark blue/purple
+        backgroundGradient.addColorStop(0.5, '#3b3b5c'); // Slightly lighter blue/purple
+        backgroundGradient.addColorStop(1, '#1a1a2e'); // FIXED
+        ctx.fillStyle = backgroundGradient;
+        ctx.fillRect(0, 0, width, height);
+
+        // 3. Draw subtle, static background stars and nebulous clouds for atmosphere
+        // (Simplified; for production, you might want to pre-calculate and store these like in StarMap)
+        for (let i = 0; i < 50; i++) {
+            ctx.beginPath();
+            ctx.arc(Math.random() * width, Math.random() * height, Math.random() * 1.5, 0, Math.PI * 2);
+            ctx.fillStyle = `rgba(255, 255, 255, ${0.1 + Math.random() * 0.2})`; // Faint white stars
+            ctx.fill();
+        }
+        ctx.filter = 'blur(8px)'; // Apply blur for nebula effect
+        ctx.fillStyle = 'rgba(100, 100, 255, 0.05)';
+        ctx.beginPath();
+        ctx.arc(width * 0.2, height * 0.3, 100, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.fillStyle = 'rgba(255, 100, 100, 0.05)';
+        ctx.beginPath();
+        ctx.arc(width * 0.7, height * 0.8, 120, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.filter = 'none'; // IMPORTANT: Reset filter after drawing blurs!
+
+        if (!activeSystem) return; // Don't draw if no active system
+
+        // Save context state before applying transforms for the system view.
+        ctx.save();
+        // Translate to the center of the canvas.
+        ctx.translate(width / 2, height / 2);
+        // Apply the calculated system-wide scale.
+        ctx.scale(systemOrbitState.current.systemScale, systemOrbitState.current.systemScale);
+
+        // --- Draw the Star ---
+        ctx.beginPath();
+        ctx.arc(0, 0, activeSystem.starSize || 15, 0, Math.PI * 2);
+        ctx.fillStyle = activeSystem.starColor || '#FFD700'; // Default to gold
+        ctx.shadowBlur = 20; // Star glow effect
+        ctx.shadowColor = activeSystem.starColor || '#FFD700';
+        ctx.fill();
+        ctx.shadowBlur = 0; // Reset shadow for subsequent drawings
+
+        // --- Draw Planets and Moons ---
+        const planets = activeSystem.planets || [];
+        planets.forEach(planet => {
+            // --- Crucial ID check for planets (drawing - using planet.planetId) ---
+            if (planet.planetId === undefined || planet.planetId === null) {
+                console.warn("StarSystemViewer: Skipping drawing planet due to missing planetId:", planet);
+                return; // Skip drawing this planet
+            }
+
+            // Retrieve pre-calculated orbit data for this planet. (using planet.planetId)
+            const planetOrbitData = systemOrbitState.current.planetOrbits[planet.planetId];
+            if (!planetOrbitData) {
+                // This means the planet was likely skipped during the orbit calculation due to a missing ID.
+                console.warn(`StarSystemViewer: No orbit data found for planet ID '${planet.planetId}'. Skipping drawing.`);
                 return;
             }
 
-            // --- Draw Planets ---
-            // NMS style is more illustrative. Let's arrange them somewhat radially
-            // but consider their size for visual hierarchy.
-            // Sort planets by orbitRadius or planetSize to control layout order
-            // (larger planets might go on "outer" rings, or just be more prominent)
-            const sortedPlanets = [...activeSystem.planets].sort((a, b) => a.orbitRadius - b.orbitRadius);
-            // Or, for a more visual NMS-like layout, sort by size and distribute
-            // sortedPlanets = [...activeSystem.planets].sort((a, b) => b.planetSize - a.planetSize);
-            // We need to keep track of previous planet's position and size to avoid overlap
-            let lastPlacedRadius = 0; // Represents the radius of the outer edge of the previous "ring"
-            let currentAngleOffset = 0; // To space planets angularly within a ring
+            // Update planet angle for animation (this mutates the ref directly for efficiency)
+            planetOrbitData.angle += planetOrbitData.speed;
 
-            // Reset positions for each draw call to re-calculate based on current data
-            const planetPositions = [];
+            // Calculate planet's current position based on its orbit.
+            const planetX = Math.cos(planetOrbitData.angle) * planetOrbitData.radius;
+            const planetY = Math.sin(planetOrbitData.angle) * planetOrbitData.radius;
 
-            const numPlanets = sortedPlanets.length;
-            const segmentAngle = (Math.PI * 2) / numPlanets; // Evenly distribute
+            // Draw orbit path for planet (faint circle around the star)
+            ctx.beginPath();
+            ctx.arc(0, 0, planetOrbitData.radius, 0, Math.PI * 2);
+            ctx.strokeStyle = (planet.color || '#FFFFFF') + '33'; // Semi-transparent white
+            ctx.lineWidth = 1;
+            ctx.stroke();
 
-            sortedPlanets.forEach((planet, index) => {
-                const planetRadius = Math.max(MIN_PLANET_RADIUS, planet.planetSize * PLANET_RADIUS_SCALE);
+            // Draw the planet itself
+            ctx.beginPath();
+            ctx.arc(planetX, planetY, getPlanetVisualSize(planet), 0, Math.PI * 2);
+            ctx.fillStyle = planet.color || '#8888AA'; // Default planet color
+            ctx.fill();
 
-                // Calculate effective orbit radius dynamically
-                // Start with a base, then ensure enough space from the previous "ring"
-                let effectiveOrbitRadius;
-                if (index === 0) {
-                    // First planet, use its base orbitRadius from data or a default minimum
-                    effectiveOrbitRadius = BASE_ORBIT_DISTANCE + planetRadius;
-                } else {
-                    // For subsequent planets, ensure they are outside the previous planet's orbit + its own size
-                    // This is a simplification; a true non-overlapping would need more complex geometry.
-                    // For a more NMS-like illustrative placement, we can just space rings out.
-                    effectiveOrbitRadius = lastPlacedRadius + ORBIT_INCREMENT + planetRadius;
-                }
+            // Draw planet label (positioned above the planet) (using planet.planetId)
+            ctx.fillStyle = '#FFFFFF';
+            // Use a generic monospace font for now, or import a specific NMS-like font
+            ctx.font = '14px monospace';
+            ctx.textAlign = 'center';
+            ctx.fillText(planet.planetName || `Planet ${planet.planetId}`, planetX, planetY - getPlanetVisualSize(planet) - 10);
 
-                // Add some randomness to angles/radii for a less rigid feel, like NMS screenshot
-                const angle = (index * segmentAngle * (1.0 + Math.random() * 0.1)) + (Math.random() * Math.PI / 8 - Math.PI / 16); // More significant random angle
-                const currentRadius = effectiveOrbitRadius + (Math.random() * 30 - 15); // Larger random radius offset
+            // --- Draw Moons for this Planet ---
+            if (planet.moons && planet.moons.length > 0) {
+                planet.moons.forEach(moon => {
+                    // --- Crucial ID check for moons (using moon.moonId) ---
+                    if (moon.moonId === undefined || moon.moonId === null) {
+                        console.warn(`StarSystemViewer: Skipping drawing moon of planet ${planet.planetId} due to missing moonId:`, moon);
+                        return; // Skip drawing this moon
+                    }
 
-                const px = cx + Math.cos(angle) * currentRadius;
-                const py = cy + Math.sin(angle) * currentRadius;
+                    // Retrieve pre-calculated orbit data for this moon. (using moon.moonId)
+                    const moonOrbitData = planetOrbitData.moons[moon.moonId];
+                    if (!moonOrbitData) {
+                        console.warn(`StarSystemViewer: No orbit data found for moon ID '${moon.moonId}' (planet ${planet.planetId}). Skipping drawing.`);
+                        return;
+                    }
 
-                // Store the position for click detection (important for randomness)
-                planetPositions.push({ id: planet.planetId, px, py, radius: planetRadius });
+                    // Update moon angle for animation
+                    moonOrbitData.angle += moonOrbitData.speed;
 
-                // Update lastPlacedRadius for the next iteration (simple linear progression)
-                // This is a simple strategy, not a perfect collision detection.
-                lastPlacedRadius = currentRadius + planetRadius;
+                    // Calculate moon's position relative to its parent planet.
+                    const moonX = planetX + Math.cos(moonOrbitData.angle) * moonOrbitData.radius;
+                    const moonY = planetY + Math.sin(moonOrbitData.angle) * moonOrbitData.radius;
 
-                // --- Draw Planet Sphere (rest of the drawing code for planet remains the same) ---
-                ctx.beginPath();
-                // ... (your existing planet drawing code using px, py, planetRadius)
-                const planetMainColor = planet.planetColor || getPlanetColor(planet.planetType) || '#808080';
-                const planetDarkColor = darkenColor(planetMainColor, 0.4);
+                    // Draw moon orbit path (faint circle around the parent planet)
+                    ctx.beginPath();
+                    ctx.arc(planetX, planetY, moonOrbitData.radius, 0, Math.PI * 2);
+                    ctx.strokeStyle = (moon.moonColor || '#CCCCCC') + '22'; // Use moon.moonColor if available, else default
+                    ctx.lineWidth = 0.5;
+                    ctx.stroke();
 
-                const planetGradient = ctx.createRadialGradient(
-                    px - planetRadius * 0.3, // Offset light source for shadow effect
-                    py - planetRadius * 0.3,
-                    0,
-                    px,
-                    py,
-                    planetRadius
-                );
-                planetGradient.addColorStop(0, planetMainColor);
-                planetGradient.addColorStop(1, planetDarkColor);
-                ctx.fillStyle = planetGradient;
-                ctx.arc(px, py, planetRadius, 0, Math.PI * 2);
-                ctx.fill();
+                    // Draw the moon itself
+                    ctx.beginPath();
+                    ctx.arc(moonX, moonY, getPlanetVisualSize(moon), 0, Math.PI * 2);
+                    ctx.fillStyle = moon.moonColor || '#BBBBBB'; // Use moon.moonColor if available, else default
+                    ctx.fill();
 
-                // Optional: Faint outer glow/atmosphere
-                ctx.filter = 'blur(2px)';
-                ctx.fillStyle = `rgba(${parseInt(planetMainColor.slice(1, 3), 16)}, ${parseInt(planetMainColor.slice(3, 5), 16)}, ${parseInt(planetMainColor.slice(5, 7), 16)}, 0.2)`;
-                ctx.beginPath();
-                ctx.arc(px, py, planetRadius + 5, 0, Math.PI * 2);
-                ctx.fill();
-                ctx.filter = 'none';
-
-                // --- Planet Name & Details Call-outs ---
-                // Positioning for text: adjust based on planet size and desired look
-                const textOffset = planetRadius + 5; // Distance from planet edge
-                let currentTextX = px + textOffset;
-                let currentTextY = py + 5; // Vertically align with planet center
-
-                // Adjust text position if it goes off-screen (simple boundary check)
-                if (currentTextX + ctx.measureText(planet.planetName).width > width - 10) {
-                    currentTextX = px - textOffset - ctx.measureText(planet.planetName).width;
-                }
-                if (currentTextY < 20) currentTextY = 20; // Prevent going too high
-                if (currentTextY > height - 20) currentTextY = height - 20; // Prevent going too low
-
-
-                ctx.fillStyle = '#fff';
-                ctx.font = '14px NMSFont, monospace';
-                ctx.textAlign = 'left';
-                ctx.fillText(planet.planetName, currentTextX, currentTextY);
-
-                let detailY = currentTextY + 16;
-
-                if (planet.moons && planet.moons.length > 0) {
-                    ctx.fillStyle = '#C0C0C0';
+                    // Moon label (optional, can be too cluttered) (NOW USING moon.moonName)
+                    // If you enable this, make sure 'moonName' is consistently available.
+                    ctx.fillStyle = '#CCCCCC';
                     ctx.font = '10px monospace';
-                    ctx.fillText(`${planet.moons.length} Moon(s)`, currentTextX, detailY);
-                    detailY += 12;
-                }
-
-                if (planet.settlements && planet.settlements.length > 0) {
-                    ctx.fillStyle = '#FFFF00';
-                    ctx.font = '10px monospace';
-                    ctx.fillText(`${planet.settlements.length} Settlement(s)`, currentTextX, detailY);
-                }
-            });
-        }
-
-        draw();
-
-        // --- Event Handlers (for click interaction) ---
-        function handleClick(event) {
-            const x = event.clientX - rect.left;
-            const y = event.clientY - rect.top;
-
-            activeSystem.planets?.forEach((planet, index) => {
-                const planetRadius = Math.max(MIN_PLANET_RADIUS, planet.planetSize * PLANET_RADIUS_SCALE);
-
-                const effectiveOrbitRadius = (planet.orbitRadius || (BASE_ORBIT_DISTANCE + index * ORBIT_INCREMENT));
-                const angle = (index * segmentAngle) + (Math.random() * 0.5 - 0.25); // Needs to match draw's random offset for click detection
-                const currentRadius = effectiveOrbitRadius + (Math.random() * 20 - 10);
-
-                const px = cx + Math.cos(angle) * currentRadius;
-                const py = cy + Math.sin(angle) * currentRadius;
-
-                const dist = Math.sqrt((x - px) ** 2 + (y - py) ** 2);
-                if (dist < planetRadius) { // Click detection based on actual planet radius
-                    console.log(`Clicked on planet: ${planet.planetName}`);
-                    setSelectedPlanet(planet);
-                }
-            });
-        }
-
-        canvas.addEventListener('click', handleClick);
-        canvas.addEventListener('mousemove', (event) => {
-            setMousePos({ x: event.clientX - rect.left, y: event.clientY - rect.top });
+                    ctx.textAlign = 'center';
+                    ctx.fillText(moon.moonName || `Moon ${moon.moonId}`, moonX, moonY - getPlanetVisualSize(moon) - 5);
+                });
+            }
         });
 
-        return () => {
-            canvas.removeEventListener('click', handleClick);
-            canvas.removeEventListener('mousemove', (event) => {
-                setMousePos({ x: event.clientX - rect.left, y: event.clientY - rect.top });
-            });
+        // Restore context to remove system-wide transforms before drawing UI elements.
+        ctx.restore();
+
+
+        // --- Top-left UI elements (NMS-like system info) ---
+        // This is drawn directly on the canvas for simplicity. For complex UI, use HTML/CSS overlays.
+        if (activeSystem) {
+            ctx.fillStyle = 'rgba(0,0,0,0.5)'; // Semi-transparent black background for text
+            ctx.fillRect(10, 10, 260, 100); // Adjust size as needed
+
+            ctx.fillStyle = '#00ff88'; // NMS-like green accent color
+            ctx.font = '20px monospace';
+            ctx.textAlign = 'left';
+            ctx.fillText(activeSystem.name || 'Unnamed System', 20, 35);
+
+            ctx.font = '14px monospace';
+            ctx.fillStyle = '#FFFFFF';
+            // Assuming activeSystem has a 'moonsCount' property calculated or available.
+            // If not, you'd need to calculate it here:
+            const totalMoons = (activeSystem.planets || []).reduce((acc, p) => acc + (p.moons ? p.moons.length : 0), 0);
+            ctx.fillText(`${planets.length} PLANETS / ${totalMoons} MOON(S)`, 20, 60);
+
+            // Example of NMS style icons (requires a font like "Material Symbols Outlined" loaded via Google Fonts)
+            // ctx.font = '24px "Material Symbols Outlined"';
+            // ctx.fillText('☉', 20, 90); // Sun/star icon
+            // ctx.fillText('🪐', 50, 90); // Planet icon
+        }
+
+    }, [activeSystem, canvasDimensions, getPlanetVisualSize]); // Re-draw if system, dimensions, or visual size logic changes.
+
+
+    // --- Animation Loop ---
+    // This effect manages the requestAnimationFrame loop for continuous drawing.
+    useEffect(() => {
+        const animate = () => {
+            if (activeSystem) { // Only animate if a system is currently active
+                drawScene(); // Call the drawing function
+            }
+            animationFrameId.current = requestAnimationFrame(animate); // Request next frame
         };
-    }, [activeSystem]);
+
+        animate(); // Start the animation loop
+
+        // Cleanup: cancel the animation frame when the component unmounts or activeSystem changes.
+        return () => {
+            if (animationFrameId.current) {
+                cancelAnimationFrame(animationFrameId.current);
+            }
+        };
+    }, [drawScene, activeSystem]); // Depend on drawScene and activeSystem.
 
     return (
-        <div className="w-full h-full relative flex flex-col">
-            <div className="flex justify-start items-center gap-4 bg-gray-900 bg-opacity-80 px-6 py-3 z-20">
-                <button
-                    onClick={onClose}
-                    className="bg-gray-800 text-white px-4 py-2 rounded hover:bg-gray-700"
-                >
-                    <SquareArrowLeft className="inline w-4 h-4 mr-1 text-red-400" /> Back to Galaxy Map
-                </button>
-            </div>
-
-            <div ref={wrapperRef} className="flex-grow w-full bg-black"> {/* Changed bg-black to ensure full coverage */}
-                <canvas ref={canvasRef} className="w-full h-full z-10" />
-            </div>
-
-            {selectedPlanet && (
-                <div className="absolute bottom-4 left-4 text-white bg-gray-900 p-3 rounded shadow-lg z-30">
-                    <h3>{selectedPlanet.planetName} Details</h3>
-                    <p>Type: {selectedPlanet.planetType}</p>
-                    <p>Conditions: {selectedPlanet.planetConditions.weather}, {selectedPlanet.planetConditions.temperature}</p>
-                    <p>Settlements: {selectedPlanet.settlements?.length || 0}</p>
-                    {/* Add more details as needed */}
-                </div>
-            )}
+        <div className="star-system-viewer w-full h-full relative">
+            <button
+                onClick={onClose}
+                className="absolute top-4 left-4 z-20 px-4 py-2 bg-gray-700 text-white rounded-md hover:bg-gray-600 flex items-center space-x-2"
+            >
+                {/* Consider adding a Material Symbols icon here if you include the font: */}
+                {/* <span className="material-symbols-outlined">arrow_back</span> */}
+                <span>Back to Galaxy Map</span>
+            </button>
+            <canvas ref={canvasRef} className="w-full h-full block"></canvas>
+            {/* Additional HTML UI overlays could be placed here if not drawn on canvas */}
         </div>
     );
 };
