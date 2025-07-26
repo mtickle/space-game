@@ -46,7 +46,10 @@ const StarMap = ({
     const animationFrameRef = useRef(null);
     const [showVisited, setShowVisited] = useState(false);
     const orbitState = useRef({});
-    const [isSystemViewerOpen, setSystemViewerOpen] = useState(false);
+    // const [isSystemViewerOpen, setSystemViewerOpen] = useState(false);
+
+    // *** Define the state to control StarSystemViewer visibility here ***
+    const [showSystemMap, setShowSystemMap] = useState(false); // THIS IS THE MASTER STATE
 
     //--- This effect sets the initial canvas size and listens for window resize events to adjust the canvas size dynamically.
     useEffect(() => {
@@ -70,7 +73,7 @@ const StarMap = ({
         stars.forEach(star => {
             if (!star.planets || star.planets.length === 0) return;
 
-            state[star.name] = star.planets.map((planet, i) => ({
+            state[star.id] = star.planets.map((planet, i) => ({
                 angle: Math.random() * Math.PI * 2,
                 speed: 0.001 + Math.random() * 0.001,
                 radius: planet.orbitRadius || (20 + i * 8),
@@ -292,54 +295,6 @@ const StarMap = ({
         requestAnimationFrame(animate);
     };
 
-
-
-    // const goToSystem = (targetStar) => {
-    //     // Try to get the full star object from localStorage
-    //     const saved = localStorage.getItem(`star_${targetStar.name}`);
-    //     let fullStar = saved ? JSON.parse(saved) : stars.find(s => s.name === targetStar.name);
-    //     if (!fullStar) return;
-
-    //     const duration = 600;
-    //     const frameRate = 60;
-    //     const steps = Math.round((duration / 1000) * frameRate);
-    //     const startX = offsetX;
-    //     const startY = offsetY;
-    //     const deltaX = -fullStar.x - startX;
-    //     const deltaY = -fullStar.y - startY;
-
-    //     let currentStep = 0;
-
-    //     const animate = () => {
-    //         currentStep++;
-    //         const t = currentStep / steps;
-    //         const ease = t < 0.5
-    //             ? 2 * t * t
-    //             : -1 + (4 - 2 * t) * t;
-
-    //         setOffsetX(startX + deltaX * ease);
-    //         setOffsetY(startY + deltaY * ease);
-
-    //         if (currentStep < steps) {
-    //             requestAnimationFrame(animate);
-    //         } else {
-    //             // Ensure planets are loaded (from save or generate fresh)
-    //             if (!fullStar.planets || fullStar.planets.length === 0) {
-    //                 fullStar.planets = generatePlanets(fullStar.name);
-    //                 fullStar.planets.forEach(p => {
-    //                     p.angle = p.angle ?? Math.random() * Math.PI * 2;
-    //                 });
-    //             }
-
-    //             saveStarToLocalStorage(fullStar, stars);
-
-    //             setSelectedStar(fullStar); //--- Show the planets in orbit.
-    //         }
-    //     };
-
-    //     requestAnimationFrame(animate);
-    // };
-
     //--- Here some smooth motion to return you back to the galactic center of 0,0.
     const goToZeroCommaZero = () => {
         const duration = 600;
@@ -371,37 +326,54 @@ const StarMap = ({
     };
 
     return (
-        <div className="w-screen h-screen bg-black flex flex-col text-white font-mono">
-            <Header
-                stars={stars}
-                factionFilter={factionFilter}
-                setFactionFilter={setFactionFilter}
-                starTypeFilter={starTypeFilter}
-                setStarTypeFilter={setStarTypeFilter}
-            />
 
-            <div className="flex flex-row flex-1 overflow-hidden">
-                <Sidebar
-                    selectedStar={selectedStar}
-                    onMapClick={() => { }}
-                    setActiveSystem={setActiveSystem}
+
+        <div>
+            <div className="w-screen h-screen bg-black flex flex-col text-white font-mono">
+                <Header
+                    stars={stars}
+                    factionFilter={factionFilter}
+                    setFactionFilter={setFactionFilter}
+                    starTypeFilter={starTypeFilter}
+                    setStarTypeFilter={setStarTypeFilter}
                 />
-                <div className="flex flex-1 items-center justify-center relative">
-                    <canvas
-                        ref={canvasRef}
-                        className="bg-black cursor-pointer w-full h-full block"
-                        onMouseDown={handleMouseDown}
-                        onMouseMove={handleMouseMove}
-                        onMouseUp={handleMouseUp}
-                        onMouseLeave={handleMouseUp}
-                        onWheel={handleWheel}
-                        onClick={handleClick}
-                        onContextMenu={handleContextMenu}
+                <div className="flex flex-row flex-1 overflow-hidden">
+                    {/* Sidebar stays left */}
+                    <Sidebar
+                        selectedStar={selectedStar}
+                        // onMapClick={() => {}} // This can probably be removed if not used for anything else specific
+                        setActiveSystem={setActiveSystem}
+                        // *** Pass the setShowSystemMap and activeSystem setter down ***
+                        setShowSystemMap={setShowSystemMap}
                     />
 
-                    {isSystemViewerOpen && activeSystem && (
-                        <StarSystemViewer system={activeSystem} onClose={() => setSystemViewerOpen(false)} />
-                    )}
+                    {/* This wraps only the canvas + system viewer */}
+                    <div className="relative flex-1">
+                        {/* Canvas always visible underneath */}
+                        <canvas
+                            ref={canvasRef}
+                            className="bg-black cursor-pointer w-full h-full block"
+                            onMouseDown={handleMouseDown}
+                            onMouseMove={handleMouseMove}
+                            onMouseUp={handleMouseUp}
+                            onMouseLeave={handleMouseUp}
+                            onWheel={handleWheel}
+                            onClick={handleClick}
+                            onContextMenu={handleContextMenu}
+                        />
+
+                        {/* StarSystemViewer layered on top */}
+                        {/* Use the showSystemMap state from THIS component */}
+                        {showSystemMap && activeSystem && ( // Re-added activeSystem check for robustness
+                            <div className="absolute inset-0 z-10 bg-gray-900 overflow-hidden"> {/* Changed overflow-auto to overflow-hidden, removed p-6, border, shadow, rounded for full canvas fill */}
+                                <StarSystemViewer
+                                    activeSystem={activeSystem} // <-- YES, CHANGE THIS LINE
+                                    // *** When closing, update the state in THIS component ***
+                                    onClose={() => setShowSystemMap(false)}
+                                />
+                            </div>
+                        )}
+                    </div>
                 </div>
 
             </div>
@@ -418,7 +390,9 @@ const StarMap = ({
                 goToZeroCommaZero={goToZeroCommaZero}
                 setShowVisited={setShowVisited}
                 showVisited={showVisited} />
-        </div>
+        </div >
+
+
     );
 };
 

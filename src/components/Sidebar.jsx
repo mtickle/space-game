@@ -2,21 +2,13 @@
 import { useState } from 'react';
 import { useHomeSystem } from '../hooks/useHomeSystem'; // adjust path as needed
 import PlanetPanel from './PlanetPanel'; // adjust path as needed
-import StarSystemViewer from './StarSystemViewer';
 
 
-const Sidebar = ({ selectedStar, setActiveSystem }) => {
+const Sidebar = ({ selectedStar, setActiveSystem, setShowSystemMap }) => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [selectedPlanet, setSelectedPlanet] = useState(null);
     const home = JSON.parse(localStorage.getItem('homeSystem') || '{}');
     const { homeSystem, setHome, clearHome } = useHomeSystem();
-    const [showSystemMap, setShowSystemMap] = useState(false);
-    const [isSystemViewerOpen, setSystemViewerOpen] = useState(false);
-
-    const handleMapClick = (planet) => {
-        setSelectedPlanet(planet);
-        setIsModalOpen(true);
-    };
 
     return (
         <div className="w-1/4 bg-gray-900 text-white font-mono p-4 h-screen overflow-y-auto shadow-[0_0-10px_#0f0] pb-50">
@@ -40,16 +32,14 @@ const Sidebar = ({ selectedStar, setActiveSystem }) => {
                     <p className="text-green-400"><strong>Symbol:</strong> {selectedStar.faction?.symbol || 'N/A'}</p>
                     <p className="mt-2 text-base text-gray-300">{selectedStar.description}</p>
 
-                    {/* <button
-                        onClick={() => setActiveSystem(selectedStar)}
-                        className="mt-2 px-2 py-1 bg-purple-700 text-white text-xs rounded hover:bg-purple-600"
-                    >
-                        Star System Map
-                    </button>&nbsp; */}
-
-
                     <button
-                        onClick={() => setSystemViewerOpen(true)}
+                        // *** Use the setShowSystemMap prop received from StarMap ***
+                        onClick={() => {
+                            setShowSystemMap(true);
+                            // Optionally, if activeSystem isn't always set when selectedStar is,
+                            // you might want to call setActiveSystem(selectedStar) here
+                            // if you haven't already done it in handleClick in StarMap.
+                        }}
                         className="mt-2 px-2 py-1 bg-purple-700 text-white text-xs rounded hover:bg-purple-600"
                     >
                         Star System Map
@@ -84,7 +74,7 @@ const Sidebar = ({ selectedStar, setActiveSystem }) => {
                                     key={index}
                                     planet={planet}
                                     factionColor={selectedStar.faction?.color || '#FFFFFF'}
-                                    onMapClick={handleMapClick}
+                                //onMapClick={handleMapClick}
                                 />
                             ))}
                         </div>
@@ -103,12 +93,6 @@ const Sidebar = ({ selectedStar, setActiveSystem }) => {
                 />
             )}
 
-            {showSystemMap && selectedStar && (
-                <StarSystemViewer
-                    starSystem={selectedStar}  // ✅ match expected prop name
-                    onClose={() => setShowSystemMap(false)}
-                />
-            )}
         </div>
     );
 };
