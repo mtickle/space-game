@@ -6,19 +6,18 @@ const StarSystemViewer = ({ activeSystem, onClose }) => {
     const canvasRef = useRef(null);
     const animationFrameId = useRef(null);
     const systemPositions = useRef({});
-    // New ref to store static background star positions
     const backgroundStars = useRef([]);
-    // New ref to store static background nebula positions
     const backgroundNebulae = useRef([]);
 
     const [canvasDimensions, setCanvasDimensions] = useState({ width: 0, height: 0 });
 
     const getPlanetVisualSize = useCallback((celestialBody) => {
         if (!celestialBody) return 1;
+
         if (celestialBody.moonId) {
-            return celestialBody.moonSize || 4;
+            return (celestialBody.moonSize || 4) * 3;
         }
-        return celestialBody.size || 8;
+        return (celestialBody.planetSize || 8) * 5;
     }, []);
 
     // --- EFFECT: Handle Canvas Resizing and Initial Setup ---
@@ -35,14 +34,12 @@ const StarSystemViewer = ({ activeSystem, onClose }) => {
                 canvas.width = width;
                 canvas.height = height;
                 setCanvasDimensions({ width, height });
-                // Regenerate static background stars and nebulae on resize
                 generateStaticBackground(width, height);
             }
         });
 
         resizeObserver.observe(container);
 
-        // Initial generation of background stars/nebulae on mount
         if (canvas.width > 0 && canvas.height > 0) {
             generateStaticBackground(canvas.width, canvas.height);
         }
@@ -53,28 +50,25 @@ const StarSystemViewer = ({ activeSystem, onClose }) => {
     // Function to generate static background stars and nebulae
     const generateStaticBackground = useCallback((width, height) => {
         const newStars = [];
-        for (let i = 0; i < 150; i++) { // Increased number of stars for denser field
+        for (let i = 0; i < 150; i++) {
             newStars.push({
                 x: Math.random() * width,
                 y: Math.random() * height,
                 radius: Math.random() * 1.5,
-                alpha: 0.1 + Math.random() * 0.25 // Slightly brighter stars
+                alpha: 0.1 + Math.random() * 0.25
             });
         }
         backgroundStars.current = newStars;
 
         const newNebulae = [];
-        // Nebula 1
         newNebulae.push({
-            x: width * 0.2, y: height * 0.3, radius: 100, color: 'rgba(100, 100, 255, 0.05)' // Blue
+            x: width * 0.2, y: height * 0.3, radius: 100, color: 'rgba(100, 100, 255, 0.05)'
         });
-        // Nebula 2
         newNebulae.push({
-            x: width * 0.7, y: height * 0.8, radius: 120, color: 'rgba(255, 100, 100, 0.05)' // Red
+            x: width * 0.7, y: height * 0.8, radius: 120, color: 'rgba(255, 100, 100, 0.05)'
         });
-        // Add a third for variety
         newNebulae.push({
-            x: width * 0.5, y: height * 0.1, radius: 80, color: 'rgba(100, 255, 100, 0.05)' // Green
+            x: width * 0.5, y: height * 0.1, radius: 80, color: 'rgba(100, 255, 100, 0.05)'
         });
         backgroundNebulae.current = newNebulae;
     }, []);
@@ -102,10 +96,9 @@ const StarSystemViewer = ({ activeSystem, onClose }) => {
         }
 
         const maxCanvasRadius = Math.min(canvasDimensions.width, canvasDimensions.height) / 2;
-        // Adjusted: Increased clusterRadius and min separations for more spread-out look
-        const clusterRadius = maxCanvasRadius * 0.6; // Planets will be within 60% of canvas half-dimension
-        const minPlanetSeparation = 70; // More separation between planet centers
-        const minMoonSeparation = 30;     // More separation between moon centers
+        const clusterRadius = maxCanvasRadius * 0.6;
+        const minPlanetSeparation = 70;
+        const minMoonSeparation = 30;
 
         planets.forEach(planet => {
             if (planet.planetId === undefined || planet.planetId === null) {
@@ -115,7 +108,7 @@ const StarSystemViewer = ({ activeSystem, onClose }) => {
 
             let planetX, planetY;
             let attempts = 0;
-            const maxAttempts = 200; // Increased attempts for better packing
+            const maxAttempts = 200;
 
             do {
                 planetX = (Math.random() * 2 - 1) * clusterRadius;
@@ -126,7 +119,6 @@ const StarSystemViewer = ({ activeSystem, onClose }) => {
                     const dx = planetX - p.x;
                     const dy = planetY - p.y;
                     const distance = Math.sqrt(dx * dx + dy * dy);
-                    // Ensure a minimum distance between planet edges plus separation
                     return distance < (getPlanetVisualSize(planet) + getPlanetVisualSize(p.data)) + minPlanetSeparation;
                 }));
 
@@ -147,7 +139,6 @@ const StarSystemViewer = ({ activeSystem, onClose }) => {
                     let moonX, moonY;
                     let moonAttempts = 0;
                     const maxMoonAttempts = 100;
-                    // Adjusted: More generous moon cluster radius around planet
                     const moonClusterRadius = getPlanetVisualSize(planet) * 2 + 50;
 
                     do {
@@ -159,7 +150,6 @@ const StarSystemViewer = ({ activeSystem, onClose }) => {
                             const dx = moonX - m.x;
                             const dy = moonY - m.y;
                             const distance = Math.sqrt(dx * dx + dy * dy);
-                            // Ensure a minimum distance between moon edges plus separation
                             return distance < (getPlanetVisualSize(moon) + getPlanetVisualSize(m.data)) + minMoonSeparation;
                         }));
 
@@ -235,7 +225,7 @@ const StarSystemViewer = ({ activeSystem, onClose }) => {
             ctx.arc(nebula.x, nebula.y, nebula.radius, 0, Math.PI * 2);
             ctx.fill();
         });
-        ctx.filter = 'none'; // IMPORTANT: Reset filter after drawing blurs!
+        ctx.filter = 'none';
 
         if (!activeSystem) return;
 
@@ -243,14 +233,15 @@ const StarSystemViewer = ({ activeSystem, onClose }) => {
         ctx.translate(width / 2, height / 2);
         ctx.scale(systemPositions.current.systemScale, systemPositions.current.systemScale);
 
-        // --- Draw the Star ---
-        ctx.beginPath();
-        ctx.arc(0, 0, activeSystem.starSize || 15, 0, Math.PI * 2);
-        ctx.fillStyle = activeSystem.starColor || '#FFD700';
-        ctx.shadowBlur = 20;
-        ctx.shadowColor = activeSystem.starColor || '#FFD700';
-        ctx.fill();
-        ctx.shadowBlur = 0;
+        // --- REMOVED: Draw the Star ---
+        // const starRadius = (activeSystem.starSize || 10);
+        // ctx.beginPath();
+        // ctx.arc(0, 0, starRadius, 0, Math.PI * 2);
+        // ctx.fillStyle = activeSystem.starColor || '#FFD700';
+        // ctx.shadowBlur = starRadius * 1.5;
+        // ctx.shadowColor = activeSystem.starColor || '#FFD700';
+        // ctx.fill();
+        // ctx.shadowBlur = 0;
 
         const allCelestialBodiesToDraw = [];
 
@@ -260,7 +251,7 @@ const StarSystemViewer = ({ activeSystem, onClose }) => {
                 x: pPos.x,
                 y: pPos.y,
                 size: getPlanetVisualSize(planet),
-                color: planet.color || '#8888AA',
+                color: planet.planetColor || '#8888AA',
                 name: planet.planetName || `Planet ${planet.planetId}`,
                 type: 'planet',
                 originalData: planet
@@ -273,7 +264,6 @@ const StarSystemViewer = ({ activeSystem, onClose }) => {
                     y: pPos.y + mPos.y,
                     size: getPlanetVisualSize(moon),
                     color: moon.moonColor || '#BBBBBB',
-                    // name: moon.moonName || `Moon ${moon.moonId}`, // Moon names still removed for less clutter
                     type: 'moon',
                     originalData: moon,
                     parentPlanetPos: { x: pPos.x, y: pPos.y }
@@ -286,10 +276,18 @@ const StarSystemViewer = ({ activeSystem, onClose }) => {
         allCelestialBodiesToDraw.forEach(body => {
             const { x, y, size, color, name, type, originalData, parentPlanetPos } = body;
 
+            // --- Draw the body itself with glow ---
             ctx.beginPath();
             ctx.arc(x, y, size, 0, Math.PI * 2);
             ctx.fillStyle = color;
+
+            // Add glow to planets and moons
+            if (type === 'planet' || type === 'moon') {
+                ctx.shadowBlur = size * 1.5;
+                ctx.shadowColor = color;
+            }
             ctx.fill();
+            ctx.shadowBlur = 0;
 
             if (type === 'planet') {
                 ctx.fillStyle = '#FFFFFF';
@@ -333,7 +331,7 @@ const StarSystemViewer = ({ activeSystem, onClose }) => {
             ctx.fillText(`${totalPlanets} PLANETS / ${totalMoons} MOON(S)`, 20, 60);
         }
 
-    }, [activeSystem, canvasDimensions, getPlanetVisualSize, backgroundStars, backgroundNebulae]); // Added background refs to deps
+    }, [activeSystem, canvasDimensions, getPlanetVisualSize, backgroundStars, backgroundNebulae]);
 
 
     // --- Animation Loop (still static) ---
