@@ -76,10 +76,10 @@ const StarSystemViewer = ({ activeSystem, onClose }) => {
 
     // --- EFFECT: Calculate Static Positions When Active System or Canvas Dimensions Change ---
     useEffect(() => {
-        console.log("StarSystemViewer: Position calculation useEffect running...");
+        //console.log("StarSystemViewer: Position calculation useEffect running...");
         if (!activeSystem || !canvasDimensions.width || !canvasDimensions.height) {
             systemPositions.current = { systemScale: 1, planetPositions: {} };
-            console.warn("StarSystemViewer: Skipping position calculation due to missing activeSystem or canvas dimensions.");
+            //console.warn("StarSystemViewer: Skipping position calculation due to missing activeSystem or canvas dimensions.");
             return;
         }
 
@@ -91,7 +91,7 @@ const StarSystemViewer = ({ activeSystem, onClose }) => {
         const planets = activeSystem.planets || [];
         if (planets.length === 0) {
             systemPositions.current = newSystemPositions;
-            console.warn("StarSystemViewer: Active system has no planets. Position calculation finished.");
+            //warn("StarSystemViewer: Active system has no planets. Position calculation finished.");
             return;
         }
 
@@ -102,7 +102,7 @@ const StarSystemViewer = ({ activeSystem, onClose }) => {
 
         planets.forEach(planet => {
             if (planet.planetId === undefined || planet.planetId === null) {
-                console.error("StarSystemViewer: Planet skipped during position calculation due to missing planetId:", planet);
+                //console.error("StarSystemViewer: Planet skipped during position calculation due to missing planetId:", planet);
                 return;
             }
 
@@ -132,7 +132,7 @@ const StarSystemViewer = ({ activeSystem, onClose }) => {
             if (planet.moons && planet.moons.length > 0) {
                 planet.moons.forEach(moon => {
                     if (moon.moonId === undefined || moon.moonId === null) {
-                        console.error(`StarSystemViewer: Moon of planet ${planet.planetId} skipped during position calculation due to missing moonId:`, moon);
+                        // console.error(`StarSystemViewer: Moon of planet ${planet.planetId} skipped during position calculation due to missing moonId:`, moon);
                         return;
                     }
 
@@ -176,7 +176,7 @@ const StarSystemViewer = ({ activeSystem, onClose }) => {
             const contentWidth = maxX - minX;
             const contentHeight = maxY - minY;
 
-            const desiredPaddingRatio = 0.8;
+            const desiredPaddingRatio = 1;
             const scaleX = (canvasDimensions.width * desiredPaddingRatio) / contentWidth;
             const scaleY = (canvasDimensions.height * desiredPaddingRatio) / contentHeight;
 
@@ -185,7 +185,7 @@ const StarSystemViewer = ({ activeSystem, onClose }) => {
         }
 
         systemPositions.current = newSystemPositions;
-        console.log("StarSystemViewer: Calculated systemPositions:", systemPositions.current);
+        //console.log("StarSystemViewer: Calculated systemPositions:", systemPositions.current);
 
     }, [activeSystem, canvasDimensions, getPlanetVisualSize]);
 
@@ -283,7 +283,7 @@ const StarSystemViewer = ({ activeSystem, onClose }) => {
 
             // Add glow to planets and moons
             if (type === 'planet' || type === 'moon') {
-                ctx.shadowBlur = size * 1.5;
+                ctx.shadowBlur = size * .5;
                 ctx.shadowColor = color;
             }
             ctx.fill();
@@ -315,6 +315,7 @@ const StarSystemViewer = ({ activeSystem, onClose }) => {
 
         ctx.restore();
 
+        //--- Box showing the current system. Needs work.
         if (activeSystem) {
             ctx.fillStyle = 'rgba(0,0,0,0.5)';
             ctx.fillRect(10, 10, 260, 100);
@@ -329,6 +330,7 @@ const StarSystemViewer = ({ activeSystem, onClose }) => {
             const totalPlanets = (activeSystem.planets || []).length;
             const totalMoons = (activeSystem.planets || []).reduce((acc, p) => acc + (p.moons ? p.moons.length : 0), 0);
             ctx.fillText(`${totalPlanets} PLANETS / ${totalMoons} MOON(S)`, 20, 60);
+
         }
 
     }, [activeSystem, canvasDimensions, getPlanetVisualSize, backgroundStars, backgroundNebulae]);
@@ -354,7 +356,7 @@ const StarSystemViewer = ({ activeSystem, onClose }) => {
         <div className="star-system-viewer w-full h-full relative">
             <button
                 onClick={onClose}
-                className="absolute top-4 left-4 z-20 px-4 py-2 bg-gray-700 text-white rounded-md hover:bg-gray-600 flex items-center space-x-2"
+                className="absolute bottom-4 left-4 z-20 px-4 py-2 bg-gray-700 text-white rounded-md hover:bg-gray-600 flex items-center space-x-2"
             >
                 <span>Back to Galaxy Map</span>
             </button>

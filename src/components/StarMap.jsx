@@ -40,6 +40,7 @@ const StarMap = ({
     const orbitState = useRef({});
 
     const [showSystemMap, setShowSystemMap] = useState(false);
+    const [showOrbitalSystemMap, setShowOrbitalSystemMap] = useState(false);
 
     // --- NEW: Ref to store static background stars ---
     const backgroundStars = useRef([]);
@@ -385,6 +386,7 @@ const StarMap = ({
                         selectedStar={selectedStar}
                         setActiveSystem={setActiveSystem}
                         setShowSystemMap={setShowSystemMap}
+                        setShowOrbitalSystemMap={setShowOrbitalSystemMap}
                     />
 
                     <div className="relative flex-1">
@@ -408,6 +410,7 @@ const StarMap = ({
                                 />
                             </div>
                         )}
+
                     </div>
                 </div>
             </div>

@@ -4,13 +4,11 @@ import { useHomeSystem } from '../hooks/useHomeSystem'; // adjust path as needed
 import PlanetPanel from './PlanetPanel'; // adjust path as needed
 
 
-const Sidebar = ({ selectedStar, setActiveSystem, setShowSystemMap }) => {
+const Sidebar = ({ selectedStar, setActiveSystem, setShowSystemMap, setShowOrbitalSystemMap }) => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [selectedPlanet, setSelectedPlanet] = useState(null);
     const home = JSON.parse(localStorage.getItem('homeSystem') || '{}');
     const { homeSystem, setHome, clearHome } = useHomeSystem();
-
-    console.log(selectedStar)
 
     return (
         <div className="w-1/4 bg-gray-900 text-white font-mono p-4 h-screen overflow-y-auto shadow-[0_0-10px_#0f0] pb-50">
@@ -34,18 +32,17 @@ const Sidebar = ({ selectedStar, setActiveSystem, setShowSystemMap }) => {
                     <p className="text-green-400"><strong>Symbol:</strong> {selectedStar.faction?.symbol || 'N/A'}</p>
                     <p className="mt-2 text-base text-gray-300">{selectedStar.description}</p>
 
+
                     <button
                         // *** Use the setShowSystemMap prop received from StarMap ***
                         onClick={() => {
                             setShowSystemMap(true);
-                            // Optionally, if activeSystem isn't always set when selectedStar is,
-                            // you might want to call setActiveSystem(selectedStar) here
-                            // if you haven't already done it in handleClick in StarMap.
                         }}
                         className="mt-2 px-2 py-1 bg-purple-700 text-white text-xs rounded hover:bg-purple-600"
                     >
                         Star System Map
                     </button>&nbsp;
+
 
 
                     {selectedStar.name === homeSystem.name ? (
