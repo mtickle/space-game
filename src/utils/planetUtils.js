@@ -7,13 +7,13 @@ export function hydrateOrSynthesizeSystem(clickedStar, orbitStateRef, allStars) 
 
     if (isStarSystemHydrated(clickedStar.id)) {    //--- LOAD THE SYSTEM
         fullSystem = getHydratedStarSystem(clickedStar.id);
-        console.log(`[Hydration] Loaded cached system for ${clickedStar.name}`);
+        //console.log(`[Hydration] Loaded cached system for ${clickedStar.name}`);
         //setSelectedStar(fullSystem); // fullSystem must contain planets
 
     } else { //--- SAVE THE SYSTEM
         fullSystem = synthesizeStarSystem(clickedStar);
         saveHydratedStarSystem(fullSystem);
-        console.log(`[Synthesis] Created new system for ${clickedStar.name}`);
+        //console.log(`[Synthesis] Created new system for ${clickedStar.name}`);
         //setSelectedStar(fullSystem); // fullSystem must contain planets
 
     }

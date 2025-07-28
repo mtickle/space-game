@@ -67,7 +67,7 @@ export const saveStarSystemToStorage = (starSystem) => {
 
 //--- THis is an actual and good save function!!!
 export const saveHydratedStarSystem = (starSystem) => {
-    console.log(starSystem)
+    // console.log(starSystem)
     if (!starSystem || typeof starSystem !== 'object' || !starSystem.starId || !starSystem.starName) {
         console.warn('[Storage] Invalid star system passed to saveHydratedStarSystem:', starSystem);
         return;

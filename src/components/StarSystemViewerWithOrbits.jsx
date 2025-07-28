@@ -155,7 +155,7 @@ const StarSystemViewerWithOrbits = ({ activeSystem, onClose }) => {
 
         // Store the final calculated orbit state in the ref.
         systemOrbitState.current = newOrbitState;
-        console.log("StarSystemViewer: Calculated systemOrbitState:", systemOrbitState.current);
+        //console.log("StarSystemViewer: Calculated systemOrbitState:", systemOrbitState.current);
 
         // The drawScene effect will pick this up on the next animation frame.
     }, [activeSystem, canvasDimensions, getPlanetVisualSize]); // Recalculate if system, canvas size, or visual size logic changes.

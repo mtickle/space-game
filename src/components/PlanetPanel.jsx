@@ -6,8 +6,6 @@ import { useState } from 'react';
 const PlanetPanel = ({ planet, factionColor, onMapClick }) => {
     const [open, setOpen] = useState(false);
 
-    console.log(planet)
-
     // --- Guard clause: Don't render if planet is undefined
     if (!planet) {
         return (
@@ -47,8 +45,8 @@ const PlanetPanel = ({ planet, factionColor, onMapClick }) => {
                             <ul className="ml-4 list-disc text-gray-200 text-sm">
                                 {planet.moons.map((moon, idx) => (
                                     <li key={idx}>
-                                        <span className="text-white">{moon.name}</span>{' '}
-                                        <span className="text-gray-400">({moon.type})</span>
+                                        <span className="text-white">{moon.moonName}</span>{' '}
+                                        <span className="text-gray-400">({moon.moonType})</span>
                                         {moon.settlements && moon.settlements.length > 0 && (
                                             <ul className="ml-4 list-disc text-xs text-gray-400">
                                                 {moon.settlements.map((s, i) => (

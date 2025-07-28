@@ -1,5 +1,3 @@
-// @components/StarSystemViewer.jsx
-
 import { useCallback, useEffect, useRef, useState } from 'react';
 
 const StarSystemViewer = ({ activeSystem, onClose }) => {
@@ -15,6 +13,9 @@ const StarSystemViewer = ({ activeSystem, onClose }) => {
     const [viewScale, setViewScale] = useState(1);
     const isDragging = useRef(false);
     const lastMousePos = useRef({ x: 0, y: 0 });
+
+    console.log(activeSystem)
+
 
     // New state for hovered celestial body
     const [hoveredCelestialBody, setHoveredCelestialBody] = useState(null); // { type, name, originalData, screenX, screenY, screenRadius }
@@ -93,6 +94,59 @@ const StarSystemViewer = ({ activeSystem, onClose }) => {
         backgroundNebulae.current = newNebulae;
     }, []);
 
+    // New function to calculate system positions
+    const calculateSystemPositions = useCallback((systemData, width, height) => {
+        const newPlanetPositions = {};
+        let maxOrbitRadius = 0;
+
+        // Position the star at the center (0,0 in system coordinates)
+        const starX = 0;
+        const starY = 0;
+
+        // Define base orbit radius and increment for better spacing
+        const baseOrbitRadius = 100; // Starting radius for the first planet
+        const orbitSpacing = 60;    // Additional radius for each subsequent planet
+
+        systemData.planets.forEach((planet, index) => {
+            // Use angle if provided, otherwise distribute evenly
+            const angle = planet.angle !== undefined ? planet.angle : (index * (2 * Math.PI / systemData.planets.length));
+            // Use planet.orbitRadius if provided, otherwise calculate with new spacing logic
+            const orbitRadius = planet.orbitRadius !== undefined ? planet.orbitRadius : (baseOrbitRadius + index * orbitSpacing);
+
+            const planetX = starX + orbitRadius * Math.cos(angle);
+            const planetY = starY + orbitRadius * Math.sin(angle);
+
+            maxOrbitRadius = Math.max(maxOrbitRadius, orbitRadius);
+
+            const moons = {};
+            planet.moons.forEach((moon, moonIndex) => {
+                const moonAngle = moon.angle !== undefined ? moon.angle : (moonIndex * (2 * Math.PI / planet.moons.length));
+                const moonOrbitRadius = (moon.moonSize || 4) * 8; // Smaller radius for moons
+
+                const moonX = moonOrbitRadius * Math.cos(moonAngle);
+                const moonY = moonOrbitRadius * Math.sin(moonAngle);
+                moons[moon.moonId] = { x: moonX, y: moonY, data: moon };
+            });
+
+            newPlanetPositions[planet.planetId] = {
+                x: planetX,
+                y: planetY,
+                data: planet,
+                moons: moons
+            };
+        });
+
+        // Calculate a suitable systemScale to fit everything within the canvas
+        // This is a basic estimation and might need fine-tuning based on actual rendering
+        const paddingFactor = 1.2; // Add some padding around the system
+        const systemDiameter = maxOrbitRadius * 2;
+        const potentialScaleX = (width / systemDiameter) * paddingFactor;
+        const potentialScaleY = (height / systemDiameter) * paddingFactor;
+        const systemScale = Math.min(potentialScaleX, potentialScaleY, 1.0); // Don't zoom in more than 1x initially if system is small
+
+        return { systemScale, planetPositions: newPlanetPositions };
+    }, []);
+
     useEffect(() => {
         //console.log("StarSystemViewer: Position calculation/load useEffect running...");
         //console.log("activeSystem inside useEffect:", activeSystem); // Keep this for debugging
@@ -100,10 +154,10 @@ const StarSystemViewer = ({ activeSystem, onClose }) => {
         // GUARDRAIL: Check for activeSystem AND activeSystem.starId
         if (!activeSystem || !activeSystem.starId || !canvasDimensions.width || !canvasDimensions.height) {
             systemPositions.current = { systemScale: 1, planetPositions: {} };
-          //  console.warn("StarSystemViewer: Skipping position calculation due to missing activeSystem, starId, or canvas dimensions.");
+            // 	console.warn("StarSystemViewer: Skipping position calculation due to missing activeSystem, starId, or canvas dimensions.");
             // If activeSystem is present but starId is missing, it's a data problem
             if (activeSystem && !activeSystem.starId) {
-            //    console.error("StarSystemViewer: activeSystem object is missing 'starId' property!", activeSystem);
+                // 		console.error("StarSystemViewer: activeSystem object is missing 'starId' property!", activeSystem);
             }
             return; // Exit early if essential data is missing
         }
@@ -116,25 +170,26 @@ const StarSystemViewer = ({ activeSystem, onClose }) => {
             const storedLayout = localStorage.getItem(localStorageKey);
             if (storedLayout) {
                 systemPositions.current = JSON.parse(storedLayout);
-          //      console.log("StarSystemViewer: Loaded systemPositions from local storage:", systemPositions.current);
+                // 			console.log("StarSystemViewer: Loaded systemPositions from local storage:", systemPositions.current);
                 return;
             }
         } catch (e) {
             //console.error("Failed to load system layout from local storage:", e);
         }
 
-        //console.log("StarSystemViewer: No stored layout found or failed to load. Calculating new positions...");
+        // If no stored layout found or failed to load, calculate new positions
+        console.log("StarSystemViewer: No stored layout found or failed to load. Calculating new positions...");
+        const newSystemPositions = calculateSystemPositions(activeSystem, canvasDimensions.width, canvasDimensions.height);
+        systemPositions.current = newSystemPositions;
 
-        // ... rest of your position calculation and saving logic ...
-        // Make sure the localStorage.setItem also uses this guarded localStorageKey
         try {
             localStorage.setItem(localStorageKey, JSON.stringify(newSystemPositions));
-          //  console.log("StarSystemViewer: Saved new systemPositions to local storage.");
+            // 	console.log("StarSystemViewer: Saved new systemPositions to local storage.");
         } catch (e) {
             console.error("Failed to save system layout to local storage:", e);
         }
 
-    }, [activeSystem, canvasDimensions, getPlanetVisualSize]);
+    }, [activeSystem, canvasDimensions, calculateSystemPositions]);
 
 
     const handleMouseDown = useCallback((e) => {
@@ -481,7 +536,7 @@ const StarSystemViewer = ({ activeSystem, onClose }) => {
             ctx.fillStyle = '#00ff88';
             ctx.font = '20px monospace';
             ctx.textAlign = 'left';
-            ctx.fillText(activeSystem.name || 'Unnamed System', 20, 35);
+            ctx.fillText(activeSystem.starName || 'Unnamed System', 20, 35); // Use activeSystem.starName
 
             ctx.font = '14px monospace';
             ctx.fillStyle = '#FFFFFF';

@@ -11,10 +11,6 @@ const Sidebar = ({ activeSystem, setActiveSystem, setShowSystemMap, setShowOrbit
     const home = JSON.parse(localStorage.getItem('homeSystem') || '{}');
     const { homeSystem, setHome, clearHome } = useHomeSystem();
 
-
-    console.log(activeSystem.planets)
-
-
     return (
         <div className="w-1/4 bg-gray-900 text-white font-mono p-4 h-screen overflow-y-auto shadow-[0_0-10px_#0f0] pb-50">
             {activeSystem && activeSystem.starId ? (
