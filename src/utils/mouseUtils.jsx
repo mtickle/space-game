@@ -35,7 +35,7 @@ export const createHandleMouseMove = ({
             const dy = mouseY - star.y;
             return Math.sqrt(dx * dx + dy * dy) < star.size + 4;
         });
-        setHoveredStar(hovered ? { ...hovered, clientX: e.clientX - rect.left, clientY: e.clientY - rect.top } : null);
+        // setHoveredStar(hovered ? { ...hovered, clientX: e.clientX - rect.left, clientY: e.clientY - rect.top } : null);
     }
 };
 
@@ -57,7 +57,6 @@ export const createHandleClick = ({
     offsetY,
     scale,
     stars,
-    //setSelectedStar,
     setActiveSystem,
     orbitState
 }) => (e) => {
@@ -78,15 +77,7 @@ export const createHandleClick = ({
 
     //let fullSystem;
     const fullSystem = hydrateOrSynthesizeSystem(clickedStar, orbitState, stars);
-
-    console.log("-------------------------------------")
-    console.log(fullSystem)
-    console.log("-------------------------------------")
-
-    //setSelectedStar(fullSystem);
     setActiveSystem(fullSystem);
-
-
 
     // ✅ Set angles if missing
     fullSystem.planets.forEach(p => {
@@ -99,8 +90,8 @@ export const createHandleClick = ({
 
     // ✅ Track visit manually if not handled inside saveHydratedStarSystem
     const visited = JSON.parse(localStorage.getItem('visitedStars') || '[]');
-    if (!visited.includes(fullSystem.id)) {
-        visited.push(fullSystem.id);
+    if (!visited.includes(fullSystem.starId)) {
+        visited.push(fullSystem.starId);
         localStorage.setItem('visitedStars', JSON.stringify(visited));
     }
 };

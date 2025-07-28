@@ -6,16 +6,18 @@ import PlanetPanel from './PlanetPanel'; // adjust path as needed
 
 const Sidebar = ({ activeSystem, setActiveSystem, setShowSystemMap, setShowOrbitalSystemMap }) => {
 
-    console.log(activeSystem)
-
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [selectedPlanet, setSelectedPlanet] = useState(null);
     const home = JSON.parse(localStorage.getItem('homeSystem') || '{}');
     const { homeSystem, setHome, clearHome } = useHomeSystem();
 
+
+    console.log(activeSystem.planets)
+
+
     return (
         <div className="w-1/4 bg-gray-900 text-white font-mono p-4 h-screen overflow-y-auto shadow-[0_0-10px_#0f0] pb-50">
-            {activeSystem ? (
+            {activeSystem && activeSystem.starId ? (
                 <div>
                     <div className="flex items-center mb-2">
                         <div className="w-6 h-6 rounded-full mr-3" style={{ backgroundColor: activeSystem.faction?.color || '#FFFFFF' }}></div>
@@ -87,12 +89,13 @@ const Sidebar = ({ activeSystem, setActiveSystem, setShowSystemMap, setShowOrbit
                     <p className="text-gray-300">Click a star to explore its system. Journey through the cosmos and uncover faction secrets!</p>
                 </div>
             )}
-            {isModalOpen && selectedPlanet && (
-                <PlanetMapModal
-                    planet={selectedPlanet}
-                    onClose={() => setIsModalOpen(false)}
-                />
-            )}
+            {
+                isModalOpen && selectedPlanet && (
+                    <PlanetMapModal
+                        planet={selectedPlanet}
+                        onClose={() => setIsModalOpen(false)}
+                    />
+                )}
 
         </div>
     );

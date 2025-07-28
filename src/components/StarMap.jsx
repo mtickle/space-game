@@ -47,8 +47,8 @@ const StarMap = ({
     const backgroundStars = useRef([]);
     const NEBULA_CLOUDS = useRef([]); // Also store nebula cloud properties
 
-    console.log("ActiveSystem in StarMap")
-    console.log(activeSystem)
+    //console.log("ActiveSystem in StarMap")
+    //console.log(activeSystem)
     //--- Effect to manage canvas size and generate static background elements ---
     useEffect(() => {
         const canvas = canvasRef.current;
@@ -386,6 +386,7 @@ const StarMap = ({
                 />
                 <div className="flex flex-row flex-1 overflow-hidden">
                     <Sidebar
+                        activeSystem={activeSystem}
                         setActiveSystem={setActiveSystem}
                         setShowSystemMap={setShowSystemMap}
                         setShowOrbitalSystemMap={setShowOrbitalSystemMap}

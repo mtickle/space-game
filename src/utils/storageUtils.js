@@ -1,7 +1,7 @@
 // saveStarToLocalStorage.js
 export function isStarSystemHydrated(starId) {
     const systems = JSON.parse(localStorage.getItem('savedStarSystems') || '[]');
-    return systems.some(system => system.id === starId);
+    return systems.some(system => system.starId === starId);
 }
 
 // export function getHydratedStarSystem(starId) {
@@ -67,24 +67,25 @@ export const saveStarSystemToStorage = (starSystem) => {
 
 //--- THis is an actual and good save function!!!
 export const saveHydratedStarSystem = (starSystem) => {
+    console.log(starSystem)
     if (!starSystem || typeof starSystem !== 'object' || !starSystem.starId || !starSystem.starName) {
         console.warn('[Storage] Invalid star system passed to saveHydratedStarSystem:', starSystem);
         return;
     }
 
     // Save full object by ID
-    localStorage.setItem(`star_${starSystem.id}`, JSON.stringify(starSystem));
+    localStorage.setItem(`star_${starSystem.starId}`, JSON.stringify(starSystem));
 
     // Optionally also store it in a full array
     const existingRaw = JSON.parse(localStorage.getItem('savedStarSystems') || '[]');
-    const filtered = existingRaw.filter(s => s?.id !== starSystem.id);
+    const filtered = existingRaw.filter(s => s?.id !== starSystem.starId);
     filtered.push(starSystem);
     localStorage.setItem('savedStarSystems', JSON.stringify(filtered));
 
     // Track it in visited stars
     const visited = JSON.parse(localStorage.getItem('visitedStars') || '[]');
-    if (!visited.includes(starSystem.name)) {
-        visited.push(starSystem.name);
+    if (!visited.includes(starSystem.starName)) {
+        visited.push(starSystem.starName);
         localStorage.setItem('visitedStars', JSON.stringify(visited));
     }
 

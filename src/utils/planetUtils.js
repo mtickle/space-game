@@ -23,8 +23,8 @@ export function hydrateOrSynthesizeSystem(clickedStar, orbitStateRef, allStars) 
 
     // Track visit
     const visited = JSON.parse(localStorage.getItem('visitedStars') || '[]');
-    if (!visited.includes(fullSystem.name)) {
-        visited.push(fullSystem.name);
+    if (!visited.includes(fullSystem.starName)) {
+        visited.push(fullSystem.starName);
         localStorage.setItem('visitedStars', JSON.stringify(visited));
     }
 

@@ -6,6 +6,8 @@ import { useState } from 'react';
 const PlanetPanel = ({ planet, factionColor, onMapClick }) => {
     const [open, setOpen] = useState(false);
 
+    console.log(planet)
+
     // --- Guard clause: Don't render if planet is undefined
     if (!planet) {
         return (
