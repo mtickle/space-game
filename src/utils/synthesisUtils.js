@@ -22,6 +22,7 @@ const generatePlanetName = (starName, index, uniqueNames) => {
 };
 
 export function synthesizeStarSystem(star) {
+    // console.log(star)
     if (!star || !star.id || !star.name) {
         // console.warn('[Synthesis] Invalid star object:', star);
         return null;
@@ -41,15 +42,15 @@ export function synthesizeStarSystem(star) {
     const faction = generateFaction(); // { name, symbol }
 
     const starSystem = {
-        id: star.id,
-        name: star.name,
-        x: star.x,
-        y: star.y,
-        size: star.size,
-        type,
-        temp,
-        description,
-        faction,
+        starId: star.id,
+        starName: star.name,
+        starX: star.x,
+        starY: star.y,
+        starSize: star.size,
+        starType: type,
+        starTemp: temp,
+        starDescription: description,
+        starFaction: faction,
         planets,
         catalogedFauna,
         catalogedFlora,

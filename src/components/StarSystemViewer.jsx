@@ -16,6 +16,13 @@ const StarSystemViewer = ({ activeSystem, onClose }) => {
     const isDragging = useRef(false);
     const lastMousePos = useRef({ x: 0, y: 0 });
 
+    // New state for hovered celestial body
+    const [hoveredCelestialBody, setHoveredCelestialBody] = useState(null); // { type, name, originalData, screenX, screenY, screenRadius }
+
+    const MOON_VISIBILITY_THRESHOLD = 1.5; // Moons appear when viewScale is 1.5 or greater
+    // New threshold for moon labels on hover - make it higher than moon visibility
+    const MOON_LABEL_VISIBILITY_THRESHOLD = 2.5; // Moon labels on hover appear when viewScale is 2.5 or greater
+
     const getPlanetVisualSize = useCallback((celestialBody) => {
         if (!celestialBody) return 1;
 
@@ -87,135 +94,42 @@ const StarSystemViewer = ({ activeSystem, onClose }) => {
     }, []);
 
     useEffect(() => {
-        console.log("StarSystemViewer: Position calculation/load useEffect running...");
-        if (!activeSystem || !canvasDimensions.width || !canvasDimensions.height) {
+        //console.log("StarSystemViewer: Position calculation/load useEffect running...");
+        //console.log("activeSystem inside useEffect:", activeSystem); // Keep this for debugging
+
+        // GUARDRAIL: Check for activeSystem AND activeSystem.starId
+        if (!activeSystem || !activeSystem.starId || !canvasDimensions.width || !canvasDimensions.height) {
             systemPositions.current = { systemScale: 1, planetPositions: {} };
-            console.warn("StarSystemViewer: Skipping position calculation due to missing activeSystem or canvas dimensions.");
-            return;
+          //  console.warn("StarSystemViewer: Skipping position calculation due to missing activeSystem, starId, or canvas dimensions.");
+            // If activeSystem is present but starId is missing, it's a data problem
+            if (activeSystem && !activeSystem.starId) {
+            //    console.error("StarSystemViewer: activeSystem object is missing 'starId' property!", activeSystem);
+            }
+            return; // Exit early if essential data is missing
         }
 
+        // Now we are guaranteed that activeSystem and activeSystem.starId exist
         const localStorageKey = `system_layout_${activeSystem.starId}`;
+        //console.log("Calculated localStorageKey:", localStorageKey); // Keep this for debugging
 
         try {
             const storedLayout = localStorage.getItem(localStorageKey);
             if (storedLayout) {
                 systemPositions.current = JSON.parse(storedLayout);
-                console.log("StarSystemViewer: Loaded systemPositions from local storage:", systemPositions.current);
+          //      console.log("StarSystemViewer: Loaded systemPositions from local storage:", systemPositions.current);
                 return;
             }
         } catch (e) {
-            console.error("Failed to load system layout from local storage:", e);
+            //console.error("Failed to load system layout from local storage:", e);
         }
 
-        console.log("StarSystemViewer: No stored layout found or failed to load. Calculating new positions...");
+        //console.log("StarSystemViewer: No stored layout found or failed to load. Calculating new positions...");
 
-        const newSystemPositions = {
-            systemScale: 1,
-            planetPositions: {}
-        };
-
-        const planets = activeSystem.planets || [];
-        if (planets.length === 0) {
-            systemPositions.current = newSystemPositions;
-            console.warn("StarSystemViewer: Active system has no planets. Position calculation finished.");
-            return;
-        }
-
-        const maxCanvasRadius = Math.min(canvasDimensions.width, canvasDimensions.height) / 2;
-        const clusterRadius = maxCanvasRadius * 0.6;
-        const minPlanetSeparation = 70;
-        const minMoonSeparation = 30;
-
-        planets.forEach(planet => {
-            if (planet.planetId === undefined || planet.planetId === null) {
-                console.error("StarSystemViewer: Planet skipped during position calculation due to missing planetId:", planet);
-                return;
-            }
-
-            let planetX, planetY;
-            let attempts = 0;
-            const maxAttempts = 200;
-
-            do {
-                planetX = (Math.random() * 2 - 1) * clusterRadius;
-                planetY = (Math.random() * 2 - 1) * clusterRadius;
-                attempts++;
-            } while (attempts < maxAttempts &&
-                Object.values(newSystemPositions.planetPositions).some(p => {
-                    const dx = planetX - p.x;
-                    const dy = planetY - p.y;
-                    const distance = Math.sqrt(dx * dx + dy * dy);
-                    return distance < (getPlanetVisualSize(planet) + getPlanetVisualSize(p.data)) + minPlanetSeparation;
-                }));
-
-            newSystemPositions.planetPositions[planet.planetId] = {
-                x: planetX,
-                y: planetY,
-                data: planet,
-                moons: {}
-            };
-
-            if (planet.moons && planet.moons.length > 0) {
-                planet.moons.forEach(moon => {
-                    if (moon.moonId === undefined || moon.moonId === null) {
-                        console.error(`StarSystemViewer: Moon of planet ${planet.planetId} skipped during position calculation due to missing moonId:`, moon);
-                        return;
-                    }
-
-                    let moonX, moonY;
-                    let moonAttempts = 0;
-                    const maxMoonAttempts = 100;
-                    const moonClusterRadius = getPlanetVisualSize(planet) * 2 + 50;
-
-                    do {
-                        moonX = (Math.random() * 2 - 1) * moonClusterRadius;
-                        moonY = (Math.random() * 2 - 1) * moonClusterRadius;
-                        moonAttempts++;
-                    } while (moonAttempts < maxMoonAttempts &&
-                        Object.values(newSystemPositions.planetPositions[planet.planetId].moons).some(m => {
-                            const dx = moonX - m.x;
-                            const dy = moonY - m.y;
-                            const distance = Math.sqrt(dx * dx + dy * dy);
-                            return distance < (getPlanetVisualSize(moon) + getPlanetVisualSize(m.data)) + minMoonSeparation;
-                        }));
-
-                    newSystemPositions.planetPositions[planet.planetId].moons[moon.moonId] = {
-                        x: moonX,
-                        y: moonY,
-                        data: moon
-                    };
-                });
-            }
-        });
-
-        const allCelestialBodies = Object.values(newSystemPositions.planetPositions).flatMap(p => {
-            const moons = Object.values(p.moons).map(m => ({ x: p.x + m.x, y: p.y + m.y, data: m.data }));
-            return [{ x: p.x, y: p.y, data: p.data }, ...moons];
-        });
-
-        if (allCelestialBodies.length > 0) {
-            const minX = Math.min(...allCelestialBodies.map(c => c.x - getPlanetVisualSize(c.data)));
-            const maxX = Math.max(...allCelestialBodies.map(c => c.x + getPlanetVisualSize(c.data)));
-            const minY = Math.min(...allCelestialBodies.map(c => c.y - getPlanetVisualSize(c.data)));
-            const maxY = Math.max(...allCelestialBodies.map(c => c.y + getPlanetVisualSize(c.data)));
-
-            const contentWidth = maxX - minX;
-            const contentHeight = maxY - minY;
-
-            const desiredPaddingRatio = 0.8;
-            const scaleX = (canvasDimensions.width * desiredPaddingRatio) / contentWidth;
-            const scaleY = (canvasDimensions.height * desiredPaddingRatio) / contentHeight;
-
-            newSystemPositions.systemScale = Math.min(scaleX, scaleY, 1.0);
-            newSystemPositions.systemScale = Math.max(newSystemPositions.systemScale, 0.1);
-        }
-
-        systemPositions.current = newSystemPositions;
-        console.log("StarSystemViewer: Calculated new systemPositions:", systemPositions.current);
-
+        // ... rest of your position calculation and saving logic ...
+        // Make sure the localStorage.setItem also uses this guarded localStorageKey
         try {
             localStorage.setItem(localStorageKey, JSON.stringify(newSystemPositions));
-            console.log("StarSystemViewer: Saved new systemPositions to local storage.");
+          //  console.log("StarSystemViewer: Saved new systemPositions to local storage.");
         } catch (e) {
             console.error("Failed to save system layout to local storage:", e);
         }
@@ -230,13 +144,84 @@ const StarSystemViewer = ({ activeSystem, onClose }) => {
         if (canvas) canvas.style.cursor = 'grabbing';
     }, []);
 
+    // Modified handleMouseMove for hover detection
     const handleMouseMove = useCallback((e) => {
-        if (!isDragging.current) return;
-        const dx = e.clientX - lastMousePos.current.x;
-        const dy = e.clientY - lastMousePos.current.y;
-        setViewOffset(prev => ({ x: prev.x + dx, y: prev.y + dy }));
-        lastMousePos.current = { x: e.clientX, y: e.clientY };
-    }, []);
+        const canvas = canvasRef.current;
+        if (!canvas) return;
+
+        if (isDragging.current) {
+            const dx = e.clientX - lastMousePos.current.x;
+            const dy = e.clientY - lastMousePos.current.y;
+            setViewOffset(prev => ({ x: prev.x + dx, y: prev.y + dy }));
+            lastMousePos.current = { x: e.clientX, y: e.clientY };
+        } else {
+            // --- Hover Detection Logic ---
+            const rect = canvas.getBoundingClientRect();
+            const mouseX = e.clientX - rect.left;
+            const mouseY = e.clientY - rect.top;
+
+            let newHoveredBody = null;
+            const { width, height } = canvasDimensions;
+            const combinedScale = systemPositions.current.systemScale * viewScale;
+
+            // Iterate through bodies (prioritize moons if visible and within threshold)
+            // It's important to iterate in reverse drawing order (smallest/topmost last) for correct hit detection
+            const allCelestialBodies = [];
+            Object.values(systemPositions.current.planetPositions).forEach(pPos => {
+                const planet = pPos.data;
+                // Add planets
+                allCelestialBodies.push({
+                    x: pPos.x, y: pPos.y, size: getPlanetVisualSize(planet),
+                    type: 'planet', originalData: planet, name: planet.planetName || `Planet ${planet.planetId}`
+                });
+                // Add moons if visible
+                if (viewScale >= MOON_VISIBILITY_THRESHOLD) {
+                    Object.values(pPos.moons).forEach(mPos => {
+                        const moon = mPos.data;
+                        allCelestialBodies.push({
+                            x: pPos.x + mPos.x, y: pPos.y + mPos.y, size: getPlanetVisualSize(moon),
+                            type: 'moon', originalData: moon, name: moon.moonName || `Moon ${moon.moonId}`
+                        });
+                    });
+                }
+            });
+
+            // Sort by size descending (smallest last) so that smaller objects are hit-tested first
+            // This is crucial for moons being clickable/hoverable over planets they orbit
+            allCelestialBodies.sort((a, b) => a.size - b.size);
+
+            for (let i = 0; i < allCelestialBodies.length; i++) {
+                const body = allCelestialBodies[i];
+                const transformedX = (body.x * combinedScale) + (width / 2 + viewOffset.x);
+                const transformedY = (body.y * combinedScale) + (height / 2 + viewOffset.y);
+                const transformedRadius = body.size * combinedScale;
+
+                const distance = Math.sqrt(
+                    (mouseX - transformedX) ** 2 +
+                    (mouseY - transformedY) ** 2
+                );
+
+                if (distance < transformedRadius) {
+                    // Found a hovered body
+                    newHoveredBody = {
+                        type: body.type,
+                        name: body.name,
+                        originalData: body.originalData,
+                        screenX: transformedX,
+                        screenY: transformedY,
+                        screenRadius: transformedRadius
+                    };
+                    break; // Found the top-most hovered body, stop checking
+                }
+            }
+
+            // Only update state if hover status has changed
+            if (!isDragging.current && JSON.stringify(newHoveredBody) !== JSON.stringify(hoveredCelestialBody)) {
+                setHoveredCelestialBody(newHoveredBody);
+            }
+        }
+    }, [isDragging, viewOffset, viewScale, canvasDimensions, hoveredCelestialBody, getPlanetVisualSize, MOON_VISIBILITY_THRESHOLD]);
+
 
     const handleMouseUp = useCallback(() => {
         isDragging.current = false;
@@ -248,6 +233,7 @@ const StarSystemViewer = ({ activeSystem, onClose }) => {
         isDragging.current = false;
         const canvas = canvasRef.current;
         if (canvas) canvas.style.cursor = 'grab';
+        setHoveredCelestialBody(null); // Clear hover when mouse leaves canvas
     }, []);
 
     const handleWheel = useCallback((e) => {
@@ -342,25 +328,28 @@ const StarSystemViewer = ({ activeSystem, onClose }) => {
                     color: moon.moonColor || '#BBBBBB',
                     type: 'moon',
                     originalData: moon,
-                    parentPlanetPos: { x: pPos.x, y: pPos.y } // Keep this for potential future lines to parent
+                    // parentPlanetPos: { x: pPos.x, y: pPos.y } // Not used for drawing, only for hit test collection
                 });
             });
         });
 
         allCelestialBodiesData.sort((a, b) => b.size - a.size); // Draw larger bodies first
 
-        // --- Layer 4: Planets and Moons (fully transformed) ---
+        // --- Layer 4: Planets and Moons (fully transformed, with conditional moon drawing) ---
         ctx.save();
-        // Apply main view transformations
         ctx.translate(width / 2 + viewOffset.x, height / 2 + viewOffset.y);
         const combinedScale = systemPositions.current.systemScale * viewScale;
         ctx.scale(combinedScale, combinedScale);
 
-        // Array to store info box data so we can draw them *after* main transforms are reset
-        const infoBoxesToDraw = [];
+        const planetInfoBoxesToDraw = []; // Only for planets
 
         allCelestialBodiesData.forEach(body => {
             const { x, y, size, color, name, type, originalData } = body;
+
+            // Conditional Moon Drawing
+            if (type === 'moon' && viewScale < MOON_VISIBILITY_THRESHOLD) {
+                return; // Skip drawing moons if zoom level is below threshold
+            }
 
             // Draw the body itself with glow and GRADIENT fill
             ctx.beginPath();
@@ -378,7 +367,11 @@ const StarSystemViewer = ({ activeSystem, onClose }) => {
 
             ctx.fillStyle = gradient;
 
-            if (type === 'planet' || type === 'moon') {
+            // Highlight hovered body
+            if (hoveredCelestialBody && hoveredCelestialBody.originalData === originalData) {
+                ctx.shadowBlur = size * 2; // Stronger glow
+                ctx.shadowColor = 'rgba(255, 255, 0, 0.8)'; // Yellowish glow
+            } else if (type === 'planet' || type === 'moon') {
                 ctx.shadowBlur = size * 1.5;
                 ctx.shadowColor = color;
             }
@@ -391,55 +384,59 @@ const StarSystemViewer = ({ activeSystem, onClose }) => {
                 const screenY = (y * combinedScale) + (height / 2 + viewOffset.y);
                 const screenRadius = size * combinedScale;
 
-                infoBoxesToDraw.push({
+                planetInfoBoxesToDraw.push({
                     name: name,
                     moonCount: originalData.moons ? originalData.moons.length : 0,
                     settlementsCount: originalData.settlements ? originalData.settlements.length : 0,
-                    // Store the absolute screen position for the attachment point
                     attachX: screenX + screenRadius,
-                    attachY: screenY + screenRadius
+                    attachY: screenY + screenRadius,
+                    type: 'planet' // Indicate this is a planet's box
                 });
             }
         });
 
         ctx.restore(); // Restore context after drawing planets/moons
 
-        // --- Layer 5: Fixed UI Elements (including planet info boxes) ---
+        // --- Layer 5: Fixed UI Elements (including planet/moon info boxes and system info) ---
         // These are drawn with a fresh context, not affected by viewOffset/viewScale
 
-        // Draw Planet Info Boxes
-        infoBoxesToDraw.forEach(info => {
+        // Helper function to draw a pill box
+        const drawPillBox = (info, isMoonHovered = false) => {
             const pixelOffsetFromPlanetEdgeX = 15;
             const pixelOffsetFromPlanetEdgeY = 10;
 
-            // Box top-left position (fixed pixel distance from attach point)
             const boxX = info.attachX + pixelOffsetFromPlanetEdgeX;
             const boxY = info.attachY + pixelOffsetFromPlanetEdgeY;
 
             const nameText = info.name;
-            let moonSettlementsText = '';
-            if (info.moonCount > 0 && info.settlementsCount > 0) {
-                moonSettlementsText = `${info.moonCount} Moon(s) | ${info.settlementsCount} Settlement(s)`;
-            } else if (info.moonCount > 0) {
-                moonSettlementsText = `${info.moonCount} Moon(s)`;
-            } else if (info.settlementsCount > 0) {
-                moonSettlementsText = `${info.settlementsCount} Settlement(s)`;
+            let subText = '';
+            if (isMoonHovered) { // Moon hover box
+                // Moons don't have moons or settlements of their own, so just their type
+                subText = info.originalData.moonType || 'Moon';
+            } else { // Planet box
+                if (info.moonCount > 0 && info.settlementsCount > 0) {
+                    subText = `${info.moonCount} Moon(s) | ${info.settlementsCount} Settlement(s)`;
+                } else if (info.moonCount > 0) {
+                    subText = `${info.moonCount} Moon(s)`;
+                } else if (info.settlementsCount > 0) {
+                    subText = `${info.settlementsCount} Settlement(s)`;
+                }
             }
 
             const padding = 8;
             const lineHeight = 14;
-            const textHeight = moonSettlementsText ? (lineHeight * 2) : lineHeight;
+            const textHeight = subText ? (lineHeight * 2) : lineHeight;
 
             ctx.font = '12px monospace';
             const nameTextWidth = ctx.measureText(nameText).width;
             ctx.font = '10px monospace';
-            const moonSettlementsTextWidth = ctx.measureText(moonSettlementsText).width;
+            const subTextWidth = ctx.measureText(subText).width;
 
-            const boxWidth = Math.max(nameTextWidth, moonSettlementsTextWidth) + padding * 2;
+            const boxWidth = Math.max(nameTextWidth, subTextWidth) + padding * 2;
             const boxHeight = textHeight + padding * 2;
             const cornerRadius = 8;
 
-            ctx.fillStyle = 'rgba(0,0,0,0.6)';
+            ctx.fillStyle = 'rgba(0,0,0,0.7)'; // Slightly more opaque for hover
             ctx.beginPath();
             ctx.roundRect(boxX, boxY, boxWidth, boxHeight, cornerRadius);
             ctx.fill();
@@ -449,12 +446,32 @@ const StarSystemViewer = ({ activeSystem, onClose }) => {
             ctx.textAlign = 'left';
             ctx.fillText(nameText, boxX + padding, boxY + padding + 10);
 
-            if (moonSettlementsText) {
+            if (subText) {
                 ctx.fillStyle = '#C0C0C0';
                 ctx.font = '10px monospace';
-                ctx.fillText(moonSettlementsText, boxX + padding, boxY + padding + 10 + lineHeight);
+                ctx.fillText(subText, boxX + padding, boxY + padding + 10 + lineHeight);
             }
+        };
+
+        // Draw Planet Info Boxes (always visible for planets)
+        planetInfoBoxesToDraw.forEach(info => {
+            drawPillBox(info);
         });
+
+        // Draw Moon Info Box (only if hovered and zoom is sufficient)
+        if (hoveredCelestialBody &&
+            hoveredCelestialBody.type === 'moon' &&
+            viewScale >= MOON_LABEL_VISIBILITY_THRESHOLD) {
+
+            const info = {
+                name: hoveredCelestialBody.name,
+                originalData: hoveredCelestialBody.originalData,
+                attachX: hoveredCelestialBody.screenX + hoveredCelestialBody.screenRadius,
+                attachY: hoveredCelestialBody.screenY + hoveredCelestialBody.screenRadius
+            };
+            drawPillBox(info, true); // Pass true to indicate it's a moon hover box
+        }
+
 
         // Draw System Info Box (top-left)
         if (activeSystem) {
@@ -473,7 +490,7 @@ const StarSystemViewer = ({ activeSystem, onClose }) => {
             ctx.fillText(`${totalPlanets} PLANETS / ${totalMoons} MOON(S)`, 20, 60);
         }
 
-    }, [activeSystem, canvasDimensions, getPlanetVisualSize, backgroundStars, backgroundNebulae, darkenColor, viewOffset, viewScale]);
+    }, [activeSystem, canvasDimensions, getPlanetVisualSize, backgroundStars, backgroundNebulae, darkenColor, viewOffset, viewScale, MOON_VISIBILITY_THRESHOLD, MOON_LABEL_VISIBILITY_THRESHOLD, hoveredCelestialBody]); // Added hoveredCelestialBody and new threshold to dependencies
 
 
     useEffect(() => {

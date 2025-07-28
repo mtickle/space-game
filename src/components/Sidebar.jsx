@@ -4,7 +4,10 @@ import { useHomeSystem } from '../hooks/useHomeSystem'; // adjust path as needed
 import PlanetPanel from './PlanetPanel'; // adjust path as needed
 
 
-const Sidebar = ({ selectedStar, setActiveSystem, setShowSystemMap, setShowOrbitalSystemMap }) => {
+const Sidebar = ({ activeSystem, setActiveSystem, setShowSystemMap, setShowOrbitalSystemMap }) => {
+
+    console.log(activeSystem)
+
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [selectedPlanet, setSelectedPlanet] = useState(null);
     const home = JSON.parse(localStorage.getItem('homeSystem') || '{}');
@@ -12,25 +15,24 @@ const Sidebar = ({ selectedStar, setActiveSystem, setShowSystemMap, setShowOrbit
 
     return (
         <div className="w-1/4 bg-gray-900 text-white font-mono p-4 h-screen overflow-y-auto shadow-[0_0-10px_#0f0] pb-50">
-            {selectedStar ? (
+            {activeSystem ? (
                 <div>
                     <div className="flex items-center mb-2">
-                        <div className="w-6 h-6 rounded-full mr-3" style={{ backgroundColor: selectedStar.faction?.color || '#FFFFFF' }}></div>
+                        <div className="w-6 h-6 rounded-full mr-3" style={{ backgroundColor: activeSystem.faction?.color || '#FFFFFF' }}></div>
                         <h2 className="text-2xl font-bold text-yellow-400">
-                            {selectedStar.name}
-                            {selectedStar.name === home.name && (
+                            {activeSystem.starName}
+                            {activeSystem.starName === home.name && (
                                 <span className="ml-2 text-green-400 text-sm">(Home)</span>
                             )}
                         </h2>
                     </div>
-                    {/* <p className="text-green-400"><strong>Unique ID:</strong> {selectedStar.id}</p> */}
-                    <p className="text-green-400"><strong>X:</strong> {selectedStar.x}</p>
-                    <p className="text-green-400"><strong>Y:</strong> {selectedStar.y}</p>
-                    <p className="text-green-400"><strong>Star Type:</strong> {selectedStar.type}</p>
-                    <p className="text-green-400"><strong>Temperature:</strong> {selectedStar.temp}</p>
-                    <p className="text-green-400"><strong>Faction:</strong> {selectedStar.faction?.name || 'Unknown'}</p>
-                    <p className="text-green-400"><strong>Symbol:</strong> {selectedStar.faction?.symbol || 'N/A'}</p>
-                    <p className="mt-2 text-base text-gray-300">{selectedStar.description}</p>
+                    <p className="text-green-400"><strong>X:</strong> {activeSystem.starX}</p>
+                    <p className="text-green-400"><strong>Y:</strong> {activeSystem.starY}</p>
+                    <p className="text-green-400"><strong>Star Type:</strong> {activeSystem.starType}</p>
+                    <p className="text-green-400"><strong>Temperature:</strong> {activeSystem.starTemp}</p>
+                    <p className="text-green-400"><strong>Faction:</strong> {activeSystem.faction?.name || 'Unknown'}</p>
+                    <p className="text-green-400"><strong>Symbol:</strong> {activeSystem.faction?.symbol || 'N/A'}</p>
+                    <p className="mt-2 text-base text-gray-300">{activeSystem.starDescription}</p>
 
 
                     <button
@@ -45,7 +47,7 @@ const Sidebar = ({ selectedStar, setActiveSystem, setShowSystemMap, setShowOrbit
 
 
 
-                    {selectedStar.name === homeSystem.name ? (
+                    {activeSystem.starName === homeSystem.name ? (
                         <button
                             onClick={clearHome}
                             className="mt-3 px-2 py-1 bg-gray-700 text-white text-xs rounded hover:bg-gray-600"
@@ -55,9 +57,9 @@ const Sidebar = ({ selectedStar, setActiveSystem, setShowSystemMap, setShowOrbit
                     ) : (
                         <button
                             onClick={() => setHome({
-                                name: selectedStar.name,
-                                x: selectedStar.x,
-                                y: selectedStar.y
+                                name: activeSystem.starName,
+                                x: activeSystem.starX,
+                                y: activeSystem.starY
                             })}
                             className="mt-3 px-2 py-1 bg-blue-600 text-white text-xs rounded hover:bg-blue-700"
                         >
@@ -65,14 +67,14 @@ const Sidebar = ({ selectedStar, setActiveSystem, setShowSystemMap, setShowOrbit
                         </button>
                     )}
 
-                    {Array.isArray(selectedStar.planets) && (
+                    {Array.isArray(activeSystem.planets) && (
                         <div className="mt-4">
                             <h3 className="text-lg font-bold text-yellow-400">Planetary System</h3>
-                            {selectedStar.planets.map((planet, index) => (
+                            {activeSystem.planets.map((planet, index) => (
                                 <PlanetPanel
                                     key={index}
                                     planet={planet}
-                                    factionColor={selectedStar.faction?.color || '#FFFFFF'}
+                                    factionColor={activeSystem.faction?.color || '#FFFFFF'}
                                 //onMapClick={handleMapClick}
                                 />
                             ))}

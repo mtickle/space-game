@@ -8,7 +8,8 @@ export function drawStarMap(ctx, options) {
         offsetX,
         offsetY,
         homeSystem,
-        visitedStars
+        visitedStars,
+        activeSystem
     } = options;
 
     // includes ctx.save(), ctx.translate(), ctx.scale()
@@ -24,7 +25,7 @@ export function drawTooltip(ctx, hoveredStar) {
 
 // src/utils/drawUtils.js
 
-export function drawStarMapScene({ canvasRef, stars, hoveredStar, selectedStar, scale, offsetX, offsetY }) {
+export function drawStarMapScene({ canvasRef, stars, hoveredStar, activeSystem, scale, offsetX, offsetY }) {
     const canvas = canvasRef.current;
     if (!canvas) return;
     const ctx = canvas.getContext('2d');

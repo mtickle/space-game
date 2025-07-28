@@ -27,9 +27,10 @@ const StarMap = ({
     setScale,
     setCanvasSize,
 }) => {
+
     const [activeSystem, setActiveSystem] = useState(null);
     const canvasRef = useRef(null);
-    const [selectedStar, setSelectedStar] = useState(null);
+    //const [selectedStar, setSelectedStar] = useState(null);
     const [hoveredStar, setHoveredStar] = useState(null);
     const [isDragging, setIsDragging] = useState(false);
     const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
@@ -46,6 +47,8 @@ const StarMap = ({
     const backgroundStars = useRef([]);
     const NEBULA_CLOUDS = useRef([]); // Also store nebula cloud properties
 
+    console.log("ActiveSystem in StarMap")
+    console.log(activeSystem)
     //--- Effect to manage canvas size and generate static background elements ---
     useEffect(() => {
         const canvas = canvasRef.current;
@@ -138,11 +141,11 @@ const StarMap = ({
             offsetY,
             scale,
             stars,
-            setSelectedStar,
+            //setSelectedStar,
             setActiveSystem,
             setShowSystemMap
         })(e);
-    }, [isDragging, canvasRef, offsetX, offsetY, scale, stars, setSelectedStar, setActiveSystem, setShowSystemMap]);
+    }, [isDragging, canvasRef, offsetX, offsetY, scale, stars, setActiveSystem, setShowSystemMap]);
 
     const handleContextMenu = createHandleContextMenu({
         canvasRef,
@@ -236,7 +239,7 @@ const StarMap = ({
                 ctx.fill();
             }
 
-            const isSelected = selectedStar?.id === star.id;
+            const isSelected = activeSystem?.starId === star.starId;
             if (isSelected && visited.includes(star.id) && Array.isArray(star.planets)) {
                 const orbits = orbitState.current[star.id] || [];
                 star.planets.forEach((planet, i) => {
@@ -296,7 +299,7 @@ const StarMap = ({
         }
     }, [
         stars, offsetX, offsetY, scale,
-        selectedStar, hoveredStar,
+        activeSystem, hoveredStar,
         factionFilter, starTypeFilter, showVisited,
         orbitState, // orbitState.current is directly mutated, but the object ref itself is stable
         // No explicit redrawTrigger from resize observer needed here, as the initial generation
@@ -336,12 +339,12 @@ const StarMap = ({
                 requestAnimationFrame(animateFrame);
             } else {
                 const system = hydrateOrSynthesizeSystem(targetStar, orbitState, stars);
-                setSelectedStar(system);
+                //setSelectedStar(system);
                 setActiveSystem(system);
             }
         };
         requestAnimationFrame(animateFrame);
-    }, [offsetX, offsetY, setOffsetX, setOffsetY, setSelectedStar, setActiveSystem, stars, orbitState]);
+    }, [offsetX, offsetY, setOffsetX, setOffsetY, setActiveSystem, stars, orbitState]);
 
     const goToZeroCommaZero = useCallback(() => {
         const duration = 600;
@@ -383,7 +386,6 @@ const StarMap = ({
                 />
                 <div className="flex flex-row flex-1 overflow-hidden">
                     <Sidebar
-                        selectedStar={selectedStar}
                         setActiveSystem={setActiveSystem}
                         setShowSystemMap={setShowSystemMap}
                         setShowOrbitalSystemMap={setShowOrbitalSystemMap}

@@ -67,7 +67,7 @@ export const saveStarSystemToStorage = (starSystem) => {
 
 //--- THis is an actual and good save function!!!
 export const saveHydratedStarSystem = (starSystem) => {
-    if (!starSystem || typeof starSystem !== 'object' || !starSystem.id || !starSystem.name) {
+    if (!starSystem || typeof starSystem !== 'object' || !starSystem.starId || !starSystem.starName) {
         console.warn('[Storage] Invalid star system passed to saveHydratedStarSystem:', starSystem);
         return;
     }
@@ -88,5 +88,5 @@ export const saveHydratedStarSystem = (starSystem) => {
         localStorage.setItem('visitedStars', JSON.stringify(visited));
     }
 
-    console.log(`[Storage] Hydrated star system saved: ${starSystem.name}`);
+    //console.log(`[Storage] Hydrated star system saved: ${starSystem.name}`);
 };

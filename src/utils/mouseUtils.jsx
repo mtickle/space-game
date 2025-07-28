@@ -57,7 +57,7 @@ export const createHandleClick = ({
     offsetY,
     scale,
     stars,
-    setSelectedStar,
+    //setSelectedStar,
     setActiveSystem,
     orbitState
 }) => (e) => {
@@ -78,8 +78,15 @@ export const createHandleClick = ({
 
     //let fullSystem;
     const fullSystem = hydrateOrSynthesizeSystem(clickedStar, orbitState, stars);
-    setSelectedStar(fullSystem);
+
+    console.log("-------------------------------------")
+    console.log(fullSystem)
+    console.log("-------------------------------------")
+
+    //setSelectedStar(fullSystem);
     setActiveSystem(fullSystem);
+
+
 
     // ✅ Set angles if missing
     fullSystem.planets.forEach(p => {

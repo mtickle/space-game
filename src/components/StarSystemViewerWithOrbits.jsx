@@ -53,9 +53,9 @@ const StarSystemViewerWithOrbits = ({ activeSystem, onClose }) => {
     // --- EFFECT: Calculate Orbits When Active System or Canvas Dimensions Change ---
     // This effect ensures that orbit radii and system scale are calculated dynamically.
     useEffect(() => {
-        console.log("StarSystemViewer: Orbit calculation useEffect running...");
-        console.log("StarSystemViewer: activeSystem received:", activeSystem);
-        console.log("StarSystemViewer: canvasDimensions:", canvasDimensions);
+        // console.log("StarSystemViewer: Orbit calculation useEffect running...");
+        // console.log("StarSystemViewer: activeSystem received:", activeSystem);
+        // console.log("StarSystemViewer: canvasDimensions:", canvasDimensions);
 
         if (!activeSystem || !canvasDimensions.width || !canvasDimensions.height) {
             // If no active system or canvas dimensions are zero, reset and return.
