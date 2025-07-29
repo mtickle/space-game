@@ -1,4 +1,4 @@
-import { getHydratedStarSystem, isStarSystemHydrated, saveHydratedStarSystem } from '@utils/storageUtils';
+import { getHydratedStarSystem, isStarSystemHydrated, saveHydratedStarSystem, saveThingsToDatabase } from '@utils/storageUtils';
 import { synthesizeStarSystem } from '@utils/synthesisUtils'; // adjust path
 
 //--- Core function here. Do we create a NEW system or load a VISITED system.
@@ -13,6 +13,9 @@ export function hydrateOrSynthesizeSystem(clickedStar, orbitStateRef, allStars) 
     } else { //--- SAVE THE SYSTEM
         fullSystem = synthesizeStarSystem(clickedStar);
         saveHydratedStarSystem(fullSystem);
+        console.log(fullSystem)
+        saveThingsToDatabase("postStarSystem", fullSystem)
+
         //console.log(`[Synthesis] Created new system for ${clickedStar.name}`);
         //setSelectedStar(fullSystem); // fullSystem must contain planets
 
