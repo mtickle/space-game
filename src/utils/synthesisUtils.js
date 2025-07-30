@@ -7,6 +7,7 @@ import { generateIndustry } from '@utils/industryUtils';
 import { generateMineral } from '@utils/mineralUtils';
 import { generateMoons } from '@utils/moonUtils';
 import { planetTypes, settlementNames, uniquePlanetNames } from '@utils/namingUtils';
+import { generateStation } from './stationUtils';
 //import { generatePlanetName } from '@utils/planetUtils';
 import { generateFullStarProfile } from '@utils/starUtils';
 import { v4 as uuidv4 } from 'uuid';
@@ -41,6 +42,19 @@ export function synthesizeStarSystem(star) {
     const { type, temp, description } = generateFullStarProfile();
     const faction = generateFaction(); // { name, symbol }
 
+    // --- NEW: Generate Space Station Data ---
+    let spaceStation = null;
+    if (faction && faction.id) { // Only generate a station if a valid faction object is assigned
+       // console.log("[Synthesis] Faction is valid, attempting to generate space station..."); // Debug log
+        // Pass the full faction object, starId, and starName to generate station data
+        spaceStation = generateStation(faction, star.id, star.name);
+        //console.log("[Synthesis] Result of generateStationData:", spaceStation); // Debug log: Check if spaceStation is null here
+    } else {
+       // console.log("[Synthesis] No valid faction found for station generation. Faction:", faction); // Debug log
+    }
+
+    console.log(spaceStation)
+
     const starSystem = {
         starId: star.id,
         starName: star.name,
@@ -51,6 +65,7 @@ export function synthesizeStarSystem(star) {
         starTemp: temp,
         starDescription: description,
         starFaction: faction,
+        spaceStation: spaceStation,
         planets,
         catalogedFauna,
         catalogedFlora,

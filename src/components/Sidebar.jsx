@@ -29,6 +29,7 @@ const Sidebar = ({ activeSystem, setActiveSystem, setShowSystemMap, setShowOrbit
                     <p className="text-green-400"><strong>Star Type:</strong> {activeSystem.starType}</p>
                     <p className="text-green-400"><strong>Temperature:</strong> {activeSystem.starTemp}</p>
                     <p className="text-green-400"><strong>Faction:</strong> {activeSystem.faction?.name || 'Unknown'}</p>
+                    <p className="text-green-400"><strong>Faction Presence:</strong> {activeSystem.spaceStation?.stationName || 'Unknown'}</p>
                     <p className="text-green-400"><strong>Symbol:</strong> {activeSystem.faction?.symbol || 'N/A'}</p>
                     <p className="mt-2 text-base text-gray-300">{activeSystem.starDescription}</p>
 
