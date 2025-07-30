@@ -124,8 +124,8 @@ const PlanetPanel = ({ planet, factionColor, onMapClick }) => {
                             <div className="flex items-center gap-1 text-orange-400 font-bold">
                                 <FlaskConical className="w-4 h-4" /> Resources
                             </div>
-                            {/* <ul className="ml-4 list-disc text-gray-200 text-sm">
-                                {planet.resources.map((mineral, i) => (
+                            <ul className="ml-4 list-disc text-gray-200 text-sm">
+                                {planet.resourceList.map((mineral, i) => (
                                     <li key={i}>
                                         <FlaskConical className="inline w-4 h-4 mr-1 text-pink-400" />
                                         {mineral.mineralName} ({mineral.elements.join(', ')})
@@ -134,7 +134,7 @@ const PlanetPanel = ({ planet, factionColor, onMapClick }) => {
                                         )}
                                     </li>
                                 ))}
-                            </ul> */}
+                            </ul>
                         </div>
                     )}
 

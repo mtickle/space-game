@@ -322,37 +322,186 @@ const StarSystemViewer = ({ activeSystem, onClose }) => {
         });
         ctx.restore();
 
+
         if (introProgress > 0.8) {
             ctx.globalAlpha = (introProgress - 0.8) / 0.2;
-            const placedRects = [], checkCollision = (boxA, boxB) => { const margin = 4; return boxA.x < boxB.x + boxB.width + margin && boxA.x + boxA.width + margin > boxB.x && boxA.y < boxB.y + boxB.height + margin && boxA.y + boxA.height + margin > boxB.y; };
-            const drawPillBoxAtPosition = (boxInfo, textInfo) => { const { x, y, width, height } = boxInfo, { name, subText } = textInfo; const padding = 8, lineHeight = 14, cornerRadius = 8; ctx.fillStyle = 'rgba(23, 23, 33, 0.85)'; ctx.strokeStyle = 'rgba(100, 100, 120, 0.9)'; ctx.lineWidth = 1; ctx.beginPath(); ctx.roundRect(x, y, width, height, cornerRadius); ctx.fill(); ctx.stroke(); ctx.fillStyle = '#FFFFFF'; ctx.font = 'bold 12px monospace'; ctx.textAlign = 'left'; ctx.textBaseline = 'top'; ctx.fillText(name, x + padding, y + padding); if (subText) { ctx.fillStyle = '#C0C0C0'; ctx.font = '10px monospace'; ctx.fillText(subText, x + padding, y + padding + lineHeight + 2); } };
+            
+            // placedRects will store the bounding boxes of labels already drawn to avoid overlaps
+            const placedRects = []; 
+            // Helper to check if two rectangles (boxes) collide
+            const checkCollision = (boxA, boxB) => { 
+                const margin = 4; // Add a small margin for visual separation
+                return boxA.x < boxB.x + boxB.width + margin && 
+                       boxA.x + boxA.width + margin > boxB.x && 
+                       boxA.y < boxB.y + boxB.height + margin && 
+                       boxA.y + boxA.height + margin > boxB.y; 
+            };
 
-            // STEP 6: USED here.
-            allCelestialBodiesData.forEach(body => {
-                const screenRadius = body.size * combinedScale;
-                placedRects.push({ x: (body.x * combinedScale) + (width / 2 + viewOffset.x) - screenRadius, y: (body.y * combinedScale) + (height / 2 + viewOffset.y) - screenRadius, width: screenRadius * 2, height: screenRadius * 2 });
-            });
-            const labelsToProcess = [...planetInfoBoxesToDraw.map(info => ({ type: 'planet', ...info }))];
-            if (viewScale >= MOON_LABEL_VISIBILITY_THRESHOLD) {
+            // Helper function to draw a pill box at a given position and with given text info
+            const drawPillBoxAtPosition = (boxInfo, textInfo) => { 
+                const { x, y, width, height } = boxInfo; 
+                const { name, subText } = textInfo; 
+                const padding = 8, lineHeight = 14, cornerRadius = 8; 
+                
+                ctx.fillStyle = 'rgba(23, 23, 33, 0.85)'; // Background fill
+                ctx.strokeStyle = 'rgba(100, 100, 120, 0.9)'; // Border stroke
+                ctx.lineWidth = 1; 
+                ctx.beginPath(); 
+                ctx.roundRect(x, y, width, height, cornerRadius); 
+                ctx.fill(); 
+                ctx.stroke(); 
+                
+                ctx.fillStyle = '#FFFFFF'; 
+                ctx.font = 'bold 12px monospace'; // Font for name
+                ctx.textAlign = 'left'; 
+                ctx.textBaseline = 'top'; 
+                ctx.fillText(name, x + padding, y + padding); 
+                
+                if (subText) { 
+                    ctx.fillStyle = '#C0C0C0'; // Color for subText
+                    ctx.font = '10px monospace'; // Font for subText
+                    ctx.fillText(subText, x + padding, y + padding + lineHeight + 2); 
+                } 
+            };
 
-                // STEP 7: USED here.
-                allCelestialBodiesData.forEach(body => {
-                    if (body.type === 'moon') labelsToProcess.push({ type: 'moon', name: body.name, originalData: body.originalData, screenX: (body.x * combinedScale) + (width / 2 + viewOffset.x), screenY: (body.y * combinedScale) + (height / 2 + viewOffset.y), screenRadius: body.size * combinedScale });
+            // Collect all bodies that might need labels (planets and visible/hovered moons)
+            // This block is for collecting data for the collision-avoiding labels
+            // It replaces the previous STEP 6 and STEP 7 logic.
+            const labelsToProcess = [];
+
+            // Add planets
+            Object.values(systemPositions.current.planetPositions).forEach(pPos => {
+                const planet = pPos.data;
+                const screenX = (pPos.x * combinedScale) + (width / 2 + viewOffset.x);
+                const screenY = (pPos.y * combinedScale) + (height / 2 + viewOffset.y);
+                const screenRadius = getPlanetVisualSize(planet) * combinedScale;
+
+                labelsToProcess.push({
+                    type: 'planet',
+                    name: planet.planetName || `Planet ${planet.planetId}`,
+                    originalData: planet, // Keep original data for subText logic
+                    screenX: screenX,
+                    screenY: screenY,
+                    screenRadius: screenRadius
                 });
-            } else if (hoveredCelestialBody && hoveredCelestialBody.type === 'moon' && viewScale >= MOON_VISIBILITY_THRESHOLD) {
-                labelsToProcess.push({ type: 'moon', ...hoveredCelestialBody });
+
+                // Add moons if they are visible (based on MOON_VISIBILITY_THRESHOLD)
+                // This is for always-on moon labels if MOON_LABEL_VISIBILITY_THRESHOLD is low
+                // (Currently, moon labels are only on hover, so this section might be redundant for your current needs)
+                // If you want ALL visible moons to have labels when zoomed in, this is the place.
+                if (viewScale >= MOON_LABEL_VISIBILITY_THRESHOLD) { // Check if moon labels should generally be visible
+                    Object.values(pPos.moons).forEach(mPos => {
+                        const moon = mPos.data;
+                        const moonScreenX = (pPos.x + mPos.x) * combinedScale + (width / 2 + viewOffset.x);
+                        const moonScreenY = (pPos.y + mPos.y) * combinedScale + (height / 2 + viewOffset.y);
+                        const moonScreenRadius = getPlanetVisualSize(moon) * combinedScale;
+
+                        labelsToProcess.push({
+                            type: 'moon',
+                            name: moon.moonName || `Moon ${moon.moonId}`,
+                            originalData: moon,
+                            screenX: moonScreenX,
+                            screenY: moonScreenY,
+                            screenRadius: moonScreenRadius
+                        });
+                    });
+                }
+            });
+
+            // Add the hovered moon if it exists and its label should be visible
+            if (hoveredCelestialBody && hoveredCelestialBody.type === 'moon' && viewScale >= MOON_LABEL_VISIBILITY_THRESHOLD) {
+                // Ensure this specific hovered moon is added if it wasn't already (e.g., by the general moon visibility)
+                // Avoid duplicates if it's already in labelsToProcess from the general moon visibility block
+                const isAlreadyInList = labelsToProcess.some(label => label.originalData === hoveredCelestialBody.originalData);
+                if (!isAlreadyInList) {
+                    labelsToProcess.push({
+                        type: 'moon',
+                        name: hoveredCelestialBody.name,
+                        originalData: hoveredCelestialBody.originalData,
+                        screenX: hoveredCelestialBody.screenX,
+                        screenY: hoveredCelestialBody.screenY,
+                        screenRadius: hoveredCelestialBody.screenRadius
+                    });
+                }
             }
+
+
+            // --- Process and Draw Labels ---
             labelsToProcess.forEach(labelInfo => {
-                const nameText = labelInfo.name; let subText = ''; if (labelInfo.type === 'moon') { subText = labelInfo.originalData.moonType || 'Moon'; } else { const { moonCount, settlementsCount } = labelInfo; if (moonCount > 0 && settlementsCount > 0) subText = `${moonCount} Moon(s) | ${settlementsCount} Settlement(s)`; else if (moonCount > 0) subText = `${moonCount} Moon(s)`; else if (settlementsCount > 0) subText = `${settlementsCount} Settlement(s)`; }
-                const padding = 8, lineHeight = 14, textHeight = subText ? (lineHeight * 2) : lineHeight, boxWidth = Math.max(ctx.measureText(nameText).width, subText ? ctx.measureText(subText).width : 0) + padding * 2, boxHeight = textHeight + padding * 2 - (subText ? 0 : 2);
-                const margin = 12, r = labelInfo.screenRadius + margin, positions = [{ x: labelInfo.screenX + r, y: labelInfo.screenY - boxHeight / 2 }, { x: labelInfo.screenX - r - boxWidth, y: labelInfo.screenY - boxHeight / 2 }, { x: labelInfo.screenX - boxWidth / 2, y: labelInfo.screenY - r - boxHeight }, { x: labelInfo.screenX - boxWidth / 2, y: labelInfo.screenY + r }];
+                const nameText = labelInfo.name;
+                let subText = '';
+
+                // Determine subText based on type and originalData
+                if (labelInfo.type === 'moon') {
+                    subText = labelInfo.originalData.moonType || 'Moon';
+                    const moonSettlements = labelInfo.originalData.moonSettlements;
+                    if (moonSettlements && moonSettlements.length > 0) {
+                        subText += (subText ? ' | ' : '') + `Set: ${moonSettlements.length}`;
+                    }
+                } else if (labelInfo.type === 'planet') {
+                    const moonCount = labelInfo.originalData.moons?.length || 0;
+                    const settlementsCount = labelInfo.originalData.settlements?.length || 0;
+                    const resources = labelInfo.originalData.resourceList ? labelInfo.originalData.resourceList.map(r => r.mineralName).join(', ') : '';
+
+                    if (moonCount > 0 && settlementsCount > 0) {
+                        subText = `${moonCount} Moon(s) | ${settlementsCount} Settlement(s)`;
+                    } else if (moonCount > 0) {
+                        subText = `${moonCount} Moon(s)`;
+                    } else if (settlementsCount > 0) {
+                        subText = `${settlementsCount} Settlement(s)`;
+                    }
+                    if (resources) {
+                        subText += (subText ? ' | ' : '') + `Res: ${resources}`;
+                    }
+                }
+                // Space station labels are handled differently (not in this collision avoidance loop yet)
+
+                const padding = 8;
+                const lineHeight = 14;
+                const textHeight = subText ? (lineHeight * 2) : lineHeight;
+
+                // --- CRITICAL: Set font for measurement BEFORE measuring ---
+                ctx.font = 'bold 12px monospace'; // Font for nameText measurement
+                const nameTextWidth = ctx.measureText(nameText).width;
+
+                let subTextWidth = 0;
+                if (subText) {
+                    ctx.font = '10px monospace'; // Font for subText measurement
+                    subTextWidth = ctx.measureText(subText).width;
+                }
+                
+                const boxWidth = Math.max(nameTextWidth, subTextWidth) + padding * 2;
+                const boxHeight = textHeight + padding * 2; // Simplified boxHeight calculation
+
+                const margin = 12; // Margin from the body's edge
+                const r = labelInfo.screenRadius + margin; // Distance from body center to start looking for label position
+
+                // Define preferred positions around the body (relative to body's screen center)
+                // Order matters for collision avoidance (e.g., try right, then left, then top, then bottom)
+                const positions = [
+                    { x: labelInfo.screenX + r, y: labelInfo.screenY - boxHeight / 2 }, // Right
+                    { x: labelInfo.screenX - r - boxWidth, y: labelInfo.screenY - boxHeight / 2 }, // Left
+                    { x: labelInfo.screenX - boxWidth / 2, y: labelInfo.screenY - r - boxHeight }, // Top
+                    { x: labelInfo.screenX - boxWidth / 2, y: labelInfo.screenY + r }, // Bottom
+                ];
+
+                // Attempt to place the label in the first non-colliding position
+                let placed = false;
                 for (const pos of positions) {
                     const candidateBox = { x: pos.x, y: pos.y, width: boxWidth, height: boxHeight };
+                    // Check if this candidate box collides with any already placed labels or celestial bodies
+                    // For now, only checking against other labels (placedRects)
                     if (!placedRects.some(rect => checkCollision(candidateBox, rect))) {
                         drawPillBoxAtPosition(candidateBox, { name: nameText, subText: subText });
-                        placedRects.push(candidateBox);
+                        placedRects.push(candidateBox); // Add this label's box to placedRects
+                        placed = true;
                         break;
                     }
+                }
+
+                // Optional: If no non-colliding position found, you might choose not to draw the label
+                if (!placed) {
+                    // console.warn(`Label for ${nameText} could not be placed without collision.`);
                 }
             });
             ctx.globalAlpha = 1.0;
