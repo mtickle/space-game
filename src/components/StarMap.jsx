@@ -375,49 +375,58 @@ const StarMap = ({
 
 
     return (
-        <div>
-            <div className="w-screen h-screen bg-black flex flex-col text-white font-mono">
-                <Header
-                    stars={stars}
-                    factionFilter={factionFilter}
-                    setFactionFilter={setFactionFilter}
-                    starTypeFilter={starTypeFilter}
-                    setStarTypeFilter={setStarTypeFilter}
+        // THIS is now the main application container for the entire viewport height.
+        // It flexes its direct children vertically.
+        <div className="w-screen h-screen bg-black flex flex-col text-white font-mono">
+            {/* Header takes its natural height */}
+            <Header
+                stars={stars}
+                factionFilter={factionFilter}
+                setFactionFilter={setFactionFilter}
+                starTypeFilter={starTypeFilter}
+                setStarTypeFilter={setStarTypeFilter}
+            />
+
+            {/* This div contains Sidebar and Canvas.
+            'flex-1' ensures it grows to fill all *remaining* vertical space
+            after Header, AdminPanel, and Footer take their height. */}
+            <div className="flex flex-row flex-1 overflow-hidden">
+                <Sidebar
+                    activeSystem={activeSystem}
+                    setActiveSystem={setActiveSystem}
+                    setShowSystemMap={setShowSystemMap}
+                    setShowOrbitalSystemMap={setShowOrbitalSystemMap}
                 />
-                <div className="flex flex-row flex-1 overflow-hidden">
-                    <Sidebar
-                        activeSystem={activeSystem}
-                        setActiveSystem={setActiveSystem}
-                        setShowSystemMap={setShowSystemMap}
-                        setShowOrbitalSystemMap={setShowOrbitalSystemMap}
+
+                <div className="relative flex-1">
+                    <canvas
+                        ref={canvasRef}
+                        className="bg-black cursor-pointer w-full h-full block"
+                        onMouseDown={handleMouseDown}
+                        onMouseMove={handleMouseMove}
+                        onMouseUp={handleMouseUp}
+                        onMouseLeave={handleMouseUp}
+                        onWheel={handleWheel}
+                        onClick={handleClick}
+                        onContextMenu={handleContextMenu}
                     />
 
-                    <div className="relative flex-1">
-                        <canvas
-                            ref={canvasRef}
-                            className="bg-black cursor-pointer w-full h-full block"
-                            onMouseDown={handleMouseDown}
-                            onMouseMove={handleMouseMove}
-                            onMouseUp={handleMouseUp}
-                            onMouseLeave={handleMouseUp}
-                            onWheel={handleWheel}
-                            onClick={handleClick}
-                            onContextMenu={handleContextMenu}
-                        />
+                    {showSystemMap && activeSystem && (
+                        <div className="absolute inset-0 z-10 bg-gray-900 overflow-hidden">
+                            <StarSystemViewer
+                                activeSystem={activeSystem}
+                                onClose={() => setShowSystemMap(false)}
+                            />
+                        </div>
+                    )}
 
-                        {showSystemMap && activeSystem && (
-                            <div className="absolute inset-0 z-10 bg-gray-900 overflow-hidden">
-                                <StarSystemViewer
-                                    activeSystem={activeSystem}
-                                    onClose={() => setShowSystemMap(false)}
-                                />
-                            </div>
-                        )}
-
-                    </div>
                 </div>
             </div>
+
+            {/* AdminPanel takes its natural height */}
             <AdminPanel stars={stars} goToSystem={goToSystem} />
+
+            {/* Footer takes its natural height */}
             <Footer
                 offsetX={offsetX}
                 offsetY={offsetY}

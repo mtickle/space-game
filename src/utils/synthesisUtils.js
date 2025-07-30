@@ -53,8 +53,6 @@ export function synthesizeStarSystem(star) {
        // console.log("[Synthesis] No valid faction found for station generation. Faction:", faction); // Debug log
     }
 
-    console.log(spaceStation)
-
     const starSystem = {
         starId: star.id,
         starName: star.name,
