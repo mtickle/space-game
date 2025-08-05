@@ -95,8 +95,8 @@ export const saveHydratedStarSystem = (starSystem) => {
 export async function saveThingsToDatabase(endpoint, data) {
     //const apiUrl = `${API_BASE_URL}/${endpoint}`;
 
-    let apiUrl = 'http://localhost:3001/api/' + endpoint;
-    //let apiUrl = 'https://game-api-zjod.onrender.com/api/' + endpoint;
+    //let apiUrl = 'http://localhost:3001/api/' + endpoint;
+    let apiUrl = 'https://game-api-zjod.onrender.com/api/' + endpoint;
 
     //console.log('Saving to database:', apiUrl, data);
 
@@ -118,8 +118,8 @@ export async function saveThingsToDatabase(endpoint, data) {
 
 export async function loadThingsFromDatabase(endpoint, ...params) {
     try {
-        const apiUrl = `http://localhost:3001/api/${endpoint}/${params.join('/')}`;
-        // const apiUrl = `https://game-api-zjod.onrender.com/api/${endpoint}/${params.join('/')}`;
+        //const apiUrl = `http://localhost:3001/api/${endpoint}/${params.join('/')}`;
+        const apiUrl = `https://game-api-zjod.onrender.com/api/${endpoint}/${params.join('/')}`;
 
         const response = await fetch(apiUrl, {
             headers: {

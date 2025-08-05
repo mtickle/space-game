@@ -1,3 +1,4 @@
+import { generateAtmosphere } from '@utils/atmosphereUtils';
 import { generateConditions } from '@utils/conditionUtils';
 import { generateEconomy } from '@utils/economyUtils';
 import { generateFaction } from '@utils/factionUtils';
@@ -45,12 +46,12 @@ export function synthesizeStarSystem(star) {
     // --- NEW: Generate Space Station Data ---
     let spaceStation = null;
     if (faction && faction.id) { // Only generate a station if a valid faction object is assigned
-       // console.log("[Synthesis] Faction is valid, attempting to generate space station..."); // Debug log
+        // console.log("[Synthesis] Faction is valid, attempting to generate space station..."); // Debug log
         // Pass the full faction object, starId, and starName to generate station data
         spaceStation = generateStation(faction, star.id, star.name);
         //console.log("[Synthesis] Result of generateStationData:", spaceStation); // Debug log: Check if spaceStation is null here
     } else {
-       // console.log("[Synthesis] No valid faction found for station generation. Faction:", faction); // Debug log
+        // console.log("[Synthesis] No valid faction found for station generation. Faction:", faction); // Debug log
     }
 
     const starSystem = {
@@ -114,6 +115,7 @@ export const synthesizePlanetarySystem = (starName, starId) => {
             resourceList: [],
             moons: generateMoons(starId, planetName, planetId, planetType.type),
             settlements: [],
+            atmosphere: generateAtmosphere(planetType.type),
         };
 
         // Generate resources (2–4)

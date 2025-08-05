@@ -116,7 +116,21 @@ const PlanetPanel = ({ planet, factionColor, onMapClick }) => {
                         </>
                     )}
 
-
+                    {/* Atmosphere */}
+                    {planet.atmosphere && (
+                        <div>
+                            <div className="flex items-center gap-1 text-orange-400 font-bold">
+                                <Wind className="w-4 h-4" /> Atmosphere
+                            </div>
+                            <ul className="ml-4 list-disc text-gray-200 text-sm">
+                                {planet.atmosphere.elements.map((element, i) => (
+                                    <li key={i}>
+                                        {element.name} ({Math.round(element.percent * 100)}%)
+                                    </li>
+                                ))}
+                            </ul>
+                        </div>
+                    )}
 
 
                     {planet.resourceList?.length > 0 && (
