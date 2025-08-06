@@ -57,6 +57,7 @@ const Sidebar = ({ activeSystem, setActiveSystem, setShowSystemMap, setShowOrbit
                     ) : (
                         <button
                             onClick={() => setHome({
+                                id: activeSystem.starId,
                                 name: activeSystem.starName,
                                 x: activeSystem.starX,
                                 y: activeSystem.starY

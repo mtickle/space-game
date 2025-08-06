@@ -15,8 +15,6 @@ const PlanetPanel = ({ planet, factionColor, onMapClick }) => {
         );
     }
 
-    console.log(planet)
-
     return (
         <div className="border-t border-gray-700 py-2">
             <button
