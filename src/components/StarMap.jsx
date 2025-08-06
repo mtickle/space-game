@@ -219,6 +219,8 @@ const StarMap = ({
             ctx.shadowBlur = 0;
             ctx.globalAlpha = 1;
 
+            console.log(home.id);
+
             if (home.id === star.id) {
                 ctx.beginPath();
                 ctx.arc(star.x, star.y, star.size + 4 / scale, 0, Math.PI * 2);
@@ -232,7 +234,8 @@ const StarMap = ({
             ctx.textAlign = 'center';
             ctx.fillText(star.name, star.x, star.y - star.size - 6 / scale);
 
-            if (showVisited && visited.includes(star.id)) {
+            //if (showVisited && visited.includes(star.id)) {
+            if (visited.includes(star.id)) {
                 ctx.beginPath();
                 ctx.arc(star.x, star.y - star.size - 12 / scale, 2 / scale, 0, Math.PI * 2);
                 ctx.fillStyle = '#00FF00';

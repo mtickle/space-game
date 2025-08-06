@@ -45,9 +45,19 @@ export const useLazyStarField = ({ offsetX, offsetY, canvasWidth, canvasHeight, 
     useEffect(() => {
         if (!canvasWidth || !canvasHeight) return;
 
-        const visibleSectors = getVisibleSectors(offsetX, offsetY, canvasWidth, canvasHeight, scale);
+        const initialSectorsToLoad = [];
+        const initialRadius = 1;
 
-        visibleSectors.forEach(key => {
+        for (let i = -initialRadius; i <= initialRadius; i++) {
+            for (let j = -initialRadius; j <= initialRadius; j++) {
+                initialSectorsToLoad.push(getSectorKey(i * SECTOR_SIZE, j * SECTOR_SIZE));
+            }
+        }
+
+        const visibleSectors = getVisibleSectors(offsetX, offsetY, canvasWidth, canvasHeight, scale);
+        const allSectors = new Set([...initialSectorsToLoad, ...visibleSectors]);
+
+        allSectors.forEach(key => {
             if (loadedSectors.current.has(key)) return;
 
             const [sx, sy] = key.split(',').map(Number);
@@ -59,7 +69,16 @@ export const useLazyStarField = ({ offsetX, offsetY, canvasWidth, canvasHeight, 
                 if (saved) {
                     newStars = JSON.parse(saved);
                 } else {
-                    newStars = Array.from({ length: 5 }, (_, i) => {
+                    // --- MODIFIED: Dynamic star count based on a seed ---
+                    // Using the seed to generate a consistent density for the sector
+                    const sectorSeed = (sx * 1000 + sy) % 2147483647; // A seed for this sector
+                    const sectorRng = mulberry32(sectorSeed);
+                    // Generate a number of stars between a min and max
+                    const minStars = 2
+                    const maxStars = 8;
+                    const numStarsPerSector = Math.floor(sectorRng() * (maxStars - minStars + 1)) + minStars;
+
+                    newStars = Array.from({ length: numStarsPerSector }, (_, i) => {
                         const s = generateStarSystem(i);
                         return {
                             ...s,
@@ -77,19 +96,17 @@ export const useLazyStarField = ({ offsetX, offsetY, canvasWidth, canvasHeight, 
                         size: star.size,
                         color: star.color,
                         type: star.type,
-                        faction: star.faction,  // Optional: if needed for color/symbol
+                        faction: star.faction,
                     }));
                     try {
                         localStorage.setItem(localKey, JSON.stringify(safeStars));
                     } catch (e) {
                         console.warn(`⚠️ Storage quota exceeded for sector ${localKey}`, e);
                     }
-
-                    //localStorage.setItem(localKey, JSON.stringify(newStars));
                 }
             } catch (e) {
                 console.warn(`Error loading or generating sector ${localKey}:`, e);
-                newStars = Array.from({ length: 5 }, (_, i) => {
+                newStars = Array.from({ length: 15 }, (_, i) => {
                     const s = generateStarSystem(i);
                     return {
                         ...s,
