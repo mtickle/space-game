@@ -1,7 +1,8 @@
 // App.jsx
-import StarMap from '@components/StarMap';
+//import StarMap from '@components/StarMap';
 import { genesisGenerateGalaxy } from '@utils/genesis';
 import { useState } from 'react';
+import ApiStarMap from './components/ApiStarMap.jsx';
 import { useLazyStarField } from './hooks/useLazyStarField';
 
 if (import.meta.env.DEV) {
@@ -27,7 +28,7 @@ const App = () => {
 
   return (
     <div className="bg-black w-fill h-fill">
-      <StarMap
+      <ApiStarMap
         stars={stars}
         offsetX={offsetX}
         setOffsetX={setOffsetX}
