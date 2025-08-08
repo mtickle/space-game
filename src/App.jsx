@@ -1,13 +1,8 @@
 // App.jsx
-//import StarMap from '@components/StarMap';
-import { genesisGenerateGalaxy } from '@utils/genesis';
+
 import { useState } from 'react';
 import ApiStarMap from './components/ApiStarMap.jsx';
 import { useLazyStarField } from './hooks/useLazyStarField';
-
-if (import.meta.env.DEV) {
-  window.genesisGenerateGalaxy = genesisGenerateGalaxy;
-}
 
 const App = () => {
 

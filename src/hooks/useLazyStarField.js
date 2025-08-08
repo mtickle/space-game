@@ -128,36 +128,36 @@ export const useLazyStarField = ({ offsetX, offsetY, canvasWidth, canvasHeight, 
     // Can be integrated with draw loop in StarMap.jsx
 };
 
-// Utility to reset saved galaxy
-export const clearStoredGalaxy = () => {
-    Object.keys(localStorage).forEach(key => {
-        if (key.startsWith('stars_sector_')) {
-            localStorage.removeItem(key);
-        }
-    });
-};
+// // Utility to reset saved galaxy
+// export const clearStoredGalaxy = () => {
+//     Object.keys(localStorage).forEach(key => {
+//         if (key.startsWith('stars_sector_')) {
+//             localStorage.removeItem(key);
+//         }
+//     });
+// };
 
 // Tooltip interface skeleton (to be used in StarMap component or globally)
-export const getStarTooltip = (star) => {
-    if (!star) return null;
-    return {
-        name: star.name,
-        type: star.type,
-        faction: star.faction?.name || 'Unknown',
-        temperature: star.temp,
-        planets: star.planets?.length || 0,
-    };
-};
+// export const getStarTooltip = (star) => {
+//     if (!star) return null;
+//     return {
+//         name: star.name,
+//         type: star.type,
+//         faction: star.faction?.name || 'Unknown',
+//         temperature: star.temp,
+//         planets: star.planets?.length || 0,
+//     };
+// };
 
 // Save updated star back to localStorage sector
-export const saveStarToLocalStorage = (star, allStars) => {
-    const sx = Math.floor(star.x / SECTOR_SIZE);
-    const sy = Math.floor(star.y / SECTOR_SIZE);
-    const localKey = `stars_sector_${sx},${sy}`;
-    const sectorStars = allStars.filter(s => Math.floor(s.x / SECTOR_SIZE) === sx && Math.floor(s.y / SECTOR_SIZE) === sy);
-    try {
-        localStorage.setItem(localKey, JSON.stringify(sectorStars));
-    } catch (e) {
-        console.warn(`Error saving star to ${localKey}:`, e);
-    }
-};
+// export const saveStarToLocalStorage = (star, allStars) => {
+//     const sx = Math.floor(star.x / SECTOR_SIZE);
+//     const sy = Math.floor(star.y / SECTOR_SIZE);
+//     const localKey = `stars_sector_${sx},${sy}`;
+//     const sectorStars = allStars.filter(s => Math.floor(s.x / SECTOR_SIZE) === sx && Math.floor(s.y / SECTOR_SIZE) === sy);
+//     try {
+//         localStorage.setItem(localKey, JSON.stringify(sectorStars));
+//     } catch (e) {
+//         console.warn(`Error saving star to ${localKey}:`, e);
+//     }
+// };

@@ -1,44 +1,44 @@
 // faunaUtils.js
 
 //--- Animal Behavior Types
-export const behaviorTypes = [
-    'peaceful', 'edible', 'hostile', 'territorial', 'skittish', 'parasitic', 'symbiotic', 'curious', 'sentient', 'pack hunter'
-];
+// export const behaviorTypes = [
+//     'peaceful', 'edible', 'hostile', 'territorial', 'skittish', 'parasitic', 'symbiotic', 'curious', 'sentient', 'pack hunter'
+// ];
 
-export const lifeformTypes = [
-    { type: 'mammal', name: 'Mammal', icon: 'PawPrint' },
-    { type: 'reptile', name: 'Reptile', icon: 'Turtle' },
-    { type: 'avian', name: 'Avian', icon: 'Feather' },
-    { type: 'amphibian', name: 'Amphibian', icon: 'Droplet' },
-    { type: 'insectoid', name: 'Insectoid', icon: 'Bug' },
-    { type: 'crustacean', name: 'Crustacean', icon: 'Shell' },
-    { type: 'rodent', name: 'Rodent', icon: 'MousePointer' },
-    { type: 'cephalopod', name: 'Cephalopod', icon: 'Octagon' },
-    { type: 'plantimal', name: 'Plantimal', icon: 'Leaf' },
-    { type: 'hybrid', name: 'Hybrid', icon: 'Sparkles' },
-    { type: 'synthetic', name: 'Synthetic', icon: 'Cpu' }
-];
+// export const lifeformTypes = [
+//     { type: 'mammal', name: 'Mammal', icon: 'PawPrint' },
+//     { type: 'reptile', name: 'Reptile', icon: 'Turtle' },
+//     { type: 'avian', name: 'Avian', icon: 'Feather' },
+//     { type: 'amphibian', name: 'Amphibian', icon: 'Droplet' },
+//     { type: 'insectoid', name: 'Insectoid', icon: 'Bug' },
+//     { type: 'crustacean', name: 'Crustacean', icon: 'Shell' },
+//     { type: 'rodent', name: 'Rodent', icon: 'MousePointer' },
+//     { type: 'cephalopod', name: 'Cephalopod', icon: 'Octagon' },
+//     { type: 'plantimal', name: 'Plantimal', icon: 'Leaf' },
+//     { type: 'hybrid', name: 'Hybrid', icon: 'Sparkles' },
+//     { type: 'synthetic', name: 'Synthetic', icon: 'Cpu' }
+// ];
 
 //--- Biomes
-export const biomes = [
-    'surface', 'marine', 'subterranean', 'aerial', 'amphibious'
-];
+// export const biomes = [
+//     'surface', 'marine', 'subterranean', 'aerial', 'amphibious'
+// ];
 
-//--- Planetary Fauna Density Rules
-export const faunaDensityByPlanetType = {
-    'Rocky': 'moderate',
-    'Gas Giant': 'none',
-    'Ice World': 'sparse',
-    'Exotic': 'abundant',
-    'Oceanic': 'aquaticOnly',
-    'Volcanic': 'sparse',
-    'Barren': 'none',
-    'Crystaline': 'moderate',
-    'Radiated': 'bizarreOnly',
-    'Artificial': 'syntheticOnly',
-    'Metallic': 'syntheticOnly',
-    'Carbonaceous': 'moderate'
-};
+// //--- Planetary Fauna Density Rules
+// export const faunaDensityByPlanetType = {
+//     'Rocky': 'moderate',
+//     'Gas Giant': 'none',
+//     'Ice World': 'sparse',
+//     'Exotic': 'abundant',
+//     'Oceanic': 'aquaticOnly',
+//     'Volcanic': 'sparse',
+//     'Barren': 'none',
+//     'Crystaline': 'moderate',
+//     'Radiated': 'bizarreOnly',
+//     'Artificial': 'syntheticOnly',
+//     'Metallic': 'syntheticOnly',
+//     'Carbonaceous': 'moderate'
+// };
 
 //--- Base Pools
 const nameSyllables = [
@@ -62,14 +62,14 @@ const nameSyllables = [
 //     return iconMap[type] || <PawPrint className="inline w-4 h-4 mr-1 text-gray-400" />; // Default to PawPrint
 // };
 
-export function generateCreatureName() {
-    const syllableCount = Math.floor(Math.random() * 2) + 2;
-    let name = '';
-    for (let i = 0; i < syllableCount; i++) {
-        name += nameSyllables[Math.floor(Math.random() * nameSyllables.length)];
-    }
-    return name.charAt(0).toUpperCase() + name.slice(1);
-}
+// export function generateCreatureName() {
+//     const syllableCount = Math.floor(Math.random() * 2) + 2;
+//     let name = '';
+//     for (let i = 0; i < syllableCount; i++) {
+//         name += nameSyllables[Math.floor(Math.random() * nameSyllables.length)];
+//     }
+//     return name.charAt(0).toUpperCase() + name.slice(1);
+// }
 
 export function generateFauna({ planetType }) {
     const density = faunaDensityByPlanetType[planetType] || 'moderate';

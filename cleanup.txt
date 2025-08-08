@@ -1,0 +1,68 @@
+PS E:\Repos\space-game> npm run knip
+
+> space-game@1.0.0 knip
+> knip
+
+Unused files (10)
+src/hooks/useCanvasResizer.js
+src/hooks/useCanvasZoomPan.js
+src/hooks/useDataStore.js
+src/components/StarMap.jsx
+src/components/StarSystemViewerWithOrbits.jsx  
+src/old/drawUtils.js
+src/old/PlanetMapViewer.jsx
+src/utils/lifeFormIconUtils.jsx
+src/utils/planetUtils.js
+src/utils/storageUtils.js
+
+Unused dependencies (4)
+@tailwindcss/postcss  package.json:17:6
+auth0                 package.json:18:6
+react-router-dom      package.json:22:6
+zustand               package.json:24:6
+
+Unused devDependencies (2)
+autoprefixer  package.json:33:6
+postcss       package.json:40:6
+
+Unused exports (37)
+clearStoredGalaxy                     src/hooks/useLazyStarField.js:132:14
+getStarTooltip                        src/hooks/useLazyStarField.js:141:14
+saveStarToLocalStorage                src/hooks/useLazyStarField.js:153:14
+STAR_CLASSES                          src/utils/systemUtils.js:8:14       
+generateStarField                     src/utils/systemUtils.js:52:14      
+behaviorTypes                         src/utils/faunaUtils.jsx:4:14       
+lifeformTypes                         src/utils/faunaUtils.jsx:8:14       
+biomes                                src/utils/faunaUtils.jsx:23:14      
+faunaDensityByPlanetType              src/utils/faunaUtils.jsx:28:14      
+generateCreatureName        function  src/utils/faunaUtils.jsx:65:17      
+floraTypes                            src/utils/floraUtils.jsx:3:14       
+default                               src/utils/floraUtils.jsx:148:8
+getPlanetColor              function  src/utils/colorUtils.js:2:17
+weatherNames                          src/utils/conditionUtils.js:2:14
+temperatureNames                      src/utils/conditionUtils.js:9:14
+nightTemperatureNames                 src/utils/conditionUtils.js:16:14
+windNames                             src/utils/conditionUtils.js:22:14
+toxicityNames                         src/utils/conditionUtils.js:28:14
+radiationLevelNames                   src/utils/conditionUtils.js:35:14
+getWeightedRandom                     src/utils/conditionUtils.js:43:14
+getConditionsForPlanetType            src/utils/conditionUtils.js:55:14
+economyNames                          src/utils/economyUtils.js:1:14
+factions                              src/utils/factionUtils.js:3:14
+getFactionById                        src/utils/factionUtils.js:69:14
+getFactionColor                       src/utils/factionUtils.js:74:14
+getFactionSymbol                      src/utils/factionUtils.js:75:14
+assignFactionsToStars                 src/utils/factionUtils.js:78:14
+shuffle                     function  src/utils/randomUtils.js:29:17
+getRandomItems              function  src/utils/randomUtils.js:41:17
+getStarTemperature          function  src/utils/starUtils.js:35:17
+loadOrGenerateStars         function  src/utils/starUtils.js:65:17
+synthesizePlanetarySystem             src/utils/synthesisUtils.js:80:14
+industryTypes                         src/utils/industryUtils.js:1:14
+generateElementalMineral    function  src/utils/mineralUtils.js:330:17
+elementNames                          src/utils/mineralUtils.js:336:9
+mineableElements                      src/utils/mineralUtils.js:336:40
+mineralNames                          src/utils/mineralUtils.js:336:58
+
+Duplicate exports (1)
+generateFlora|default  src/utils/floraUtils.jsx
