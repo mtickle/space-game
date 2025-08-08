@@ -129,9 +129,10 @@ const ApiStarMap = () => {
     const handleClick = useCallback((e) => {
         createHandleClick({
             isDragging, canvasRef, offsetX, offsetY, scale, stars,
-            setActiveSystem, setShowSystemMap
+            setActiveSystem,
+            setShowSystemMap // <-- ADD THIS LINE
         })(e);
-    }, [isDragging, offsetX, offsetY, scale, stars]);
+    }, [isDragging, offsetX, offsetY, scale, stars, setActiveSystem, setShowSystemMap]); // <-- Also add it to the dependency array
 
     const handleContextMenu = createHandleContextMenu({
         canvasRef, offsetX, offsetY, scale, stars
