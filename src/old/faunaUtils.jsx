@@ -71,45 +71,45 @@ const nameSyllables = [
 //     return name.charAt(0).toUpperCase() + name.slice(1);
 // }
 
-export function generateFauna({ planetType }) {
-    const density = faunaDensityByPlanetType[planetType] || 'moderate';
-    if (density === 'none') return [];
+// export function generateFauna({ planetType }) {
+//     const density = faunaDensityByPlanetType[planetType] || 'moderate';
+//     if (density === 'none') return [];
 
-    const count = {
-        sparse: Math.floor(Math.random() * 2) + 1,
-        moderate: Math.floor(Math.random() * 4) + 2,
-        abundant: Math.floor(Math.random() * 10) + 5,
-        aquaticOnly: Math.floor(Math.random() * 5) + 3,
-        bizarreOnly: Math.floor(Math.random() * 3) + 2,
-        syntheticOnly: Math.floor(Math.random() * 4) + 1
-    }[density];
+//     const count = {
+//         sparse: Math.floor(Math.random() * 2) + 1,
+//         moderate: Math.floor(Math.random() * 4) + 2,
+//         abundant: Math.floor(Math.random() * 10) + 5,
+//         aquaticOnly: Math.floor(Math.random() * 5) + 3,
+//         bizarreOnly: Math.floor(Math.random() * 3) + 2,
+//         syntheticOnly: Math.floor(Math.random() * 4) + 1
+//     }[density];
 
-    const creatures = [];
-    for (let i = 0; i < count; i++) {
-        const name = generateCreatureName();
-        const behavior = randomFrom(behaviorTypes);
-        const type = (density === 'syntheticOnly') ? 'synthetic' : randomFrom(lifeformTypes);
-        const biome = (density === 'aquaticOnly') ? 'marine' : randomFrom(biomes);
-        const feet = type === 'cephalopod' ? 8 : type === 'synthetic' ? randomInt(0, 12) : randomInt(0, 6);
-        const hasGender = Math.random() > 0.2;
-        const laysEggs = ['reptile', 'avian', 'insectoid', 'amphibian'].includes(type);
-        const description = `A ${behavior} ${type.name} that prefers the ${biome} biome.`;
+//     const creatures = [];
+//     for (let i = 0; i < count; i++) {
+//         const name = generateCreatureName();
+//         const behavior = randomFrom(behaviorTypes);
+//         const type = (density === 'syntheticOnly') ? 'synthetic' : randomFrom(lifeformTypes);
+//         const biome = (density === 'aquaticOnly') ? 'marine' : randomFrom(biomes);
+//         const feet = type === 'cephalopod' ? 8 : type === 'synthetic' ? randomInt(0, 12) : randomInt(0, 6);
+//         const hasGender = Math.random() > 0.2;
+//         const laysEggs = ['reptile', 'avian', 'insectoid', 'amphibian'].includes(type);
+//         const description = `A ${behavior} ${type.name} that prefers the ${biome} biome.`;
 
 
-        creatures.push({
-            name,
-            type,
-            behavior,
-            biome,
-            feet,
-            gendered: hasGender,
-            laysEggs,
-            description
-        });
-    }
+//         creatures.push({
+//             name,
+//             type,
+//             behavior,
+//             biome,
+//             feet,
+//             gendered: hasGender,
+//             laysEggs,
+//             description
+//         });
+//     }
 
-    return creatures;
-}
+//     return creatures;
+// }
 
 // faunaIconUtils.js
 import {

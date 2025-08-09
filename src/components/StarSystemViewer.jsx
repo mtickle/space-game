@@ -1,5 +1,37 @@
-import { getMoonColor } from '@utils/colorUtils'; // Adjust path if necessary
 import { useCallback, useEffect, useRef, useState } from 'react';
+
+
+// --- COLOR UTILITIES ---
+// These functions are now co-located with the component that uses them.
+
+function getPlanetColor(type) {
+    const colors = {
+        Ice: '#A0DFF0',
+        Volcanic: '#F06257',
+        Rocky: '#BCAAA4',
+        Oceanic: '#4FC3F7',
+        Gas: '#CE93D8',
+        Exotic: '#FFEB3B',
+        Crystaline: '#81D4FA'
+    };
+    return colors[type] || '#FFFFFF'; // Default to white
+}
+
+function getMoonColor(type) {
+    const colors = {
+        Ice: '#A0DFFF',
+        Frozen: '#6EC6FF',
+        Volcanic: '#FF7043',
+        Rocky: '#BCAAA4',
+        Oceanic: '#4DD0E1',
+        Exotic: '#FFD54F',
+        Crystaline: '#CE93D8',
+        Metallic: '#CFD8DC',
+        Cratered: '#9E9E9E',
+        Carbonaceous: '#546E7A'
+    };
+    return colors[type] || '#9E9E9E'; // Default to gray
+}
 
 const StarSystemViewer = ({ activeSystem, onClose }) => {
     // Core Refs for canvas and animation
@@ -325,43 +357,43 @@ const StarSystemViewer = ({ activeSystem, onClose }) => {
 
         if (introProgress > 0.8) {
             ctx.globalAlpha = (introProgress - 0.8) / 0.2;
-            
+
             // placedRects will store the bounding boxes of labels already drawn to avoid overlaps
-            const placedRects = []; 
+            const placedRects = [];
             // Helper to check if two rectangles (boxes) collide
-            const checkCollision = (boxA, boxB) => { 
+            const checkCollision = (boxA, boxB) => {
                 const margin = 4; // Add a small margin for visual separation
-                return boxA.x < boxB.x + boxB.width + margin && 
-                       boxA.x + boxA.width + margin > boxB.x && 
-                       boxA.y < boxB.y + boxB.height + margin && 
-                       boxA.y + boxA.height + margin > boxB.y; 
+                return boxA.x < boxB.x + boxB.width + margin &&
+                    boxA.x + boxA.width + margin > boxB.x &&
+                    boxA.y < boxB.y + boxB.height + margin &&
+                    boxA.y + boxA.height + margin > boxB.y;
             };
 
             // Helper function to draw a pill box at a given position and with given text info
-            const drawPillBoxAtPosition = (boxInfo, textInfo) => { 
-                const { x, y, width, height } = boxInfo; 
-                const { name, subText } = textInfo; 
-                const padding = 8, lineHeight = 14, cornerRadius = 8; 
-                
+            const drawPillBoxAtPosition = (boxInfo, textInfo) => {
+                const { x, y, width, height } = boxInfo;
+                const { name, subText } = textInfo;
+                const padding = 8, lineHeight = 14, cornerRadius = 8;
+
                 ctx.fillStyle = 'rgba(23, 23, 33, 0.85)'; // Background fill
                 ctx.strokeStyle = 'rgba(100, 100, 120, 0.9)'; // Border stroke
-                ctx.lineWidth = 1; 
-                ctx.beginPath(); 
-                ctx.roundRect(x, y, width, height, cornerRadius); 
-                ctx.fill(); 
-                ctx.stroke(); 
-                
-                ctx.fillStyle = '#FFFFFF'; 
+                ctx.lineWidth = 1;
+                ctx.beginPath();
+                ctx.roundRect(x, y, width, height, cornerRadius);
+                ctx.fill();
+                ctx.stroke();
+
+                ctx.fillStyle = '#FFFFFF';
                 ctx.font = 'bold 12px monospace'; // Font for name
-                ctx.textAlign = 'left'; 
-                ctx.textBaseline = 'top'; 
-                ctx.fillText(name, x + padding, y + padding); 
-                
-                if (subText) { 
+                ctx.textAlign = 'left';
+                ctx.textBaseline = 'top';
+                ctx.fillText(name, x + padding, y + padding);
+
+                if (subText) {
                     ctx.fillStyle = '#C0C0C0'; // Color for subText
                     ctx.font = '10px monospace'; // Font for subText
-                    ctx.fillText(subText, x + padding, y + padding + lineHeight + 2); 
-                } 
+                    ctx.fillText(subText, x + padding, y + padding + lineHeight + 2);
+                }
             };
 
             // Collect all bodies that might need labels (planets and visible/hovered moons)
@@ -469,7 +501,7 @@ const StarSystemViewer = ({ activeSystem, onClose }) => {
                     ctx.font = '10px monospace'; // Font for subText measurement
                     subTextWidth = ctx.measureText(subText).width;
                 }
-                
+
                 const boxWidth = Math.max(nameTextWidth, subTextWidth) + padding * 2;
                 const boxHeight = textHeight + padding * 2; // Simplified boxHeight calculation
 
