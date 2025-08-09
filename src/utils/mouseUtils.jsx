@@ -1,6 +1,6 @@
 //--- Welcome to mouseUtils. Here are tools for the mouse actions.
 
-import { hydrateOrSynthesizeSystem } from '@utils/planetUtils';
+import { hydrateOrSynthesizeSystem } from '@utils/synthesisUtils';
 
 export const createHandleMouseDown = (setIsDragging, setDragStart) => (e) => {
     setIsDragging(true);
@@ -75,18 +75,13 @@ export const createHandleClick = ({
 
     if (!clickedStar) return;
 
-    //let fullSystem;
     const fullSystem = hydrateOrSynthesizeSystem(clickedStar, orbitState, stars);
     setActiveSystem(fullSystem);
 
     // ✅ Set angles if missing
-    fullSystem.planets.forEach(p => {
-        p.angle = p.angle ?? Math.random() * Math.PI * 2;
-    });
-
-    // // ✅ Hydrate visual layer and sidebar
-    // setActiveSystem(fullSystem);
-    // setSelectedStar(fullSystem);  // Sidebar display
+    // fullSystem.planets.forEach(p => {
+    //     p.angle = p.angle ?? Math.random() * Math.PI * 2;
+    //});
 
     // ✅ Track visit manually if not handled inside saveHydratedStarSystem
     const visited = JSON.parse(localStorage.getItem('visitedStars') || '[]');

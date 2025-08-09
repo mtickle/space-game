@@ -1,17 +1,55 @@
-import { generateAtmosphere } from '@utils/atmosphereUtils';
-import { generateConditions } from '@utils/conditionUtils';
-import { generateEconomy } from '@utils/economyUtils';
-import { generateFaction } from '@utils/factionUtils';
-import { generateFauna } from '@utils/faunaUtils';
-import { generateFlora } from '@utils/floraUtils';
-import { generateIndustry } from '@utils/industryUtils';
-import { generateMineral } from '@utils/mineralUtils';
-import { generateMoons } from '@utils/moonUtils';
+// import { generateAtmosphere } from '@utils/atmosphereUtils';
+// import { generateConditions } from '@utils/conditionUtils';
+// import { generateEconomy } from '@utils/economyUtils';
+// import { generateFaction } from '@utils/factionUtils';
+// import { generateFauna } from '@utils/faunaUtils';
+// import { generateFlora } from '@utils/floraUtils';
+// import { generateIndustry } from '@utils/industryUtils';
+// import { generateMineral } from '@utils/mineralUtils';
+// import { generateMoons } from '@utils/moonUtils';
 import { planetTypes, settlementNames, uniquePlanetNames } from '@utils/namingUtils';
-import { generateStation } from './stationUtils';
+// import { generateStation } from './stationUtils';
 //import { generatePlanetName } from '@utils/planetUtils';
 import { generateFullStarProfile } from '@utils/starUtils';
+import { getHydratedStarSystem, isStarSystemHydrated, saveHydratedStarSystem, saveThingsToDatabase } from '@utils/storageUtils';
 import { v4 as uuidv4 } from 'uuid';
+
+//--- Core function here. Do we create a NEW system or load a VISITED system.
+export function hydrateOrSynthesizeSystem(clickedStar, orbitStateRef, allStars) {
+    let fullSystem;
+
+    if (isStarSystemHydrated(clickedStar.id)) {    //--- LOAD THE SYSTEM
+        fullSystem = getHydratedStarSystem(clickedStar.id);
+        console.log(`[Hydration] Loaded cached system for ${clickedStar.name}`);
+    } else { //--- SAVE THE SYSTEM
+        fullSystem = synthesizeStarSystem(clickedStar);
+        saveHydratedStarSystem(fullSystem);
+        saveThingsToDatabase("postStarSystem", fullSystem)
+    }
+
+    // Track visit
+    const visited = JSON.parse(localStorage.getItem('visitedStars') || '[]');
+    if (!visited.includes(fullSystem.starName)) {
+        visited.push(fullSystem.starName);
+        localStorage.setItem('visitedStars', JSON.stringify(visited));
+    }
+
+    return fullSystem;
+}
+
+//--- This should draw orbits for the selected system
+export function initializeOrbitStateForStar(orbitRef, star) {
+    if (!orbitRef || !star || !star.id || !star.planets) return;
+
+    // Avoid overwriting existing orbit state
+    if (orbitRef.current[star.id]) return;
+
+    orbitRef.current[star.id] = star.planets.map((planet, i) => ({
+        angle: Math.random() * Math.PI * 2,
+        speed: 0.001 + Math.random() * 0.001,
+        radius: planet.orbitRadius || (20 + i * 8),
+    }));
+}
 
 const generatePlanetName = (starName, index, uniqueNames) => {
     if (uniqueNames && uniqueNames.length > 0 && Math.random() < 0.4) { // 40% chance for a unique name
