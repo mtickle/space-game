@@ -1,6 +1,6 @@
 //--- Welcome to mouseUtils. Here are tools for the mouse actions.
 
-import { hydrateOrSynthesizeSystem } from '@utils/synthesisUtils';
+import { fetchSystemDetails } from '@utils/apiUtils';
 
 export const createHandleMouseDown = (setIsDragging, setDragStart) => (e) => {
     setIsDragging(true);
@@ -58,8 +58,9 @@ export const createHandleClick = ({
     scale,
     stars,
     setActiveSystem,
-    orbitState
-}) => (e) => {
+    orbitState,
+    setShowSystemMap
+}) => async (e) => {
     if (isDragging) return;
     //const orbitState = useRef({});
     const canvas = canvasRef.current;
@@ -74,21 +75,47 @@ export const createHandleClick = ({
     });
 
     if (!clickedStar) return;
+    try {
+        // --- REPLACED LOGIC ---
+        // Call the API to get or generate the full system
+        const fullSystem = await fetchSystemDetails(clickedStar);
 
-    const fullSystem = hydrateOrSynthesizeSystem(clickedStar, orbitState, stars);
-    setActiveSystem(fullSystem);
+        // Update the active system state with the data from the API
+        setActiveSystem(fullSystem);
 
-    // ✅ Set angles if missing
+        // Show the system viewer component
+        setShowSystemMap(true);
+
+        // Track the visit in localStorage
+        const visited = JSON.parse(localStorage.getItem('visitedStars') || '[]');
+        if (!visited.includes(fullSystem.starId)) {
+            visited.push(fullSystem.starId);
+            localStorage.setItem('visitedStars', JSON.stringify(visited));
+        }
+
+    } catch (error) {
+        console.error("Failed to fetch system details:", error);
+        // You could set an error state here to show a message to the user
+    }
+    // //let fullSystem;
+    // const fullSystem = hydrateOrSynthesizeSystem(clickedStar, orbitState, stars);
+    // setActiveSystem(fullSystem);
+
+    // // ✅ Set angles if missing
     // fullSystem.planets.forEach(p => {
     //     p.angle = p.angle ?? Math.random() * Math.PI * 2;
-    //});
+    // });
 
-    // ✅ Track visit manually if not handled inside saveHydratedStarSystem
-    const visited = JSON.parse(localStorage.getItem('visitedStars') || '[]');
-    if (!visited.includes(fullSystem.starId)) {
-        visited.push(fullSystem.starId);
-        localStorage.setItem('visitedStars', JSON.stringify(visited));
-    }
+    // // // ✅ Hydrate visual layer and sidebar
+    // // setActiveSystem(fullSystem);
+    // // setSelectedStar(fullSystem);  // Sidebar display
+
+    // // ✅ Track visit manually if not handled inside saveHydratedStarSystem
+    // const visited = JSON.parse(localStorage.getItem('visitedStars') || '[]');
+    // if (!visited.includes(fullSystem.starId)) {
+    //     visited.push(fullSystem.starId);
+    //     localStorage.setItem('visitedStars', JSON.stringify(visited));
+    // }
 };
 
 export const createHandleContextMenu = ({

@@ -1,6 +1,6 @@
 // utils/systemUtils.js
 
-import { assignFaction } from '@utils/factionUtils';
+//import { assignFaction } from '@utils/factionUtils';
 import { generateStarName, getStarDescription } from '@utils/starUtils';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -48,19 +48,19 @@ export const generateStarSystem = (index = 0) => {
     };
 };
 
-// Generate a full star field (with centering and optional count)
-export const generateStarField = (count = 20) => {
-    const stars = [];
-    for (let i = 0; i < count; i++) {
-        stars.push(generateStarSystem(i));
-    }
+// // Generate a full star field (with centering and optional count)
+// export const generateStarField = (count = 20) => {
+//     const stars = [];
+//     for (let i = 0; i < count; i++) {
+//         stars.push(generateStarSystem(i));
+//     }
 
-    const centerX = stars.reduce((sum, s) => sum + s.x, 0) / stars.length;
-    const centerY = stars.reduce((sum, s) => sum + s.y, 0) / stars.length;
+//     const centerX = stars.reduce((sum, s) => sum + s.x, 0) / stars.length;
+//     const centerY = stars.reduce((sum, s) => sum + s.y, 0) / stars.length;
 
-    return stars.map(s => ({
-        ...s,
-        x: s.x - centerX,
-        y: s.y - centerY,
-    }));
-};
+//     return stars.map(s => ({
+//         ...s,
+//         x: s.x - centerX,
+//         y: s.y - centerY,
+//     }));
+// };
