@@ -2,7 +2,7 @@
 import { useEffect, useState } from 'react';
 import ApiStarMap from './components/ApiStarMap.jsx';
 import LoadingModal from './components/LoadingModal';
-import { useLazyStarField } from './hooks/useLazyStarField';
+//import { useLazyStarField } from './hooks/useLazyStarField';
 
 const App = () => {
 
@@ -53,26 +53,17 @@ const App = () => {
   const [canvasSize, setCanvasSize] = useState({ width: 1200, height: 800 });
 
   //--- This hook generates a lazy-loaded star field based on the current offset and scale.
-  const stars = useLazyStarField({
-    offsetX,
-    offsetY,
-    canvasWidth: canvasSize.width,
-    canvasHeight: canvasSize.height,
-    scale,
-  });
+  // const stars = useLazyStarField({
+  //   offsetX,
+  //   offsetY,
+  //   canvasWidth: canvasSize.width,
+  //   canvasHeight: canvasSize.height,
+  //   scale,
+  // });
 
   return (
     <div className="bg-black w-fill h-fill">
-      <ApiStarMap
-        stars={stars}
-        offsetX={offsetX}
-        setOffsetX={setOffsetX}
-        offsetY={offsetY}
-        setOffsetY={setOffsetY}
-        scale={scale}
-        setScale={setScale}
-        setCanvasSize={setCanvasSize}
-      />
+      <ApiStarMap />
       <LoadingModal isOpen={isModalOpen} message={modalMessage} />
     </div>
 
