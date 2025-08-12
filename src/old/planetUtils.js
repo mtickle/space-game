@@ -7,22 +7,13 @@ export function hydrateOrSynthesizeSystem(clickedStar, orbitStateRef, allStars) 
 
     if (isStarSystemHydrated(clickedStar.id)) {    //--- LOAD THE SYSTEM
         fullSystem = getHydratedStarSystem(clickedStar.id);
-        //console.log(`[Hydration] Loaded cached system for ${clickedStar.name}`);
-        //setSelectedStar(fullSystem); // fullSystem must contain planets
-
+        console.log(`[Hydration] Loaded cached system for ${clickedStar.name}`);
     } else { //--- SAVE THE SYSTEM
         fullSystem = synthesizeStarSystem(clickedStar);
         saveHydratedStarSystem(fullSystem);
         saveThingsToDatabase("postStarSystem", fullSystem)
-
-        //console.log(`[Synthesis] Created new system for ${clickedStar.name}`);
-        //setSelectedStar(fullSystem); // fullSystem must contain planets
-
     }
-
-    // Always initialize orbit state
-    initializeOrbitStateForStar(orbitStateRef, fullSystem);
-
+    
     // Track visit
     const visited = JSON.parse(localStorage.getItem('visitedStars') || '[]');
     if (!visited.includes(fullSystem.starName)) {
@@ -32,6 +23,7 @@ export function hydrateOrSynthesizeSystem(clickedStar, orbitStateRef, allStars) 
 
     return fullSystem;
 }
+
 
 //--- This should draw orbits for the selected system
 export function initializeOrbitStateForStar(orbitRef, star) {

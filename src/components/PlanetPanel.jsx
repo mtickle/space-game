@@ -1,10 +1,74 @@
-import { getFaunaIcon } from '@utils/faunaUtils';
-import { getFloraIcon } from '@utils/floraUtils';
-import { Crown, Diameter, Droplet, Earth, Factory, FlaskConical, HandCoins, LandPlot, MapPin, PawPrint, Radiation, Sprout, ThermometerSnowflake, ThermometerSun, Wind } from 'lucide-react';
+//import { getFaunaIcon } from '@utils/faunaUtils';
+import {
+    Bug,
+    CircleHelp,
+    Cpu,
+    Crown, Diameter,
+    Droplet,
+    Earth, Factory,
+    Feather,
+    Fish,
+    FlaskConical,
+    Flower,
+    HandCoins, LandPlot,
+    Leaf,
+    MapPin,
+    MousePointer,
+    Octagon,
+    PawPrint,
+    Radiation,
+    Shell,
+    Shrub,
+    Sparkles,
+    Sprout,
+    ThermometerSnowflake, ThermometerSun,
+    TreePalm,
+    TreePine,
+    Turtle,
+    Waves,
+    Wind
+} from 'lucide-react';
 import { useState } from 'react';
 
 const PlanetPanel = ({ planet, factionColor, onMapClick }) => {
     const [open, setOpen] = useState(false);
+
+    // --- FloraIcon Sub-Component ---
+    const FloraIcon = ({ type }) => {
+        const iconMap = {
+            'tree': <TreePine className="inline w-4 h-4 mr-2 text-green-500" />,
+            'shrub': <Shrub className="inline w-4 h-4 mr-2 text-green-600" />,
+            'flower': <Flower className="inline w-4 h-4 mr-2 text-pink-500" />,
+            'vine': <TreePalm className="inline w-4 h-4 mr-2 text-green-700" />,
+            'seaweed': <Waves className="inline w-4 h-4 mr-2 text-blue-500" />,
+            'fungus': <Bug className="inline w-4 h-4 mr-2 text-purple-500" />,
+            'moss': <Leaf className="inline w-4 h-4 mr-2 text-lime-500" />,
+            'bush': <Shrub className="inline w-4 h-4 mr-2 text-green-600" />,
+            'grass': <Leaf className="inline w-4 h-4 mr-2 text-lime-600" />,
+            'coral-like': <Fish className="inline w-4 h-4 mr-2 text-teal-500" />
+        };
+        return iconMap[type] || <CircleHelp className="inline w-4 h-4 mr-2 text-gray-400" />;
+    };
+
+    // --- NEW: FaunaIcon Sub-Component ---
+    const FaunaIcon = ({ type }) => {
+        const iconMap = {
+            'mammal': <PawPrint className="inline w-4 h-4 mr-2 text-red-400" />,
+            'reptile': <Turtle className="inline w-4 h-4 mr-2 text-green-400" />,
+            'avian': <Feather className="inline w-4 h-4 mr-2 text-yellow-400" />,
+            'amphibian': <Droplet className="inline w-4 h-4 mr-2 text-blue-400" />,
+            'insectoid': <Bug className="inline w-4 h-4 mr-2 text-purple-400" />,
+            'crustacean': <Shell className="inline w-4 h-4 mr-2 text-teal-400" />,
+            'rodent': <MousePointer className="inline w-4 h-4 mr-2 text-gray-400" />,
+            'cephalopod': <Octagon className="inline w-4 h-4 mr-2 text-indigo-400" />,
+            'plantimal': <Leaf className="inline w-4 h-4 mr-2 text-lime-400" />,
+            'hybrid': <Sparkles className="inline w-4 h-4 mr-2 text-pink-400" />,
+            'synthetic': <Cpu className="inline w-4 h-4 mr-2 text-gray-500" />
+        };
+        return iconMap[type] || <CircleHelp className="inline w-4 h-4 mr-2 text-gray-400" />;
+    };
+
+
 
     // --- Guard clause: Don't render if planet is undefined
     if (!planet) {
@@ -158,7 +222,7 @@ const PlanetPanel = ({ planet, factionColor, onMapClick }) => {
                             </div>
                             <ul className="ml-4 list-disc text-gray-200 text-sm">
                                 {planet.floraList.map((f, i) => (
-                                    <li key={i} className="mb-1">{getFloraIcon(f.type)}
+                                    <li key={i} className="mb-1"><FloraIcon type={f.type} />
                                         {f.name}
                                         <ul className="ml-4 list-disc text-xs text-gray-400">
                                             <li>Type: {f.type}</li>
@@ -179,7 +243,7 @@ const PlanetPanel = ({ planet, factionColor, onMapClick }) => {
                             </div>
                             <ul className="ml-4 list-disc text-gray-200 text-sm">
                                 {planet.faunaList.map((f, i) => (
-                                    <li key={i} className="mb-1">{getFaunaIcon(f.type.name)}
+                                    <li key={i} className="mb-1"> <FaunaIcon type={f.type} />
                                         {f.name}
                                         <ul className="ml-4 list-disc text-xs text-gray-400">
                                             <li>Type: {f.type.name}</li>

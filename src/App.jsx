@@ -1,4 +1,3 @@
-// App.jsx
 
 import { useEffect, useState } from 'react';
 import ApiStarMap from './components/ApiStarMap.jsx';

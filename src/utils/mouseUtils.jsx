@@ -97,25 +97,7 @@ export const createHandleClick = ({
         console.error("Failed to fetch system details:", error);
         // You could set an error state here to show a message to the user
     }
-    // //let fullSystem;
-    // const fullSystem = hydrateOrSynthesizeSystem(clickedStar, orbitState, stars);
-    // setActiveSystem(fullSystem);
 
-    // // ✅ Set angles if missing
-    // fullSystem.planets.forEach(p => {
-    //     p.angle = p.angle ?? Math.random() * Math.PI * 2;
-    // });
-
-    // // // ✅ Hydrate visual layer and sidebar
-    // // setActiveSystem(fullSystem);
-    // // setSelectedStar(fullSystem);  // Sidebar display
-
-    // // ✅ Track visit manually if not handled inside saveHydratedStarSystem
-    // const visited = JSON.parse(localStorage.getItem('visitedStars') || '[]');
-    // if (!visited.includes(fullSystem.starId)) {
-    //     visited.push(fullSystem.starId);
-    //     localStorage.setItem('visitedStars', JSON.stringify(visited));
-    // }
 };
 
 export const createHandleContextMenu = ({
