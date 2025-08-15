@@ -13,7 +13,7 @@ const App = () => {
   const [modalMessage, setModalMessage] = useState('');
   useEffect(() => {
     const wakeUpApi = async () => {
-      setModalMessage("Waking up the API because I'm cheap... 😴");
+      setModalMessage("[{--- CONNECTING TO GALACTIC CARTOGRAPHY MAINFRAME ---}]");
       setIsModalOpen(true);
 
       try {

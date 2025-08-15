@@ -68,7 +68,7 @@ const PlanetPanel = ({ planet, factionColor, onMapClick }) => {
         return iconMap[type] || <CircleHelp className="inline w-4 h-4 mr-2 text-gray-400" />;
     };
 
-
+    console.log('Rendering PlanetPanel with planet:', planet);
 
     // --- Guard clause: Don't render if planet is undefined
     if (!planet) {
