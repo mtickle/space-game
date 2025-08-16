@@ -33,6 +33,8 @@ import { useState } from 'react';
 const PlanetPanel = ({ planet, factionColor, onMapClick }) => {
     const [open, setOpen] = useState(false);
 
+    console.log(planet)
+
     // --- FloraIcon Sub-Component ---
     const FloraIcon = ({ type }) => {
         const iconMap = {
@@ -100,6 +102,20 @@ const PlanetPanel = ({ planet, factionColor, onMapClick }) => {
                         </ul>
                     </div>
 
+                    {/* --- Inhabitants Section --- */}
+                    {planet.inhabitants && planet.inhabitants.length > 0 && (
+                        <div>
+                            <div className="flex items-center gap-1 text-cyan-400 font-bold">
+                                <Users className="w-4 h-4" /> Inhabitants
+                            </div>
+                            {planet.inhabitants.map((species, i) => (
+                                <div key={i} className="ml-4 mt-1">
+                                    <p className="text-sm text-gray-200 font-semibold">{species.speciesName}</p>
+                                    <p className="text-xs text-gray-400 italic">"{species.disposition}"</p>
+                                </div>
+                            ))}
+                        </div>
+                    )}
 
                     {Array.isArray(planet.moons) && planet.moons.length > 0 && (
                         <div>
@@ -125,58 +141,56 @@ const PlanetPanel = ({ planet, factionColor, onMapClick }) => {
                     )}
 
 
-                    {planet.settlements && planet.settlements.length > 0 && (
-                        <>
-                            {/* Economy */}
-                            <div>
-                                <div className="flex items-center gap-1 text-orange-400 font-bold">
-                                    <HandCoins className="w-4 h-4" /> Economy
-                                </div>
-                                {planet.economy ? (
-                                    <>
-                                        <p className="ml-4 text-sm text-gray-200 font-semibold">{planet.economy.name}</p>
-                                        <p className="ml-4 text-xs text-gray-400 italic">{planet.economy.description}</p>
-                                    </>
-                                ) : (
-                                    <p className="ml-4 text-sm text-gray-400 italic">Economy scan failed.</p>
-                                )}
-                            </div>
 
-                            {/* Industry */}
-                            <div>
-                                <div className="flex items-center gap-1 text-orange-400 font-bold">
-                                    <Factory className="w-4 h-4" /> Industry
-                                </div>
-                                {planet.industry ? (
-                                    <>
-                                        <p className="ml-4 text-sm text-gray-200 font-semibold">{planet.industry.name}</p>
-                                        <p className="ml-4 text-xs text-gray-400 italic">{planet.industry.description}</p>
-                                    </>
-                                ) : (
-                                    <p className="ml-4 text-sm text-gray-400 italic">Industry scan failed.</p>
-                                )}
-                            </div>
 
-                            {/* Settlements */}
-                            <div>
-                                <div className="flex items-center gap-1 text-orange-400 font-bold">
-                                    <MapPin className="w-4 h-4" /> Settlements
-                                </div>
-                                <ul className="ml-4 list-disc text-gray-200 text-sm">
-                                    {planet.settlements.map((s, i) => (
-                                        <li key={i}>
-                                            {s.isCapital ? (
-                                                <Crown className="inline w-5 h-5 mr-1 text-yellow-400" />
-                                            ) : (
-                                                <MapPin className="inline w-4 h-4 mr-1 text-gray-400" />
-                                            )}
-                                            {s.name} (Pop: {s.population.toLocaleString()})
-                                        </li>
-                                    ))}
-                                </ul>
-                            </div>
-                        </>
-                    )}
+                    {/* Economy */}
+                    <div>
+                        <div className="flex items-center gap-1 text-orange-400 font-bold">
+                            <HandCoins className="w-4 h-4" /> Economy
+                        </div>
+                        {planet.economy ? (
+                            <>
+                                <p className="ml-4 text-sm text-gray-200 font-semibold">{planet.economy.name}</p>
+                                <p className="ml-4 text-xs text-gray-400 italic">{planet.economy.description}</p>
+                            </>
+                        ) : (
+                            <p className="ml-4 text-sm text-gray-400 italic">Economy scan failed.</p>
+                        )}
+                    </div>
+
+                    {/* Industry */}
+                    <div>
+                        <div className="flex items-center gap-1 text-orange-400 font-bold">
+                            <Factory className="w-4 h-4" /> Industry
+                        </div>
+                        {planet.industry ? (
+                            <>
+                                <p className="ml-4 text-sm text-gray-200 font-semibold">{planet.industry.name}</p>
+                                <p className="ml-4 text-xs text-gray-400 italic">{planet.industry.description}</p>
+                            </>
+                        ) : (
+                            <p className="ml-4 text-sm text-gray-400 italic">Industry scan failed.</p>
+                        )}
+                    </div>
+
+                    {/* Settlements */}
+                    <div>
+                        <div className="flex items-center gap-1 text-orange-400 font-bold">
+                            <MapPin className="w-4 h-4" /> Settlements
+                        </div>
+                        <ul className="ml-4 list-disc text-gray-200 text-sm">
+                            {planet.settlements.map((s, i) => (
+                                <li key={i}>
+                                    {s.isCapital ? (
+                                        <Crown className="inline w-5 h-5 mr-1 text-yellow-400" />
+                                    ) : (
+                                        <MapPin className="inline w-4 h-4 mr-1 text-gray-400" />
+                                    )}
+                                    {s.name} (Pop: {s.population})
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
 
                     {/* Atmosphere */}
                     {planet.atmosphere && (

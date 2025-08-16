@@ -40,7 +40,7 @@ export const useApiStarField = ({ offsetX, offsetY, canvasWidth, canvasHeight, s
                 loadedSectors.current.add(sectorId);
                 const [sectorX, sectorY] = sectorId.split(',');
 
-                console.log(`Entering new sector ${sectorId}. Fetching stars...`);
+               // console.log(`Entering new sector ${sectorId}. Fetching stars...`);
 
                 // Construct the full URL from the environment variable
                 const apiUrl = `${import.meta.env.VITE_API_BASE_URL}/api/generateStars?sectorX=${sectorX}&sectorY=${sectorY}`;

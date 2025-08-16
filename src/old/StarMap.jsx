@@ -219,7 +219,7 @@ const StarMap = ({
             ctx.shadowBlur = 0;
             ctx.globalAlpha = 1;
 
-            console.log(home.id);
+            //console.log(home.id);
 
             if (home.id === star.id) {
                 ctx.beginPath();

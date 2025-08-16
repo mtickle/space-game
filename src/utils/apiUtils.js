@@ -21,13 +21,13 @@ export const fetchSystemDetails = async (star) => {
         // This block now handles the 404 silently.
 
         if (getResponse.ok) { // Status is 200-299
-            console.log(`System ${star.name} found in DB. Loading...`);
+            //console.log(`System ${star.name} found in DB. Loading...`);
             return await getResponse.json();
         }
 
         if (getResponse.status === 404) {
             // It's a new system, so we proceed to create it. No error is logged.
-            console.log(`System ${star.name} not found in DB. Creating...`);
+            //console.log(`System ${star.name} not found in DB. Creating...`);
             const postResponse = await fetch(`${baseUrl}/api/v1/systems`, {
                 method: 'POST',
                 headers: {
