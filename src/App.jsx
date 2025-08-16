@@ -1,9 +1,8 @@
 
 import { useEffect, useState } from 'react';
-import ApiDataViewer from './components/ApiDataViewer.jsx';
-import ApiStarMap from './components/ApiStarMap.jsx';
 import LoadingModal from './components/LoadingModal';
 //import { useLazyStarField } from './hooks/useLazyStarField';
+import ApiStarMap from './components/ApiStarMap';
 
 const App = () => {
 
@@ -50,7 +49,7 @@ const App = () => {
 
   return (
     <div className="bg-black w-fill h-fill">
-      <ApiDataViewer />
+      {/* <ApiDataViewer /> */}
       <ApiStarMap />
       <LoadingModal isOpen={isModalOpen} message={modalMessage} />
     </div>
