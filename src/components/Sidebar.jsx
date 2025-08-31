@@ -1,52 +1,36 @@
-import ApiPlanetPanel from './ApiPlanetPanel'; // Use the new, API-aware panel
+import ApiPlanetPanel from './ApiPlanetPanel'; // Assuming this is where planet details are shown
 
 const Sidebar = ({ activeSystem, setActiveSystem, setShowSystemMap }) => {
-
-    // --- Helper function to get a unique list of factions from the planets ---
-    const getSystemFactions = () => {
-        if (!activeSystem || !activeSystem.planets) return [];
-        const factions = activeSystem.planets.map(p => p.starFaction?.name).filter(Boolean);
-        return [...new Set(factions)];
-    };
-
     return (
-        <div className="w-80 bg-black bg-opacity-80 border-r-2 border-green-500 text-white font-mono flex flex-col h-full">
-            <div className="p-4 border-b border-gray-700">
-                <h2 className="text-2xl font-bold text-green-400">
-                    {activeSystem ? activeSystem.starName : 'No System Selected'}
-                </h2>
-                {activeSystem && (
-                    <p className="text-sm text-gray-400">{activeSystem.starDescription}</p>
-                )}
-            </div>
+        // --- THIS IS THE LINE TO CHANGE ---
+        // I've set an explicit width of w-96 (384px). You can adjust this to your liking.
+        // I also added a border and a slightly transparent background for a better look.
+        <aside className="w-96 bg-gray-900/80 border-r-2 border-green-500/50 p-4 flex flex-col overflow-y-auto">
+            {activeSystem ? (
+                <div>
+                    <h2 className="text-2xl font-bold text-green-400">{activeSystem.starName}</h2>
+                    <p className="text-sm text-gray-400 mb-4">{activeSystem.starDescription}</p>
 
-            <div className="flex-1 overflow-y-auto">
-                {activeSystem ? (
-                    activeSystem.planets.map(planet => (
-                        <ApiPlanetPanel
-                            key={planet.planetId}
-                            planet={planet} // Pass the full planet object
-                            factionColor={activeSystem.starFaction?.color || '#FFFFFF'}
-                        />
-                    ))
-                ) : (
-                    <div className="p-4 text-gray-500">
-                        <p>Select a star system to view planetary details.</p>
-                    </div>
-                )}
-            </div>
-
-            {activeSystem && (
-                <div className="p-4 border-t border-gray-700">
                     <button
-                        className="w-full py-3 px-4 bg-green-600/80 text-white rounded-lg hover:bg-green-500 transition-colors"
                         onClick={() => setShowSystemMap(true)}
+                        className="w-full mb-4 px-4 py-2 bg-green-600 hover:bg-green-500 rounded transition-colors"
                     >
-                        View System Map
+                        View Orbital Map
                     </button>
+
+                    <div className="space-y-2">
+                        {activeSystem.planets.map(planet => (
+                            <ApiPlanetPanel key={planet.planetId} planet={planet} />
+                        ))}
+                    </div>
+                </div>
+            ) : (
+                <div className="text-gray-500">
+                    <h2 className="text-2xl font-bold text-gray-600">No System Selected</h2>
+                    <p>Click on a star in the galaxy map to view its details.</p>
                 </div>
             )}
-        </div>
+        </aside>
     );
 };
 
