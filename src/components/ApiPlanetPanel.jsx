@@ -11,6 +11,7 @@ import {
     HandCoins,
     Leaf,
     MapPin,
+    Moon,
     MousePointer, Octagon,
     PawPrint,
     Shell,
@@ -62,6 +63,7 @@ const FaunaIcon = ({ type }) => {
 
 const ApiPlanetPanel = ({ planet }) => {
     const [open, setOpen] = useState(true);
+    const [showMoons, setShowMoons] = useState(false); // State for moon visibility
 
     console.log('Rendering ApiPlanetPanel for planet:', planet?.planetName || 'Unknown');
     console.dir(planet, { depth: null });
@@ -147,15 +149,55 @@ const ApiPlanetPanel = ({ planet }) => {
                         </div>
                     )}
 
+                    {/* Moons (Collapsible) */}
+                    {planet.moons?.length > 0 && (
+                        <div>
+                            <button
+                                className="w-full text-left flex items-center gap-2 font-bold text-green-400"
+                                onClick={() => setShowMoons(!showMoons)}
+                            >
+                                <Moon size={16} /> {showMoons ? '▼' : '▶'} Moons ({planet.moons.length})
+                            </button>
+                            {showMoons && (
+                                <ul className="ml-4 mt-1 border-l border-gray-600 pl-3 space-y-2">
+                                    {planet.moons.map((moon, i) => (
+                                        <li key={i}>
+                                            <p className="font-semibold text-gray-300">{moon.moonName} <span className="text-gray-500">({moon.moonType})</span></p>
+                                            <ul className="ml-4 list-disc text-xs text-gray-400">
+                                                <li>Size: {moon.moonSize}</li>
+                                                <li>Weather: {moon.moonConditions.weather}</li>
+                                                <li>Day Temp: {moon.moonConditions.temperature}</li>
+                                                <li>Night Temp: {moon.moonConditions.nightTemperature}</li>
+                                                <li>Toxicity: {moon.moonConditions.toxicity}</li>
+                                                <li>Wind: {moon.moonConditions.wind}</li>
+                                                <li>Radiation: {moon.moonConditions.radiation}</li>
+                                                {moon.moonSettlements?.length > 0 && (
+                                                    <li>Settlements: {moon.moonSettlements.join(', ')}</li>
+                                                )}
+                                            </ul>
+                                        </li>
+                                    ))}
+                                </ul>
+                            )}
+                        </div>
+                    )}
+
                     {/* --- Flora Section --- */}
                     {planet.floraList?.length > 0 && (
                         <div>
-                            <div className="flex items-center gap-1 text-green-400 font-bold">
-                                <Sprout className="w-4 h-4" /> Flora
-                            </div>
-                            <ul className="ml-4 list-disc text-gray-200 text-sm">
+                            <div className="flex items-center gap-2 font-bold text-green-400"><Sprout size={16} /> Flora</div>
+                            <ul className="ml-4 mt-1 pl-2 space-y-2">
                                 {planet.floraList.map((f, i) => (
-                                    <li key={i}><FloraIcon type={f.type} />{f.name}</li>
+                                    <li key={i}>
+                                        <div>
+                                            <span className="font-semibold"><FloraIcon type={f.type} /> {f.name}</span>
+                                            <ul className="ml-8 list-disc text-xs text-gray-400">
+                                                <li>Rarity: {f.rarity}, Appearance: {f.appearance}</li>
+                                                <li>Utility: {f.utility}</li>
+                                                {f.notes && <li className="italic">"{f.notes}"</li>}
+                                            </ul>
+                                        </div>
+                                    </li>
                                 ))}
                             </ul>
                         </div>
@@ -164,12 +206,18 @@ const ApiPlanetPanel = ({ planet }) => {
                     {/* --- Fauna Section --- */}
                     {planet.faunaList?.length > 0 && (
                         <div>
-                            <div className="flex items-center gap-1 text-red-400 font-bold">
-                                <PawPrint className="w-4 h-4" /> Fauna
-                            </div>
-                            <ul className="ml-4 list-disc text-gray-200 text-sm">
+                            <div className="flex items-center gap-2 font-bold text-green-400"><PawPrint size={16} /> Fauna</div>
+                            <ul className="ml-4 mt-1 pl-2 space-y-2">
                                 {planet.faunaList.map((f, i) => (
-                                    <li key={i}><FaunaIcon type={f.type} />{f.name}</li>
+                                    <li key={i}>
+                                        <div>
+                                            <span className="font-semibold"><FaunaIcon type={f.type} /> {f.name}</span>
+                                            <ul className="ml-8 list-disc text-xs text-gray-400">
+                                                <li>Behavior: {f.behavior}</li>
+                                                <li className="italic">"{f.description}"</li>
+                                            </ul>
+                                        </div>
+                                    </li>
                                 ))}
                             </ul>
                         </div>
