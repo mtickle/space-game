@@ -1,73 +1,53 @@
-import { Orbit, ShieldCheck, Sun } from 'lucide-react'; // Added new icons
+import React from 'react';
 import ApiPlanetPanel from './ApiPlanetPanel';
+import { Sun, Building, Users, Globe, Gem } from 'lucide-react';
 
 const Sidebar = ({ activeSystem, setActiveSystem, setShowSystemMap }) => {
+    if (!activeSystem) {
+        return (
+            <aside className="w-1/3 max-w-lg bg-black bg-opacity-80 border-l-2 border-green-500/50 p-6 flex flex-col text-gray-400">
+                <h2 className="text-2xl font-bold text-green-400 mb-4 border-b border-green-500/30 pb-2">SYSTEM SCAN</h2>
+                <div className="flex-1 flex items-center justify-center">
+                    <p className="italic">No system selected. Click a star on the map to view details.</p>
+                </div>
+            </aside>
+        );
+    }
+
+    const { starName, starDescription, starFaction, spaceStation, planets } = activeSystem;
+
     return (
-        <aside className="w-96 bg-gray-900/80 border-r-2 border-green-500/50 p-4 flex flex-col overflow-y-auto">
-            {activeSystem ? (
-                <div>
-                    {/* --- STAR HEADER --- */}
-                    <h2 className="text-2xl font-bold text-green-400">{activeSystem.starName}</h2>
-                    <p className="text-sm text-gray-400 mb-4 italic">"{activeSystem.starDescription}"</p>
+        <aside className="w-1/3 max-w-lg bg-black bg-opacity-80 border-l-2 border-green-500/50 flex flex-col">
+            <div className="p-6 border-b border-green-500/30">
+                <h2 className="text-3xl font-bold text-green-400" style={{ textShadow: '0 0 5px rgba(52, 211, 153, 0.5)' }}>{starName}</h2>
+                <p className="text-sm text-gray-400 italic mt-1">{starDescription}</p>
 
-                    {/* --- STAR DETAILS --- */}
-                    <div className="mb-4 text-sm border-l-2 border-green-500/50 pl-3 space-y-2">
-                        <div>
-                            <div className="flex items-center gap-2 font-semibold text-cyan-300">
-                                <Sun size={16} /> Star Details
-                            </div>
-                            <ul className="ml-4 text-gray-300 list-disc list-inside">
-                                <li>Type: {activeSystem.starType}</li>
-                                <li>Temp: {activeSystem.starTemp}</li>
-                            </ul>
-                        </div>
-
-                        {activeSystem.starFaction && (
-                            <div>
-                                <div className="flex items-center gap-2 font-semibold text-cyan-300">
-                                    <ShieldCheck size={16} /> Controlling Faction
-                                </div>
-                                <ul className="ml-4 text-gray-300 list-disc list-inside">
-                                    <li>{activeSystem.starFaction.name}</li>
-                                    <li className="italic text-gray-400">"{activeSystem.starFaction.alignment}"</li>
-                                </ul>
-                            </div>
-                        )}
-
-                        {activeSystem.spaceStation && (
-                            <div>
-                                <div className="flex items-center gap-2 font-semibold text-cyan-300">
-                                    <Orbit size={16} /> Orbital Station
-                                </div>
-                                <ul className="ml-4 text-gray-300 list-disc list-inside">
-                                    <li>{activeSystem.spaceStation.stationName}</li>
-                                    <li className="capitalize text-gray-400">({activeSystem.spaceStation.stationType})</li>
-                                </ul>
-                            </div>
-                        )}
+                {starFaction && (
+                    <div className="mt-4 p-3 bg-gray-900/50 rounded-lg border border-gray-700">
+                        <h3 className="font-bold text-lg text-green-300 flex items-center gap-2">
+                            <Users size={18} /> Controlling Faction
+                        </h3>
+                        <p className="text-base" style={{ color: starFaction.color }}>{starFaction.name}</p>
+                        <p className="text-xs text-gray-500">{starFaction.alignment}</p>
                     </div>
-
-                    <button
-                        onClick={() => setShowSystemMap(true)}
-                        className="w-full mb-4 px-4 py-2 bg-green-600 hover:bg-green-500 rounded transition-colors"
-                    >
-                        View Orbital Map
-                    </button>
-
-                    {/* --- PLANET LIST --- */}
-                    <h3 className="text-xl font-bold text-green-400 border-t border-gray-700 pt-2 mt-2">Planets</h3>
-                    <div className="space-y-2 mt-2">
-                        {activeSystem.planets.map(planet => (
-                            <ApiPlanetPanel key={planet.planetId} planet={planet} />
-                        ))}
+                )}
+                {spaceStation && (
+                    <div className="mt-2 p-3 bg-gray-900/50 rounded-lg border border-gray-700">
+                         <h3 className="font-bold text-lg text-green-300 flex items-center gap-2">
+                            <Building size={18} /> Major Installation
+                        </h3>
+                        <p className="text-base" style={{ color: spaceStation.factionColor }}>{spaceStation.stationName}</p>
+                        <p className="text-xs text-gray-500">Type: {spaceStation.stationType}</p>
                     </div>
-                </div>
-            ) : (
-                <div className="text-gray-500">
-                    <h2 className="text-2xl font-bold text-gray-600">No System Selected</h2>
-                    <p>Click on a star in the galaxy map to view its details.</p>
-                </div>
-            )}
+                )}
+            </div>
+
+            <div className="flex-1 p-6 overflow-y-auto space-y-4">
+                 <h3 className="text-xl font-bold text-green-400 mb-2 border-b border-green-500/30 pb-2 flex items-center gap-2"><Globe size={20}/> System Planets</h3>
+                {planets.map(planet => (
+                    <ApiPlanetPanel key={planet.planetId} planet={planet} />
+                ))}
+            </div>
         </aside>
     );
 };
