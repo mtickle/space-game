@@ -1,31 +1,168 @@
 import {
-    Bug,
-    CircleHelp,
-    Cpu,
-    Crown,
-    Droplet,
-    Factory,
-    Feather,
-    Fish,
-    Flower,
-    HandCoins,
-    Leaf,
-    MapPin,
-    MousePointer, Octagon,
-    PawPrint,
-    Shell,
-    Shrub,
-    Sparkles,
-    Sprout,
-    TreePalm,
-    TreePine,
-    Turtle,
+    Biohazard,
+    Bug, CircleHelp,
+    Clock,
+    Cloudy,
+    Cpu, Crown, Diameter, Droplet, Earth,
+    Feather, Fish, FlaskConical, Flower, Gauge, HandCoins, Landmark, Leaf,
+    Moon, MousePointer, Octagon,
+    Orbit,
+    PawPrint, Radiation, Shell, Shrub, Sparkles, Sprout, ThermometerSnowflake, ThermometerSun, TreePalm, TreePine, Turtle,
     Users,
-    Waves
+    Waves, Wind
 } from 'lucide-react';
 import { useState } from 'react';
 
-// --- Icon Sub-Components for Flora and Fauna ---
+// --- Helper Sub-Component for a single expandable section ---
+const InfoSection = ({ title, icon, children, defaultOpen = false }) => {
+    const [isOpen, setIsOpen] = useState(defaultOpen);
+    const IconComponent = icon;
+    return (
+        <div>
+            <button
+                className="w-full flex items-center gap-2 font-bold text-green-300 hover:text-green-200 transition-colors"
+                onClick={() => setIsOpen(!isOpen)}
+            >
+                <IconComponent size={16} /> {isOpen ? '▼' : '▶'} {title}
+            </button>
+            {isOpen && (
+                <div className="ml-4 mt-1 pt-2 border-l border-gray-700 pl-4 text-xs">
+                    {children}
+                </div>
+            )}
+        </div>
+    );
+};
+
+
+const ApiPlanetPanel = ({ planet }) => {
+    if (!planet) return null;
+
+    // --- Icon Sub-Components ---
+    const FloraIcon = ({ type }) => { /* ... same as before ... */ };
+    const FaunaIcon = ({ type }) => { /* ... same as before ... */ };
+
+    return (
+        <div className="bg-gray-900/50 p-4 rounded-lg border border-gray-700">
+            <h4 className="text-xl font-bold text-cyan-300">{planet.planetName}</h4>
+            <p className="text-sm text-gray-500 mb-3">{planet.planetType} World</p>
+
+            <div className="space-y-3">
+                <InfoSection title="Planetary Details" icon={Earth}>
+                    <ul className="list-disc list-inside space-y-1">
+                        <li><Diameter size={14} className="inline mr-1" />Size: {planet.planetSize}</li>
+                        <li><Gauge size={14} className="inline mr-1" />Gravity: {planet.gravity}g</li>
+                        <li><Clock size={14} className="inline mr-1" />Day: {planet.rotationalPeriod} hrs</li>
+                        <li><Orbit size={14} className="inline mr-1" />Year: {planet.orbitalPeriod} days</li>
+                    </ul>
+                </InfoSection>
+
+                {planet.planetConditions && (
+                    <InfoSection title="Conditions" icon={Cloudy}>
+                        <ul className="list-disc list-inside space-y-1">
+                            <li><Wind size={14} className="inline mr-1" />{planet.planetConditions.wind}</li>
+                            <li><ThermometerSun size={14} className="inline mr-1" />{planet.planetConditions.temperature}</li>
+                            <li><ThermometerSnowflake size={14} className="inline mr-1" />{planet.planetConditions.nightTemperature}</li>
+                            <li><Biohazard size={14} className="inline mr-1" />{planet.planetConditions.toxicity}</li>
+                            <li><Radiation size={14} className="inline mr-1" />{planet.planetConditions.radiation}</li>
+                        </ul>
+                    </InfoSection>
+                )}
+
+                {planet.hasCivilization && (
+                    <>
+                        <InfoSection title="Civilization" icon={HandCoins}>
+                            <p className="font-semibold text-gray-300">{planet.economy?.name || 'N/A'}</p>
+                            <p className="italic text-gray-400 mb-2">{planet.economy?.description}</p>
+                            <p className="font-semibold text-gray-300">{planet.industry?.name || 'N/A'}</p>
+                            <p className="italic text-gray-400">{planet.industry?.description}</p>
+                        </InfoSection>
+
+                        <InfoSection title={`Inhabitants (${planet.inhabitants?.length || 0})`} icon={Users}>
+                            <ul className="list-disc list-inside space-y-1">
+                                {planet.inhabitants.map((s, i) => (
+                                    <li key={i}>{s.speciesName} ({s.populationPercentage}%) - <span className="italic text-gray-500">{s.type}</span></li>
+                                ))}
+                            </ul>
+                        </InfoSection>
+
+                        <InfoSection title={`Settlements (${planet.settlements?.length || 0})`} icon={Landmark}>
+                            <div className="space-y-2">
+                                {planet.settlements.map((s, i) => (
+                                    <div key={i}>
+                                        <p className="font-semibold text-gray-300">{s.isCapital && <Crown size={12} className="inline mr-1 text-yellow-400" />} {s.name} (Pop: {s.population.toLocaleString()})</p>
+                                        <p className="text-gray-500 text-xs">{s.layout.theme} | {s.layout.condition}</p>
+                                        <ul className="list-disc list-inside ml-4 text-gray-400">
+                                            {s.layout.buildings.map((b, j) => <li key={j}>{b.name} <span className="text-gray-600">({b.type})</span></li>)}
+                                        </ul>
+                                    </div>
+                                ))}
+                            </div>
+                        </InfoSection>
+                    </>
+                )}
+
+                {planet.moons?.length > 0 && (
+                    <InfoSection title={`Moons (${planet.moons.length})`} icon={Moon}>
+                        <ul className="space-y-2">
+                            {planet.moons.map((moon, i) => (
+                                <li key={i}>
+                                    <p className="font-semibold text-gray-300">{moon.moonName} <span className="text-gray-500">({moon.moonType})</span></p>
+                                    <ul className="ml-4 list-disc text-gray-400">
+                                        <li>Gravity: {moon.gravity}g</li>
+                                        <li>Orbit: {moon.orbitalPeriod} hrs</li>
+                                        {moon.moonSettlements?.length > 0 && (
+                                            <li>Settlements: {moon.moonSettlements.join(', ')}</li>
+                                        )}
+                                    </ul>
+                                </li>
+                            ))}
+                        </ul>
+                    </InfoSection>
+                )}
+
+                {planet.resourceList?.length > 0 && (
+                    <InfoSection title="Resources" icon={FlaskConical}>
+                        <ul className="list-disc list-inside space-y-1">
+                            {planet.resourceList.map((res, i) => (
+                                <li key={i}>
+                                    <span className="font-semibold text-gray-300">{res.mineralName}</span>
+                                    <div className="pl-4 text-gray-500">
+                                        <span>Elements: {res.elements.join(', ')}</span>
+                                        {res.unknownElements?.length > 0 && (
+                                            <span className="text-purple-400 ml-2">
+                                                + {res.unknownElements.map(e => e.symbol).join(', ')}
+                                            </span>
+                                        )}
+                                    </div>
+                                </li>
+                            ))}
+                        </ul>
+                    </InfoSection>
+                )}
+
+                {planet.floraList?.length > 0 && (
+                    <InfoSection title="Flora" icon={Sprout}>
+                        <ul className="space-y-1">
+                            {planet.floraList.map((f, i) => <li key={i}><FloraIcon type={f.type} />{f.name}</li>)}
+                        </ul>
+                    </InfoSection>
+                )}
+
+                {planet.faunaList?.length > 0 && (
+                    <InfoSection title="Fauna" icon={PawPrint}>
+                        <ul className="space-y-1">
+                            {planet.faunaList.map((f, i) => <li key={i}><FaunaIcon type={f.type} />{f.name}</li>)}
+                        </ul>
+                    </InfoSection>
+                )}
+
+            </div>
+        </div>
+    );
+};
+
+// You'll need to re-add the FloraIcon and FaunaIcon sub-components here
 const FloraIcon = ({ type }) => {
     const iconMap = {
         'tree': <TreePine className="inline w-4 h-4 mr-2 text-green-500" />,
@@ -41,7 +178,6 @@ const FloraIcon = ({ type }) => {
     };
     return iconMap[type] || <CircleHelp className="inline w-4 h-4 mr-2 text-gray-400" />;
 };
-
 const FaunaIcon = ({ type }) => {
     const iconMap = {
         'mammal': <PawPrint className="inline w-4 h-4 mr-2 text-red-400" />,
@@ -57,127 +193,6 @@ const FaunaIcon = ({ type }) => {
         'synthetic': <Cpu className="inline w-4 h-4 mr-2 text-gray-500" />
     };
     return iconMap[type] || <CircleHelp className="inline w-4 h-4 mr-2 text-gray-400" />;
-};
-
-
-const ApiPlanetPanel = ({ planet }) => {
-    const [open, setOpen] = useState(true);
-
-    console.log('Rendering ApiPlanetPanel for planet:', planet?.planetName || 'Unknown');
-    console.dir(planet, { depth: null });
-
-    if (!planet) {
-        return <div className="text-gray-400 italic px-4 py-2">No planet selected.</div>;
-    }
-
-    return (
-        <div className="border-t border-gray-700 py-2">
-            <button
-                className="w-full text-left text-lg text-yellow-300 font-semibold hover:text-yellow-200 flex items-center"
-                onClick={() => setOpen(!open)}
-            >
-                <span className="mr-2">{open ? '▼' : '▶'}</span>
-                <span style={{ color: planet.planetColor }}>{planet.planetName}</span>
-                <span className="text-sm text-gray-400 ml-2">({planet.planetType})</span>
-            </button>
-
-            {open && (
-                <div className="ml-4 mt-2 space-y-4 pb-5 pr-2">
-
-                    {/* --- Inhabitants Section --- */}
-                    {planet.inhabitants && planet.inhabitants.length > 0 && (
-                        <div>
-                            <div className="flex items-center gap-1 text-cyan-400 font-bold">
-                                <Users className="w-4 h-4" /> Inhabitants
-                            </div>
-                            {planet.inhabitants.map((species, i) => (
-                                <div key={i} className="ml-4 mt-1">
-                                    <p className="text-sm text-gray-200 font-semibold">{species.speciesName}</p>
-                                    <p className="text-xs text-gray-400 italic">"{species.disposition}"</p>
-                                </div>
-                            ))}
-                        </div>
-                    )}
-
-                    {/* --- Economy Section --- */}
-                    {planet.economy && (
-                        <div>
-                            <div className="flex items-center gap-1 text-orange-400 font-bold">
-                                <HandCoins className="w-4 h-4" /> Economy
-                            </div>
-                            <p className="ml-4 text-sm text-gray-200 font-semibold">{planet.economy.name}</p>
-                            <p className="ml-4 text-xs text-gray-400 italic">{planet.economy.description}</p>
-                        </div>
-                    )}
-
-                    {/* --- Industry Section --- */}
-                    {planet.industry && (
-                        <div>
-                            <div className="flex items-center gap-1 text-orange-400 font-bold">
-                                <Factory className="w-4 h-4" /> Industry
-                            </div>
-                            <p className="ml-4 text-sm text-gray-200 font-semibold">{planet.industry.name}</p>
-                            <p className="ml-4 text-xs text-gray-400 italic">{planet.industry.description}</p>
-                        </div>
-                    )}
-
-                    {/* --- Settlements & Buildings Section --- */}
-                    {planet.settlements && planet.settlements.length > 0 && (
-                        <div>
-                            <div className="flex items-center gap-1 text-orange-400 font-bold">
-                                <MapPin className="w-4 h-4" /> Settlements
-                            </div>
-                            <ul className="ml-4 list-none text-gray-200 text-sm space-y-2">
-                                {planet.settlements.map((s, i) => (
-                                    <li key={i}>
-                                        <div className="flex items-center">
-                                            {s.isCapital ? <Crown className="inline w-5 h-5 mr-2 text-yellow-400" /> : <MapPin className="inline w-4 h-4 mr-2 text-gray-400" />}
-                                            {s.name} (Pop: {s.population ? s.population.toLocaleString() : 'N/A'})
-                                        </div>
-                                        {s.layout && s.layout.buildings.length > 0 && (
-                                            <ul className="ml-6 list-disc text-xs text-gray-400">
-                                                {s.layout.buildings.map((b, j) => (
-                                                    <li key={j}>{b.name}</li>
-                                                ))}
-                                            </ul>
-                                        )}
-                                    </li>
-                                ))}
-                            </ul>
-                        </div>
-                    )}
-
-                    {/* --- Flora Section --- */}
-                    {planet.floraList?.length > 0 && (
-                        <div>
-                            <div className="flex items-center gap-1 text-green-400 font-bold">
-                                <Sprout className="w-4 h-4" /> Flora
-                            </div>
-                            <ul className="ml-4 list-disc text-gray-200 text-sm">
-                                {planet.floraList.map((f, i) => (
-                                    <li key={i}><FloraIcon type={f.type} />{f.name}</li>
-                                ))}
-                            </ul>
-                        </div>
-                    )}
-
-                    {/* --- Fauna Section --- */}
-                    {planet.faunaList?.length > 0 && (
-                        <div>
-                            <div className="flex items-center gap-1 text-red-400 font-bold">
-                                <PawPrint className="w-4 h-4" /> Fauna
-                            </div>
-                            <ul className="ml-4 list-disc text-gray-200 text-sm">
-                                {planet.faunaList.map((f, i) => (
-                                    <li key={i}><FaunaIcon type={f.type} />{f.name}</li>
-                                ))}
-                            </ul>
-                        </div>
-                    )}
-                </div>
-            )}
-        </div>
-    );
 };
 
 export default ApiPlanetPanel;
