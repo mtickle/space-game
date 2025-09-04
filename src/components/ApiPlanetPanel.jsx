@@ -1,15 +1,20 @@
 import {
     Biohazard,
-    Bug, CircleHelp,
+    Bug,
+    CheckCircle2,
+    CircleHelp,
     Clock,
     Cloudy,
     Cpu, Crown, Diameter, Droplet, Earth,
     Feather, Fish, FlaskConical, Flower, Gauge, HandCoins, Landmark, Leaf,
     Moon, MousePointer, Octagon,
     Orbit,
-    PawPrint, Radiation, Shell, Shrub, Sparkles, Sprout, ThermometerSnowflake, ThermometerSun, TreePalm, TreePine, Turtle,
+    PawPrint, Radiation, Shell, Shrub, Sparkles, Sprout,
+    TestTube2,
+    ThermometerSnowflake, ThermometerSun, TreePalm, TreePine, Turtle,
     Users,
-    Waves, Wind
+    Waves, Wind,
+    XCircle
 } from 'lucide-react';
 import { useState } from 'react';
 
@@ -34,13 +39,59 @@ const InfoSection = ({ title, icon, children, defaultOpen = false }) => {
     );
 };
 
+const toSentenceCase = (str) => {
+    if (!str) return '';
+    return str.charAt(0).toUpperCase() + str.slice(1);
+};
+
+const FloraItem = ({ flora }) => {
+    const [isOpen, setIsOpen] = useState(false);
+
+    return (
+        <div className="border-l border-gray-700 pl-3">
+            <button
+                className="w-full text-left text-gray-300 font-semibold hover:text-white"
+                onClick={() => setIsOpen(!isOpen)}
+            >
+                <FloraIcon type={flora.type} /> {isOpen ? '▼' : '▶'} {flora.name}
+                <span className="italic text-gray-500 ml-2">({toSentenceCase(flora.rarity)})</span>
+            </button>
+
+            {isOpen && (
+                <div className="ml-8 mt-1 text-xs text-gray-400 space-y-1">
+                    <p><strong>Appearance:</strong> {toSentenceCase(flora.appearance)}</p>
+                    <p><strong>Utility:</strong> {flora.utility}</p>
+                    <div className="flex flex-wrap gap-x-4">
+                        <span className={flora.edible ? 'text-green-400' : 'text-red-400'}>
+                            {flora.edible ? <CheckCircle2 size={12} className="inline mr-1" /> : <XCircle size={12} className="inline mr-1" />}
+                            Edible
+                        </span>
+                        <span className={!flora.poisonous ? 'text-green-400' : 'text-red-400'}>
+                            {!flora.poisonous ? <CheckCircle2 size={12} className="inline mr-1" /> : <XCircle size={12} className="inline mr-1" />}
+                            Non-Poisonous
+                        </span>
+                        <span className={flora.cultivatable ? 'text-green-400' : 'text-gray-500'}>
+                            {flora.cultivatable ? <CheckCircle2 size={12} className="inline mr-1" /> : <XCircle size={12} className="inline mr-1" />}
+                            Cultivatable
+                        </span>
+                        <span className={flora.sentient ? 'text-purple-400' : 'text-gray-500'}>
+                            {flora.sentient ? <TestTube2 size={12} className="inline mr-1" /> : ''}
+                            {flora.sentient && 'Sentient'}
+                        </span>
+                    </div>
+                    {flora.notes && (
+                        <p className="italic text-cyan-400 pt-1">"{flora.notes}"</p>
+                    )}
+                </div>
+            )}
+        </div>
+    );
+};
+
 
 const ApiPlanetPanel = ({ planet }) => {
     if (!planet) return null;
 
-    // --- Icon Sub-Components ---
-    const FloraIcon = ({ type }) => { /* ... same as before ... */ };
-    const FaunaIcon = ({ type }) => { /* ... same as before ... */ };
 
     return (
         <div className="bg-gray-900/50 p-4 rounded-lg border border-gray-700">
@@ -142,10 +193,10 @@ const ApiPlanetPanel = ({ planet }) => {
                 )}
 
                 {planet.floraList?.length > 0 && (
-                    <InfoSection title="Flora" icon={Sprout}>
-                        <ul className="space-y-1">
-                            {planet.floraList.map((f, i) => <li key={i}><FloraIcon type={f.type} />{f.name}</li>)}
-                        </ul>
+                    <InfoSection title={`Flora (${planet.floraList.length})`} icon={Sprout}>
+                        <div className="space-y-2">
+                            {planet.floraList.map((f, i) => <FloraItem key={i} flora={f} />)}
+                        </div>
                     </InfoSection>
                 )}
 
