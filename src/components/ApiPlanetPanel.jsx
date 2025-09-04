@@ -6,7 +6,10 @@ import {
     Clock,
     Cloudy,
     Cpu, Crown, Diameter, Droplet, Earth,
-    Feather, Fish, FlaskConical, Flower, Gauge, HandCoins, Landmark, Leaf,
+    Egg,
+    Feather, Fish, FlaskConical, Flower,
+    Footprints,
+    Gauge, HandCoins, Landmark, Leaf,
     Moon, MousePointer, Octagon,
     Orbit,
     PawPrint, Radiation, Shell, Shrub, Sparkles, Sprout,
@@ -88,6 +91,39 @@ const FloraItem = ({ flora }) => {
     );
 };
 
+// --- Helper Sub-Component for a single fauna item ---
+const FaunaItem = ({ fauna }) => {
+    const [isOpen, setIsOpen] = useState(false);
+
+    return (
+        <div className="border-l border-gray-700 pl-3">
+            <button
+                className="w-full text-left text-gray-300 font-semibold hover:text-white"
+                onClick={() => setIsOpen(!isOpen)}
+            >
+                <FaunaIcon type={fauna.type} /> {isOpen ? '▼' : '▶'} {fauna.name}
+                <span className="italic text-gray-500 ml-2">({toSentenceCase(fauna.behavior)})</span>
+            </button>
+
+            {isOpen && (
+                <div className="ml-8 mt-1 text-xs text-gray-400 space-y-1">
+                    <p><strong>Biome:</strong> {toSentenceCase(fauna.biome)}</p>
+                    <div className="flex flex-wrap gap-x-4 items-center">
+                        <span>
+                            <Footprints size={12} className="inline mr-1" />
+                            Legs: {fauna.feet}
+                        </span>
+                        <span className={fauna.laysEggs ? 'text-blue-400' : 'text-gray-500'}>
+                            {fauna.laysEggs && <Egg size={12} className="inline mr-1" />}
+                            {fauna.laysEggs && 'Lays Eggs'}
+                        </span>
+                    </div>
+                    <p className="italic text-cyan-400 pt-1">"{fauna.description}"</p>
+                </div>
+            )}
+        </div>
+    );
+};
 
 const ApiPlanetPanel = ({ planet }) => {
     if (!planet) return null;
@@ -200,11 +236,12 @@ const ApiPlanetPanel = ({ planet }) => {
                     </InfoSection>
                 )}
 
+                {/* Fauna */}
                 {planet.faunaList?.length > 0 && (
-                    <InfoSection title="Fauna" icon={PawPrint}>
-                        <ul className="space-y-1">
-                            {planet.faunaList.map((f, i) => <li key={i}><FaunaIcon type={f.type} />{f.name}</li>)}
-                        </ul>
+                    <InfoSection title={`Fauna (${planet.faunaList.length})`} icon={PawPrint}>
+                        <div className="space-y-2">
+                            {planet.faunaList.map((f, i) => <FaunaItem key={i} fauna={f} />)}
+                        </div>
                     </InfoSection>
                 )}
 
