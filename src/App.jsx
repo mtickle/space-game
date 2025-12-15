@@ -27,7 +27,7 @@ const App = () => {
           throw new Error(`API responded with status: ${response.status}`);
         }
         const data = await response.json();
-        console.log('API is awake!', data);
+        //console.log('API is awake!', data);
       } catch (error) {
         console.error('Error waking up API:', error);
         setModalMessage('Could not connect to the API.');
