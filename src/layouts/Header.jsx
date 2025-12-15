@@ -10,7 +10,7 @@ const Header = ({ stars }) => {
             <h1 className="text-4xl font-baumans tracking-wide" style={{ fontFamily: '"Baumans", cursive' }}>Galactic Map Lab</h1>
             <div className="flex space-x-4">
                 <div>
-                    {isAuthenticated ? (
+                    {/* {isAuthenticated ? (
                         <div className="flex items-center gap-4">
                             <span className="text-sm font-medium">
                                 Welcome, {user.name || user.email}
@@ -29,7 +29,7 @@ const Header = ({ stars }) => {
                         >
                             Log In
                         </button>
-                    )}
+                    )} */}
                 </div>
             </div>
         </header>

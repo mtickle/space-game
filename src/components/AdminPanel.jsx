@@ -7,7 +7,10 @@ const AdminPanel = ({ stars, goToSystem }) => {
     const [open, setOpen] = useState(false);
     const [showVisited, setShowVisited] = useState(false);
 
+
     const home = JSON.parse(localStorage.getItem('homeSystem'));
+    
+    
 
     return (
         <>

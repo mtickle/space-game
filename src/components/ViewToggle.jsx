@@ -1,5 +1,4 @@
-import React from 'react';
-import { Map, Database } from 'lucide-react'; // Using icons for a nice touch
+import { Database, Map } from 'lucide-react'; // Using icons for a nice touch
 
 const ViewToggle = ({ viewMode, setViewMode }) => {
     const toggleView = () => {

@@ -1,4 +1,4 @@
-import { Building, Database, Globe, Map, Users, Zap } from 'lucide-react';
+import { Building, Database, Globe, MapIcon, Users, Zap } from 'lucide-react';
 import ApiPlanetPanel from './ApiPlanetPanel';
 
 // --- StatCard Helper (Styled for Dark/Retro Theme) ---
@@ -35,7 +35,7 @@ const Sidebar = ({ activeSystem, setActiveSystem, setShowSystemMap, stats }) => 
                     {/* Stats Grid */}
                     <div className="grid grid-cols-1 gap-3">
                         <StatCard label="Total Systems" value={stats?.totalSystems || "0"} icon={Database} />
-                        <StatCard label="Mapped Planets" value={stats?.totalPlanets || "0"} icon={Map} />
+                        <StatCard label="Mapped Planets" value={stats?.totalPlanets || "0"} icon={MapIcon} />
                         <StatCard label="Anomalies" value="142" icon={Zap} />
                     </div>
 

@@ -44,7 +44,6 @@ const JsonNode = ({ label, data, isInitiallyOpen = false }) => {
     );
 };
 
-
 const ApiDataViewer = () => {
     const [systemData, setSystemData] = useState(null);
     const [isLoading, setIsLoading] = useState(false);

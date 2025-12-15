@@ -1,4 +1,3 @@
-import AdminPanel from '@components/AdminPanel';
 import Sidebar from '@components/Sidebar';
 import StarSystemViewer from '@components/StarSystemViewer';
 import { useApiStarField } from '@hooks/useApiStarField.js';
@@ -48,6 +47,7 @@ const ApiStarMap = () => {
     const [starTypeFilter, setStarTypeFilter] = useState('All');
     const [showVisited, setShowVisited] = useState(false);
     const [showSystemMap, setShowSystemMap] = useState(false);
+    const [stats, setStats] = useState({ totalSystems: 0, totalPlanets: 0 });
 
     // --- REFS ---
     const canvasRef = useRef(null);
@@ -86,6 +86,39 @@ const ApiStarMap = () => {
         resizeObserver.observe(container);
         return () => resizeObserver.unobserve(container);
     }, []);
+
+    useEffect(() => {
+        const fetchStats = async () => {
+            // NOTE: import.meta is not available in ES2015 preview environments.
+            // Uncomment these lines in your Vite project:
+            const apiKey = import.meta.env.VITE_API_KEY;
+            const baseUrl = import.meta.env.VITE_API_BASE_URL;
+
+            // Placeholder for preview:
+            //const apiKey = '';
+            //const baseUrl = '';
+
+            try {
+                const response = await fetch(`${baseUrl}/api/v1/stats`, {
+                    headers: { 'x-api-key': apiKey }
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+
+                    setStats({
+                        totalSystems: data.starCount || 0,
+                        totalPlanets: 0
+                    });
+                }
+            } catch (error) {
+                console.error("Failed to fetch system stats:", error);
+                setStats({ totalSystems: 0, totalPlanets: 0 });
+            }
+        };
+
+        fetchStats();
+    }, []); // Run once on mount
 
     // --- MOUSE HANDLERS ---
     const handleMouseDown = createHandleMouseDown(setIsDragging, setDragStart);
@@ -278,7 +311,7 @@ const ApiStarMap = () => {
                     )}
                 </div>
             </div>
-            <AdminPanel stars={stars} goToSystem={() => { }} />
+            {/* <AdminPanel stars={stars} goToSystem={() => { }} /> */}
             <Footer
                 offsetX={offsetX}
                 offsetY={offsetY}
