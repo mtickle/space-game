@@ -94,10 +94,6 @@ const ApiStarMap = () => {
             const apiKey = import.meta.env.VITE_API_KEY;
             const baseUrl = import.meta.env.VITE_API_BASE_URL;
 
-            // Placeholder for preview:
-            //const apiKey = '';
-            //const baseUrl = '';
-
             try {
                 const response = await fetch(`${baseUrl}/api/v1/stats`, {
                     headers: { 'x-api-key': apiKey }
@@ -105,10 +101,10 @@ const ApiStarMap = () => {
 
                 if (response.ok) {
                     const data = await response.json();
-
+                    console.log(data)
                     setStats({
-                        totalSystems: data.starCount || 0,
-                        totalPlanets: 0
+                        starCount: data.starCount || 0,
+                        planetCount: data.planetCount || 0
                     });
                 }
             } catch (error) {
@@ -118,7 +114,7 @@ const ApiStarMap = () => {
         };
 
         fetchStats();
-    }, []); // Run once on mount
+    }, []);
 
     // --- MOUSE HANDLERS ---
     const handleMouseDown = createHandleMouseDown(setIsDragging, setDragStart);
@@ -288,6 +284,7 @@ const ApiStarMap = () => {
                     activeSystem={activeSystem}
                     setActiveSystem={setActiveSystem}
                     setShowSystemMap={setShowSystemMap}
+                    stats={stats}
                 />
                 <div className="relative flex-1">
                     <canvas

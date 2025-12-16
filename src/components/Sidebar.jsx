@@ -1,4 +1,4 @@
-import { Building, Database, Globe, MapIcon, Users, Zap } from 'lucide-react';
+import { Building, Database, Globe, Map as MapIcon, Users } from 'lucide-react';
 import ApiPlanetPanel from './ApiPlanetPanel';
 
 // --- StatCard Helper (Styled for Dark/Retro Theme) ---
@@ -20,13 +20,11 @@ const Sidebar = ({ activeSystem, setActiveSystem, setShowSystemMap, stats }) => 
         return (
             <aside className="w-1/3 max-w-lg bg-black bg-opacity-80 border-l-2 border-green-500/50 p-6 flex flex-col h-full z-20">
                 <div className="border-b border-green-500/30 pb-4 mb-6">
-                    <h2 className="text-2xl font-bold text-green-400 tracking-wider">SYSTEM SCAN</h2>
-                    <p className="text-sm text-green-600 mt-1 font-mono">Galactic Cartography Mainframe</p>
+                    <h2 className="text-2xl font-bold text-green-400 tracking-wider">DATABASE STATUS</h2>
                 </div>
 
                 <div className="space-y-4 flex-1 overflow-y-auto">
                     <div className="flex items-center justify-between mb-2">
-                        <h3 className="text-sm font-bold text-green-700 uppercase">Database Status</h3>
                         <span className="flex items-center gap-2 text-xs font-medium text-green-400 bg-green-900/20 px-2 py-1 rounded-full border border-green-500/30">
                             <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span> ONLINE
                         </span>
@@ -34,9 +32,18 @@ const Sidebar = ({ activeSystem, setActiveSystem, setShowSystemMap, stats }) => 
 
                     {/* Stats Grid */}
                     <div className="grid grid-cols-1 gap-3">
-                        <StatCard label="Total Systems" value={stats?.totalSystems || "0"} icon={Database} />
-                        <StatCard label="Mapped Planets" value={stats?.totalPlanets || "0"} icon={MapIcon} />
-                        <StatCard label="Anomalies" value="142" icon={Zap} />
+                        {/* FIX: Added ?. before toLocaleString() to prevent crash on undefined */}
+                        <StatCard
+                            label="Total Systems"
+                            value={stats?.starCount?.toLocaleString() || "0"}
+                            icon={Database}
+                        />
+                        <StatCard
+                            label="Mapped Planets"
+                            value={stats?.planetCount?.toLocaleString() || "0"}
+                            icon={MapIcon}
+                        />
+                        {/* <StatCard label="Anomalies" value="142" icon={Zap} /> */}
                     </div>
 
                     <div className="mt-8 p-4 bg-green-900/10 border border-green-500/30 rounded-lg text-sm text-green-300 font-mono">
