@@ -8,7 +8,7 @@ const Footer = ({ offsetX, offsetY, scale, stars, setOffsetX, setOffsetY, goToSy
         <div className="bg-black bg-opacity-90 border-t-2 border-green-500 p-3 flex flex-col sm:flex-row sm:justify-between gap-2 text-sm text-green-400 max-h-64 overflow-y-auto">
             <div className="flex flex-wrap items-center gap-2">
                 <span>
-                    Total Systems: {stars.length} |
+                    Total Systems Generated Now: {stars.length} |
                     Coordinates: ({Math.round(offsetX)}, {Math.round(offsetY)})&nbsp;
                     <button onClick={() => goToZeroCommaZero()} > <RotateCcw className="inline w-4 h-4 mr-1 text-pink-400" data-tooltip="Reset zoom to 1x" />
                     </button> |
