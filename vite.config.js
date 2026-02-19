@@ -8,7 +8,7 @@ export default defineConfig({
   plugins: [
     react(),
     tailwindcss()],
-  base: "/",
+  base: "/space-game",
   resolve: {
     alias: {
       '@': path.resolve(__dirname, 'src'),
