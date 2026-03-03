@@ -1,3 +1,5 @@
+[![Deploy to GitHub Pages](https://github.com/mtickle/space-game/actions/workflows/deploy.yml/badge.svg)](https://github.com/mtickle/space-game/actions/workflows/deploy.yml)
+
 # 🌌 Starweave: Galactic Cartography Mainframe
 
 ## 🚀 Overview
