@@ -1,5 +1,8 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import {
+    Zap
+} from 'lucide-react';
 
+import { useCallback, useEffect, useRef, useState } from 'react';
 // --- COLOR UTILITIES ---
 function getPlanetColor(type) {
     const colors = {
@@ -135,6 +138,12 @@ const StarSystemViewer = ({ activeSystem, onClose }) => {
     return (
         <div className="star-system-viewer w-full h-full relative bg-[#1a1a2e]">
             <div className="absolute top-4 left-4 z-20 p-4 bg-black/60 rounded-lg text-white font-mono backdrop-blur-sm border border-slate-700 shadow-lg">
+                {activeSystem?.isNewDiscovery && (
+                    <div className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded border border-yellow-500/50 bg-yellow-500/10 text-yellow-400 text-xs font-bold tracking-widest mb-2 animate-pulse shadow-[0_0_10px_rgba(234,179,8,0.2)]">
+                        <Zap size={12} className="fill-yellow-400/50" />
+                        NEW DISCOVERY
+                    </div>
+                )}
                 <h1 className="text-xl font-bold text-[#00ff88]">
                     {activeSystem?.starName || 'Unnamed System'}
                 </h1>
@@ -145,6 +154,7 @@ const StarSystemViewer = ({ activeSystem, onClose }) => {
                     onClick={onClose}
                     className="mt-4 px-3 py-1.5 w-full bg-slate-700 text-white text-sm rounded-md hover:bg-slate-600 transition-colors duration-200"
                 >
+
                     Back to Galaxy Map
                 </button>
             </div>

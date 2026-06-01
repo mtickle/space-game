@@ -66,22 +66,20 @@ const Sidebar = ({ activeSystem, setActiveSystem, setShowSystemMap, stats }) => 
 
                 <div className="space-y-4 flex-1 overflow-y-auto">
                     <div className="grid grid-cols-1 gap-3"></div>
-                    {starFaction && (
-                        <ItemCard
-                            label="Controlling Faction"
-                            value={starFaction.name}
-                            icon={Users}
-                            color={starFaction.color}
-                            descriptiveText={starFaction.alignment}
-                        />
-                    )}
+                    <ItemCard
+                        label="Controlling Faction"
+                        value={starFaction?.name || "Unclaimed Space"}
+                        icon={Users}
+                        color={starFaction?.color || "gray"} // or whatever your neutral default color is
+                        descriptiveText={starFaction?.alignment || "Independent"}
+                    />
 
                     {spaceStation && (
                         <ItemCard
                             label="Primary Space Station"
                             value={spaceStation.stationName}
                             icon={Building}
-                            color={starFaction.color}
+                            color={starFaction?.color || "gray"}
                             descriptiveText={spaceStation.stationType}
                         />
                     )}

@@ -17,17 +17,19 @@ export const fetchSystemDetails = async (star) => {
             headers: { 'x-api-key': apiKey }
         });
 
-        // --- MODIFIED LOGIC ---
-        // This block now handles the 404 silently.
-
-        if (getResponse.ok) { // Status is 200-299
-            //console.log(`System ${star.name} found in DB. Loading...`);
-            return await getResponse.json();
+        // If the status is 500, 401, etc., it's a real error. Throw immediately.
+        if (!getResponse.ok) {
+            throw new Error(`API error! Status: ${getResponse.status}`);
         }
 
-        if (getResponse.status === 404) {
-            // It's a new system, so we proceed to create it. No error is logged.
-            //console.log(`System ${star.name} not found in DB. Creating...`);
+        // Parse the response. The backend returns 'null' if undiscovered.
+        const systemData = await getResponse.json();
+
+        // --- MODIFIED LOGIC ---
+        // If it's null, it's a new system. Proceed to create it!
+        if (!systemData) {
+            console.log(`System ${star.name} is undiscovered. Generating new system...`);
+
             const postResponse = await fetch(`${baseUrl}/api/v1/systems`, {
                 method: 'POST',
                 headers: {
@@ -36,17 +38,19 @@ export const fetchSystemDetails = async (star) => {
                 },
                 body: JSON.stringify(star),
             });
+
             if (!postResponse.ok) {
-                throw new Error('Failed to create system via API');
+                throw new Error(`Failed to create system via API. Status: ${postResponse.status}`);
             }
+
             return await postResponse.json();
         }
 
-        // If the status is anything else (e.g., 500), it's a real error.
-        throw new Error(`API error! Status: ${getResponse.status}`);
+        // Otherwise, it wasn't null, so we successfully loaded it from the DB!
+        // console.log(`System ${star.name} found in DB. Loading...`);
+        return systemData;
 
     } catch (error) {
-        // This will now only catch actual errors, not the intentional 404.
         console.error("Failed to fetch or create system details:", error);
         throw error; // Re-throw the error so the component can handle it
     }
