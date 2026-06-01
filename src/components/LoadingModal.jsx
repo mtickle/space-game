@@ -48,7 +48,7 @@ const LoadingModal = ({ isOpen, message }) => {
         // --- Animate the flickering status text ---
         const textInterval = setInterval(() => {
             setStatusText(statusLines[Math.floor(Math.random() * statusLines.length)]);
-        }, 400);
+        }, 500);
 
         // --- Cleanup function ---
         // This is crucial to stop the animations when the modal closes

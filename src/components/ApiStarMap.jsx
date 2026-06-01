@@ -3,6 +3,9 @@ import StarSystemViewer from '@components/StarSystemViewer';
 import { useApiStarField } from '@hooks/useApiStarField.js';
 import Footer from '@layouts/Footer';
 import Header from '@layouts/Header';
+import VisitedSystemsPanel from './VisitedSystemsPanel';
+
+
 import { fetchSystemDetails } from '@utils/apiUtils.js'; // Assuming this is where the fetch logic lives
 import {
     createHandleContextMenu,
@@ -285,6 +288,18 @@ const ApiStarMap = () => {
                     setActiveSystem={setActiveSystem}
                     setShowSystemMap={setShowSystemMap}
                     stats={stats}
+                />
+                <VisitedSystemsPanel
+                    stars={stars}
+                    goToSystem={async (star) => {
+                        try {
+                            const fullSystem = await fetchSystemDetails(star);
+                            setActiveSystem(fullSystem);
+                            setShowSystemMap(true);
+                        } catch (error) {
+                            console.error("Failed to warp to system:", error);
+                        }
+                    }}
                 />
                 <div className="relative flex-1">
                     <canvas
