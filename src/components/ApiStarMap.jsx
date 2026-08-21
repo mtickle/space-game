@@ -137,6 +137,7 @@ const ApiStarMap = () => {
     }, [scale]);
 
     // UPDATED: Click handler now calls the API and handles localStorage
+    // UPDATED: Click handler now calls the API, handles generation, and manages localStorage
     const handleClick = useCallback(async (e) => {
         if (isDragging) return;
 
@@ -153,19 +154,25 @@ const ApiStarMap = () => {
 
         if (!clickedStar) return;
 
+        console.log(`Clicked on star: ${clickedStar.name} (ID: ${clickedStar.id})`);
+
         try {
+            // Just pass the raw star object. The utility does everything else!
             const fullSystem = await fetchSystemDetails(clickedStar);
+
             setActiveSystem(fullSystem);
             setShowSystemMap(true);
 
             // --- FEATURE 1: VISITED SYSTEMS LOGIC ---
             const visited = JSON.parse(localStorage.getItem('visitedStars') || '[]');
-            if (!visited.includes(fullSystem.starId)) {
-                visited.push(fullSystem.starId);
+            const systemId = fullSystem.starId || fullSystem.id;
+
+            if (systemId && !visited.includes(systemId)) {
+                visited.push(systemId);
                 localStorage.setItem('visitedStars', JSON.stringify(visited));
             }
         } catch (error) {
-            console.error("Failed to fetch system details:", error);
+            console.error("Failed to handle system click:", error);
         }
     }, [isDragging, offsetX, offsetY, scale, stars, setActiveSystem, setShowSystemMap]);
 

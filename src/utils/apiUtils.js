@@ -5,6 +5,7 @@
  * @returns {Promise<object>} The full star system data from the API.
  */
 export const fetchSystemDetails = async (star) => {
+    // 1. Ensure we have the full star object
     if (!star || !star.id) {
         throw new Error("Invalid star data provided.");
     }
@@ -17,16 +18,17 @@ export const fetchSystemDetails = async (star) => {
             headers: { 'x-api-key': apiKey }
         });
 
-        // If the status is 500, 401, etc., it's a real error. Throw immediately.
-        if (!getResponse.ok) {
-            throw new Error(`API error! Status: ${getResponse.status}`);
+        let systemData = null;
+
+        // 2. If it is NOT a 404, try to parse it
+        if (getResponse.status !== 404) {
+            if (!getResponse.ok) {
+                throw new Error(`API error! Status: ${getResponse.status}`);
+            }
+            systemData = await getResponse.json();
         }
 
-        // Parse the response. The backend returns 'null' if undiscovered.
-        const systemData = await getResponse.json();
-
-        // --- MODIFIED LOGIC ---
-        // If it's null, it's a new system. Proceed to create it!
+        // 3. If systemData is still null (because it was a 404), create it!
         if (!systemData) {
             console.log(`System ${star.name} is undiscovered. Generating new system...`);
 
@@ -46,12 +48,11 @@ export const fetchSystemDetails = async (star) => {
             return await postResponse.json();
         }
 
-        // Otherwise, it wasn't null, so we successfully loaded it from the DB!
-        // console.log(`System ${star.name} found in DB. Loading...`);
+        // 4. Otherwise, return the loaded data
         return systemData;
 
     } catch (error) {
         console.error("Failed to fetch or create system details:", error);
-        throw error; // Re-throw the error so the component can handle it
+        throw error;
     }
 };
